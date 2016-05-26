@@ -11,5 +11,7 @@ m4/*.m4
 .deps
 .dirstamp
 *.o
-
+*.lo
+*.la
+.libs
 /steam
