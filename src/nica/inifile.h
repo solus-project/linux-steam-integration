@@ -87,8 +87,7 @@ NcHashmap *nc_ini_file_parse(const char *path);
  *
  * @return 0 if the call was succesful, or a negative integer. See nc_ini_error
  */
-int nc_ini_file_parse_full(const char *path, NcHashmap **out_map,
-                                         int *error_line_number);
+int nc_ini_file_parse_full(const char *path, NcHashmap **out_map, int *error_line_number);
 
 /**
  * Return a string representation for a given @NcIniError

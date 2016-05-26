@@ -141,8 +141,7 @@ NcHashmap *nc_hashmap_new(nc_hash_create_func hash, nc_hash_compare_func compare
  * @return A newly allocated NcHashmap
  */
 NcHashmap *nc_hashmap_new_full(nc_hash_create_func hash, nc_hash_compare_func compare,
-                                             nc_hash_free_func key_free,
-                                             nc_hash_free_func value_free);
+                               nc_hash_free_func key_free, nc_hash_free_func value_free);
 
 /**
  * Store a key/value pair in the hashmap
