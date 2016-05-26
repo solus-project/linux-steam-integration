@@ -1,0 +1,3 @@
+EXTRA_DIST = \
+	LICENSE.LGPL2.1 \
+	README.md
