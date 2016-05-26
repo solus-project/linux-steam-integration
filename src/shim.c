@@ -11,7 +11,7 @@
 
 #include <stdlib.h>
 
-#define __lsi_unused__ __attribute__ ((unused))
+#define __lsi_unused__ __attribute__((unused))
 
 int main(__lsi_unused__ int argc, __lsi_unused__ char **argv)
 {
