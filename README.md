@@ -8,7 +8,7 @@ This is part of an effort by Solus to enhance Steam for everyone.
 Note that there is nothing here to see yet as this is still in development.
 
 This project, and by extension Solus, is not officially endorsed by, or affiliated
-with, Steam, or it's parent company, Valve.
+with, Steam*, or it's parent company, Valve*.
 
 
 License
