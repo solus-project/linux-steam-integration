@@ -14,4 +14,6 @@ bin_PROGRAMS = \
 	steam
 
 steam_SOURCES = \
+	src/lsi.h \
+	src/lsi.c \
 	src/shim.c
