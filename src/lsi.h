@@ -12,10 +12,13 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /* Mark a variable/argument as unused to skip warnings */
 #define __lsi_unused__ __attribute__((unused))
 
+/* Force inlining of a function */
+#define __lsi_inline__ __attribute__((always_inline))
 /**
  * Current Linux Steam Integration settings.
  */
@@ -40,8 +43,16 @@ bool lsi_config_store(LsiConfig *config);
 
 /**
  * Determine if the host system is 64-bit.
+ *
+ * @returns true if 64-bit, otherwise false
  */
-bool lsi_system_is_64bit(void);
+__lsi_inline__ static inline bool lsi_system_is_64bit(void)
+{
+#if UINTPTR_MAX == 0xffffffffffffffff
+        return true;
+#endif
+        return false;
+}
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
