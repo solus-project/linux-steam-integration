@@ -13,6 +13,31 @@
 
 #include <stdbool.h>
 
+/* Mark a variable/argument as unused to skip warnings */
+#define __lsi_unused__ __attribute__((unused))
+
+/**
+ * Current Linux Steam Integration settings.
+ */
+typedef struct LsiConfig {
+        bool force_32;           /**<Do we force 32-bit? */
+        bool use_native_runtime; /**<Do we force our native runtime? */
+} LsiConfig;
+
+/**
+ * Attempt to load the LsiConfiguration from storage.
+ *
+ * @returns true if the load succeeded, otherwise false.
+ */
+bool lsi_config_load(LsiConfig *config);
+
+/**
+ * Attempt to write the LsiConfiguration to storage
+ *
+ * @returns true if the write succeeded, otherwise false.
+ */
+bool lsi_config_store(LsiConfig *config);
+
 /**
  * Determine if the host system is 64-bit.
  */

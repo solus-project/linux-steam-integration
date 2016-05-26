@@ -9,6 +9,9 @@
  * of the License, or (at your option) any later version.
  */
 
+#include <stdint.h>
+#include <stdio.h>
+
 #include "lsi.h"
 
 bool lsi_system_is_64bit(void)
@@ -16,6 +19,18 @@ bool lsi_system_is_64bit(void)
 #if UINTPTR_MAX == 0xffffffffffffffff
         return true;
 #endif
+        return false;
+}
+
+bool lsi_config_load(__lsi_unused__ LsiConfig *config)
+{
+        fputs("lsi_config_load(): Not yet implemented", stderr);
+        return false;
+}
+
+bool lsi_config_store(__lsi_unused__ LsiConfig *config)
+{
+        fputs("lsi_config_store(): Not yet implemented", stderr);
         return false;
 }
 
