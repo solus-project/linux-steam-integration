@@ -17,6 +17,8 @@ License
         Used within the shim component to ensure it is leak free
         and as lightweight as possible, due to needing to exec the
         main Steam* launcher.
+        libnica is available under the terms of the `LGPL-2.1` license.
+        See [LICENSE.LGPL2.1](LICENSE.LGPL2.1) for more details
 
 `src/shim`:
         Copyright © 2016 Ikey Doherty
