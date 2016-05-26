@@ -8,3 +8,8 @@ configure
 libtool
 stamp-h1
 m4/*.m4
+.deps
+.dirstamp
+*.o
+
+/steam
