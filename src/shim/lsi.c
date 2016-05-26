@@ -39,7 +39,7 @@ void lsi_config_load_defaults(LsiConfig *config)
 
 const char *lsi_preload_list()
 {
-        return EMUL32LIBDIR "/libx11.so.6:" EMUL32LIBDIR "/libstdc++.so.6";
+        return "/usr/$LIB/libX11.so.6:/usr/$LIB/libstdc++.so.6";
 }
 
 /*

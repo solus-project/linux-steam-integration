@@ -9,29 +9,71 @@
  * of the License, or (at your option) any later version.
  */
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "lsi.h"
 
-int main(__lsi_unused__ int argc, __lsi_unused__ char **argv)
+/**
+ * Temporary.
+ */
+#define STEAM_BIN "/usr/bin/steam"
+#define EMUL32BIN "/usr/bin/linux32"
+
+int main(int argc, char **argv)
 {
         LsiConfig config = { 0 };
         bool is_x86_64;
+        const char *n_argv[argc + 2];
+        const char *exec_command = NULL;
+        int i = 1;
+        int8_t off = 0;
 
+        /* Initialise config */
         if (!lsi_config_load(&config)) {
                 lsi_config_load_defaults(&config);
         }
 
         is_x86_64 = lsi_system_is_64bit();
 
-        /* Debug printers */
-        fprintf(stderr, "emul32? %s\n", config.force_32 ? "yes" : "no");
-        fprintf(stderr, "native-runtime? %s\n", config.use_native_runtime ? "yes" : "no");
-        fprintf(stderr, "x86-64? %s\n", is_x86_64 ? "yes" : "no");
-        fprintf(stderr, "LD_PRELOAD=\"%s\"\n", lsi_preload_list());
+        /* Force STEAM_RUNTIME into the environment */
+        if (config.use_native_runtime) {
+                /* Explicitly disable the runtime */
+                setenv("STEAM_RUNTIME", "0", 1);
+        } else {
+                /* TODO: Determine if LD_PRELOAD is necessary, i.e. nvidia. */
+                setenv("LD_PRELOAD", lsi_preload_list(), 1);
+                setenv("STEAM_RUNTIME", "1", 1);
+        }
 
-        return EXIT_FAILURE;
+        memset(&n_argv, 0, sizeof(char *) * (argc + 2));
+
+        /* If we're 64-bit and 32-bit is forced, proxy via linux32 */
+        if (config.force_32 && is_x86_64) {
+                exec_command = EMUL32BIN;
+                n_argv[0] = EMUL32BIN;
+                n_argv[1] = STEAM_BIN;
+                off = 1;
+        } else {
+                /* Directly call STEAM_BIN */
+                exec_command = STEAM_BIN;
+                n_argv[0] = STEAM_BIN;
+        }
+
+        /* Point arguments to arguments passed to us */
+        for (i = 1; i < argc; i++) {
+                n_argv[i + off] = argv[i];
+        }
+        n_argv[i + 1 + off] = NULL;
+
+        /* Go execute steam. */
+        if (execv(exec_command, (char **)n_argv) < 0) {
+                return EXIT_FAILURE;
+        }
 }
 
 /*
