@@ -59,6 +59,12 @@ __lsi_inline__ static inline bool lsi_system_is_64bit(void)
         return false;
 }
 
+/**
+ * Return the required preload list for running Steam via their runtime
+ * This is static .text - do not free
+ */
+const char *lsi_preload_list(void);
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *

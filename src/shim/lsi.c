@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include "config.h"
 #include "lsi.h"
 
 bool lsi_config_load(__lsi_unused__ LsiConfig *config)
@@ -34,6 +35,11 @@ void lsi_config_load_defaults(LsiConfig *config)
          * things that LSI knows about */
         config->force_32 = false;
         config->use_native_runtime = true;
+}
+
+const char *lsi_preload_list()
+{
+        return EMUL32LIBDIR "/libx11.so.6:" EMUL32LIBDIR "/libstdc++.so.6";
 }
 
 /*

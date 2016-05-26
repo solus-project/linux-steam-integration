@@ -29,6 +29,7 @@ int main(__lsi_unused__ int argc, __lsi_unused__ char **argv)
         fprintf(stderr, "emul32? %s\n", config.force_32 ? "yes" : "no");
         fprintf(stderr, "native-runtime? %s\n", config.use_native_runtime ? "yes" : "no");
         fprintf(stderr, "x86-64? %s\n", is_x86_64 ? "yes" : "no");
+        fprintf(stderr, "LD_PRELOAD=\"%s\"\n", lsi_preload_list());
 
         return EXIT_FAILURE;
 }
