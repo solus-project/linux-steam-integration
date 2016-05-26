@@ -9,20 +9,31 @@
  * of the License, or (at your option) any later version.
  */
 
+#include <assert.h>
 #include <stdio.h>
 
 #include "lsi.h"
 
 bool lsi_config_load(__lsi_unused__ LsiConfig *config)
 {
-        fputs("lsi_config_load(): Not yet implemented", stderr);
+        fputs("lsi_config_load(): Not yet implemented\n", stderr);
         return false;
 }
 
 bool lsi_config_store(__lsi_unused__ LsiConfig *config)
 {
-        fputs("lsi_config_store(): Not yet implemented", stderr);
+        fputs("lsi_config_store(): Not yet implemented\n", stderr);
         return false;
+}
+
+void lsi_config_load_defaults(LsiConfig *config)
+{
+        assert(config != NULL);
+
+        /* Very simple right now, but in future we'll expand the options and
+         * things that LSI knows about */
+        config->force_32 = false;
+        config->use_native_runtime = true;
 }
 
 /*

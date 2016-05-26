@@ -42,6 +42,11 @@ bool lsi_config_load(LsiConfig *config);
 bool lsi_config_store(LsiConfig *config);
 
 /**
+ * Set the defaults for the LsiConfiguration
+ */
+void lsi_config_load_defaults(LsiConfig *config);
+
+/**
  * Determine if the host system is 64-bit.
  *
  * @returns true if 64-bit, otherwise false
