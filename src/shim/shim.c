@@ -45,8 +45,10 @@ int main(int argc, char **argv)
                 /* Explicitly disable the runtime */
                 setenv("STEAM_RUNTIME", "0", 1);
         } else {
-                /* TODO: Determine if LD_PRELOAD is necessary, i.e. nvidia. */
-                setenv("LD_PRELOAD", lsi_preload_list(), 1);
+                /* Only preload when needed. */
+                if (lsi_system_requires_preload()) {
+                        setenv("LD_PRELOAD", lsi_preload_list(), 1);
+                }
                 setenv("STEAM_RUNTIME", "1", 1);
         }
 

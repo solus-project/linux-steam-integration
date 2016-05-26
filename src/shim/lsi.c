@@ -37,6 +37,18 @@ void lsi_config_load_defaults(LsiConfig *config)
         config->use_native_runtime = true;
 }
 
+bool lsi_system_requires_preload()
+{
+#ifdef LSI_USE_NEW_ABI
+        /* Right now we only return preload when using the new C++ ABI. In
+         * future we'll expand this to return false when using the nvidia
+         * proprietary driver
+         */
+        return true;
+#endif
+        return false;
+}
+
 const char *lsi_preload_list()
 {
         return "/usr/$LIB/libX11.so.6:/usr/$LIB/libstdc++.so.6";

@@ -65,6 +65,13 @@ __lsi_inline__ static inline bool lsi_system_is_64bit(void)
  */
 const char *lsi_preload_list(void);
 
+/**
+ * Determine if the system being used requires the use of LD_PRELOAD to
+ * ensure that steam works. Essentially this is when the new C++ 11 ABI
+ * is in use, as the old Steam libraries will not be able to load.
+ */
+bool lsi_system_requires_preload(void);
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *
