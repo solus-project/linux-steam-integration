@@ -79,7 +79,7 @@ int main(int argc, char **argv)
         label = gtk_label_new(
             "<big>Linux Steam® Integration</big>\n"
             "Note that settings are not applied until the next time Steam® starts.\n"
-            "Use the \'Close\' option on the Steam® tray icon to exit the application.");
+            "Use the \'Exit Steam\' option on the Steam® tray icon to exit the application.");
         _align_label(label);
         gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
         gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
