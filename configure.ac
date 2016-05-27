@@ -27,13 +27,34 @@ else
         use_new_abi="no"
 fi
 
+# Source: https://mail.gnome.org/archives/commits-list/2012-September/msg01730.html
+# adl_RECURSIVE_EVAL(VALUE, RESULT)
+# =================================
+# Interpolate the VALUE in loop until it doesn't change,
+# and set the result to $RESULT.
+# WARNING: It's easy to get an infinite loop with some unsane input.
+# For example ${datadir} becomes ${datarootdir}, and then ${prefix}/share, and
+# finally ${prefix} is replaced by the prefix.
+AC_DEFUN([adl_RECURSIVE_EVAL],
+[_lcl_receval="$1"
+$2=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+     test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
+     _lcl_receval_old=''
+     while test "[$]_lcl_receval_old" != "[$]_lcl_receval"; do
+       _lcl_receval_old="[$]_lcl_receval"
+       eval _lcl_receval="\"[$]_lcl_receval\""
+     done
+     echo "[$]_lcl_receval")`])
+
 # Shadow location of real Steam
 AC_ARG_WITH([real-steam-binary], AS_HELP_STRING([--with-real-steam-binary],
         [the real Steam binary to use]), [steambin=${withval}],
         [steambin="$libdir/steam/steam"])
 
-AC_SUBST(steambin)
-AC_DEFINE_UNQUOTED(STEAM_BINARY, "$steambin",
+adl_RECURSIVE_EVAL(["$steambin"], [STEAMBIN])
+AC_SUBST(STEAMBIN)
+
+AC_DEFINE_UNQUOTED(STEAM_BINARY, "$STEAMBIN",
                    [The location of the real Steam binary])
 AC_OUTPUT
 
@@ -49,7 +70,7 @@ AC_MSG_RESULT([
         datarootdir:            ${datarootdir}
 
         New C++ ABI:            ${use_new_abi}
-        Real Steam binary:      ${steambin}
+        Real Steam binary:      ${STEAMBIN}
 
         compiler:               ${CC}
         cflags:                 ${CFLAGS}
