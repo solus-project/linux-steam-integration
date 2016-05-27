@@ -27,6 +27,14 @@ else
         use_new_abi="no"
 fi
 
+# Shadow location of real Steam
+AC_ARG_WITH([real-steam-binary], AS_HELP_STRING([--with-real-steam-binary],
+        [the real Steam binary to use]), [steambin=${withval}],
+        [steambin="$libdir/steam/steam"])
+
+AC_SUBST(steambin)
+AC_DEFINE_UNQUOTED(STEAM_BINARY, "$steambin",
+                   [The location of the real Steam binary])
 AC_OUTPUT
 
 AC_MSG_RESULT([
@@ -41,6 +49,7 @@ AC_MSG_RESULT([
         datarootdir:            ${datarootdir}
 
         New C++ ABI:            ${use_new_abi}
+        Real Steam binary:      ${steambin}
 
         compiler:               ${CC}
         cflags:                 ${CFLAGS}

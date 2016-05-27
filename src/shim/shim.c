@@ -11,17 +11,18 @@
 
 #define _GNU_SOURCE
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#include "config.h"
 #include "lsi.h"
 
 /**
  * Temporary.
  */
-#define STEAM_BIN "/usr/bin/steam"
 #define EMUL32BIN "/usr/bin/linux32"
 
 int main(int argc, char **argv)
@@ -58,12 +59,12 @@ int main(int argc, char **argv)
         if (config.force_32 && is_x86_64) {
                 exec_command = EMUL32BIN;
                 n_argv[0] = EMUL32BIN;
-                n_argv[1] = STEAM_BIN;
+                n_argv[1] = STEAM_BINARY;
                 off = 1;
         } else {
-                /* Directly call STEAM_BIN */
-                exec_command = STEAM_BIN;
-                n_argv[0] = STEAM_BIN;
+                /* Directly call STEAM_BINARY */
+                exec_command = STEAM_BINARY;
+                n_argv[0] = STEAM_BINARY;
         }
 
         /* Point arguments to arguments passed to us */
@@ -74,6 +75,8 @@ int main(int argc, char **argv)
 
         /* Go execute steam. */
         if (execv(exec_command, (char **)n_argv) < 0) {
+                /* TODO: Use Zenity when we have a UI */
+                fprintf(stderr, "Failed to launch Steam: %s [%s]\n", strerror(errno), STEAM_BINARY);
                 return EXIT_FAILURE;
         }
 }
