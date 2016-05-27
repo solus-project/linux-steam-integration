@@ -65,17 +65,26 @@ __lsi_inline__ static inline bool lsi_system_is_64bit(void)
 }
 
 /**
- * Return the required preload list for running Steam via their runtime
- * This is static .text - do not free
- */
-const char *lsi_preload_list(void);
-
-/**
  * Determine if the system being used requires the use of LD_PRELOAD to
  * ensure that steam works. Essentially this is when the new C++ 11 ABI
  * is in use, as the old Steam libraries will not be able to load.
  */
-bool lsi_system_requires_preload(void);
+__lsi_inline__ static inline bool lsi_system_requires_preload(void)
+{
+#ifdef LSI_USE_NEW_ABI
+        return true;
+#endif
+        return false;
+}
+
+/**
+ * Return the required preload list for running Steam via their runtime
+ * This is static .text - do not free
+ */
+__lsi_inline__ static inline const char *lsi_preload_list(void)
+{
+        return "/usr/$LIB/libX11.so.6:/usr/$LIB/libstdc++.so.6";
+}
 
 /**
  * Report a failure to the user. In the instance that DISPLAY is set, we'll
