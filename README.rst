@@ -116,7 +116,7 @@ License
         main Steam* launcher.
         libnica is available under the terms of the `LGPL-2.1` license.
 
-``src/shim``::
+``src/shim src/frontend``::
 
         Copyright © 2016 Ikey Doherty
 
