@@ -85,7 +85,6 @@ int main(int argc, char **argv)
 
         /* Go execute steam. */
         if (vfunc(exec_command, (char **)n_argv) < 0) {
-                /* TODO: Use Zenity when we have a UI */
                 lsi_report_failure("Failed to launch Steam: %s [%s]",
                                    strerror(errno),
                                    STEAM_BINARY);
