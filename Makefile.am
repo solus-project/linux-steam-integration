@@ -21,6 +21,27 @@ noinst_LTLIBRARIES = \
 	libnica.la \
 	liblsi.la
 
+bin_PROGRAMS = \
+	steam
+
+if HAVE_FRONTEND
+bin_PROGRAMS += lsi-settings
+
+lsi_settings_SOURCES = \
+	src/frontend/main.c
+
+lsi_settings_CFLAGS = \
+	$(GTK_CFLAGS) \
+	$(AM_CFLAGS) \
+	-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_3_4 \
+	-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_4
+
+lsi_settings_LDADD = \
+	liblsi.la \
+	$(GTK_LIBS)
+
+endif
+
 # Convenience library to prevent external linking with currently unstable ABI
 libnica_la_SOURCES = \
 	src/nica/hashmap.h \
@@ -43,9 +64,6 @@ liblsi_la_CFLAGS = \
 
 liblsi_la_LIBADD = \
 	libnica.la
-
-bin_PROGRAMS = \
-	steam
 
 steam_SOURCES = \
 	src/shim/shim.c
