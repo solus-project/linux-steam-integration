@@ -81,7 +81,7 @@ must be ``[Steam]``.
 
 ``use-native-runtime = $boolean``
 
-        If set to a boolean value, (yes/true/on), the host OS's native runtime
+        If set to a true boolean value, (yes/true/on), the host OS's native runtime
         will be used instead of the Steam provided runtime. If this is set to
         a false boolean value (no/false/off), then the startup will be modified
         to export the relevant ``LD_PRELOAD`` and ``STEAM_RUNTIME`` settings.
@@ -90,7 +90,7 @@ must be ``[Steam]``.
 
 ``force-32bit = $boolean``
 
-        If set to a boolean value (yes/true/on), the shadowed Steam binary will
+        If set to a true boolean value (yes/true/on), the shadowed Steam binary will
         be run via the ``linux32`` command. This will force the ``steam`` process
         and all children to believe they are running on a 32-bit system. This
         may be useful for 64-bit games that are buggy only on 64-bit.
