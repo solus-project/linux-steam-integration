@@ -1,6 +1,6 @@
 EXTRA_DIST = \
 	LICENSE.LGPL2.1 \
-	README.md \
+	README.rst \
 	data/lsi-settings.desktop
 
 desktopdir = $(datadir)/applications
