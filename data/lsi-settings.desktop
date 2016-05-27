@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Linux Steam Integration
+Comment=Application for managing Steam integration settings
+Exec=lsi-settings
+Icon=steam
+Terminal=false
+Type=Application
+Categories=Network;FileTransfer;Game;Settings;

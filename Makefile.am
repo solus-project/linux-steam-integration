@@ -1,6 +1,11 @@
 EXTRA_DIST = \
 	LICENSE.LGPL2.1 \
-	README.md
+	README.md \
+	data/lsi-settings.desktop
+
+desktopdir = $(datadir)/applications
+desktop_DATA = \
+	data/lsi-settings.desktop
 
 AM_CFLAGS = \
 	-fstack-protector -Wall -pedantic \
