@@ -12,6 +12,9 @@ Immediate LSI worklist:
  - [x] Shove out a 0.1 for Solus 1.2
  - [ ] Replace existing /usr/bin/steam entirely and decouple the tight runtime logic
        that is currently enforced.
+ - [ ] Remove requirement for steam.sh $bindir/steam entirely - allowing parallel clients.
+       LSI becomes more self contained and no longer needs to prop up Steam, but replaces
+       much of the support tools.
  - [ ] Replace the existing Steam "run.sh" style launch facilities
  - [ ] Get to a point that current ubuntu12_32 runtime is no longer required or
        wanted.
