@@ -36,7 +36,7 @@ LSI correctly. The prominent ones are explained here.
 ``--with-preload-libs=$LIBS``
 
         A colon separated list of libraries that are required to launch Steam
-        when using it's own runtime. LSI enables users to switch back to the Steam
+        when using its own runtime. LSI enables users to switch back to the Steam
         runtime, and in this instance we manage the LD_PRELOAD environmental variable.
         Ensure this is correct, and escape $LIB for correct Linux usage.
 
@@ -76,7 +76,8 @@ The user configuration takes immediate priority. Secondly we have the system-wid
 configuration for affecting all accounts, and lastly the vendor configuration,
 which may be provided by the integrator.
 
-Currently this INI file supports two options.
+Currently this INI file supports two options. The root section in this INI file
+must be ``[Steam]``.
 
 ``use-native-runtime = $boolean``
 
