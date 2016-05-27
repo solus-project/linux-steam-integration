@@ -5,7 +5,7 @@ A helper shim to enable better Steam* integration on Linux systems.
 This is part of an effort by Solus to enhance Steam for everyone.
 
 This project, and by extension Solus, is not officially endorsed by, or
-affiliated with, Steam*, or it's parent company, Valve*.
+affiliated with, Steam*, or its parent company, Valve*.
 
 
 Integrating LSI
