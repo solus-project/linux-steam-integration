@@ -56,6 +56,22 @@ AC_SUBST(STEAMBIN)
 
 AC_DEFINE_UNQUOTED(STEAM_BINARY, "$STEAMBIN",
                    [The location of the real Steam binary])
+
+
+m4_define([gtk_required_version], [3.4.0])
+
+# Check if frontend is requested
+have_frontend="no"
+AC_ARG_ENABLE(frontend, AS_HELP_STRING([--enable-frontend], [enable GTK frontend]))
+if test "x$enable_frontend" = "xyes" ; then
+        PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= gtk_required_version])
+        AC_DEFINE([HAVE_FRONTEND], [1], [Enabled GTK+ frontend])
+        have_frontend="yes"
+
+fi
+AM_CONDITIONAL([HAVE_FRONTEND], [test x$have_frontend = "xyes"])
+
+
 AC_OUTPUT
 
 AC_MSG_RESULT([
@@ -71,6 +87,7 @@ AC_MSG_RESULT([
 
         New C++ ABI:            ${use_new_abi}
         Real Steam binary:      ${STEAMBIN}
+        GTK+ Frontend:          ${have_frontend}
 
         compiler:               ${CC}
         cflags:                 ${CFLAGS}
