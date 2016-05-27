@@ -81,15 +81,6 @@ static char *lsi_get_user_config_file(void)
 }
 
 /**
- * Quick helper to determine if the path exists
- */
-__lsi_inline__ static inline bool lsi_file_exists(const char *path)
-{
-        __lsi_unused__ struct stat st = { 0 };
-        return lstat(path, &st) == 0;
-}
-
-/**
  * A subset of values equate to a true boolean, everything else is false.
  */
 static inline bool lsi_is_boolean_true(const char *compare)
@@ -204,7 +195,7 @@ void lsi_report_failure(const char *s, ...)
         }
 
         if (asprintf(&emit,
-                     "zenity --title \"%s\" --icon-name='steam' --error --text='%s'",
+                     "zenity --title \"%s\" --icon-name='steam' --error --text=\"%s\"",
                      PACKAGE_NAME,
                      report) < 0) {
                 goto stderr_log;

@@ -13,6 +13,8 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /* Mark a variable/argument as unused to skip warnings */
 #define __lsi_unused__ __attribute__((unused))
@@ -80,6 +82,15 @@ bool lsi_system_requires_preload(void);
  * attempt to make use of zenity
  */
 void lsi_report_failure(const char *s, ...);
+
+/**
+ * Quick helper to determine if the path exists
+ */
+__lsi_inline__ static inline bool lsi_file_exists(const char *path)
+{
+        __lsi_unused__ struct stat st = { 0 };
+        return lstat(path, &st) == 0;
+}
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html

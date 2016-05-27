@@ -23,7 +23,7 @@
 /**
  * Temporary.
  */
-#define EMUL32BIN "/usr/bin/linux32"
+#define EMUL32BIN "linux32"
 
 int main(int argc, char **argv)
 {
@@ -33,6 +33,7 @@ int main(int argc, char **argv)
         const char *exec_command = NULL;
         int i = 1;
         int8_t off = 0;
+        int (*vfunc)(const char *, char *const argv[]) = NULL;
 
         /* Initialise config */
         if (!lsi_config_load(&config)) {
@@ -40,6 +41,11 @@ int main(int argc, char **argv)
         }
 
         is_x86_64 = lsi_system_is_64bit();
+
+        if (!lsi_file_exists(STEAM_BINARY)) {
+                lsi_report_failure("Steam isn't currently installed at %s", STEAM_BINARY);
+                return EXIT_FAILURE;
+        }
 
         /* Force STEAM_RUNTIME into the environment */
         if (config.use_native_runtime) {
@@ -61,10 +67,14 @@ int main(int argc, char **argv)
                 n_argv[0] = EMUL32BIN;
                 n_argv[1] = STEAM_BINARY;
                 off = 1;
+                /* Use linux32 in the path */
+                vfunc = execvp;
         } else {
                 /* Directly call STEAM_BINARY */
                 exec_command = STEAM_BINARY;
                 n_argv[0] = STEAM_BINARY;
+                /* Full path here due to shadow nature */
+                vfunc = execv;
         }
 
         /* Point arguments to arguments passed to us */
@@ -74,7 +84,7 @@ int main(int argc, char **argv)
         n_argv[i + 1 + off] = NULL;
 
         /* Go execute steam. */
-        if (execv(exec_command, (char **)n_argv) < 0) {
+        if (vfunc(exec_command, (char **)n_argv) < 0) {
                 /* TODO: Use Zenity when we have a UI */
                 lsi_report_failure("Failed to launch Steam: %s [%s]",
                                    strerror(errno),
