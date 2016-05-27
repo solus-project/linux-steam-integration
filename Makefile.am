@@ -3,10 +3,6 @@ EXTRA_DIST = \
 	README.rst \
 	data/lsi-settings.desktop
 
-desktopdir = $(datadir)/applications
-desktop_DATA = \
-	data/lsi-settings.desktop
-
 AM_CFLAGS = \
 	-fstack-protector -Wall -pedantic \
 	-Wstrict-prototypes -Wundef -fno-common \
@@ -45,6 +41,10 @@ lsi_settings_CFLAGS = \
 lsi_settings_LDADD = \
 	liblsi.la \
 	$(GTK_LIBS)
+
+desktopdir = $(datadir)/applications
+desktop_DATA = \
+	data/lsi-settings.desktop
 
 endif
 
