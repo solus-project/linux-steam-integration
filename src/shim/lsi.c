@@ -31,9 +31,16 @@
  */
 #define LSI_CONFIG_FILE "linux-steam-integration.conf"
 
-#define LSI_SYSTEM_CONFIG_FILE SYSTEMCONFDIR "/linux-steam-integration.conf"
+/**
+ * System config file, i.e. /etc/linux-steam-integration.conf
+ */
+#define LSI_SYSTEM_CONFIG_FILE SYSTEMCONFDIR "/" LSI_CONFIG_FILE
 
-#define LSI_VENDOR_CONFIG_FILE VENDORDIR "/linux-steam-integration.conf"
+/**
+ * Vendor configuration file, lowest priority.
+ * /usr/share/defaults/linux-steam-integration/linux-steam-integration.conf
+ */
+#define LSI_VENDOR_CONFIG_FILE VENDORDIR "/ " LSI_CONFIG_FILE
 
 /**
  * Determine the home directory
