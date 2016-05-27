@@ -144,12 +144,6 @@ bool lsi_config_load(LsiConfig *config)
         return true;
 }
 
-bool lsi_config_store(__lsi_unused__ LsiConfig *config)
-{
-        fputs("lsi_config_store(): Not yet implemented\n", stderr);
-        return false;
-}
-
 void lsi_config_load_defaults(LsiConfig *config)
 {
         assert(config != NULL);

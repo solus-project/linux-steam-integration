@@ -40,13 +40,6 @@ typedef struct LsiConfig {
 bool lsi_config_load(LsiConfig *config);
 
 /**
- * Attempt to write the LsiConfiguration to storage
- *
- * @returns true if the write succeeded, otherwise false.
- */
-bool lsi_config_store(LsiConfig *config);
-
-/**
  * Set the defaults for the LsiConfiguration
  */
 void lsi_config_load_defaults(LsiConfig *config);
