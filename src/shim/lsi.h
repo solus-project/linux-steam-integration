@@ -19,6 +19,9 @@
 
 /* Force inlining of a function */
 #define __lsi_inline__ __attribute__((always_inline))
+
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
+
 /**
  * Current Linux Steam Integration settings.
  */

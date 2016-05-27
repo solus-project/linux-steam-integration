@@ -9,16 +9,146 @@
  * of the License, or (at your option) any later version.
  */
 
+#define _GNU_SOURCE
+
 #include <assert.h>
+#include <pwd.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "config.h"
 #include "lsi.h"
+#include "nica/hashmap.h"
+#include "nica/inifile.h"
 
-bool lsi_config_load(__lsi_unused__ LsiConfig *config)
+/**
+ * Configuration file suffix, i.e. ~/.config/linux-steam-integration.conf
+ */
+#define LSI_CONFIG_FILE "linux-steam-integration.conf"
+
+#define LSI_SYSTEM_CONFIG_FILE SYSTEMCONFDIR "/linux-steam-integration.conf"
+
+#define LSI_VENDOR_CONFIG_FILE VENDORDIR "/linux-steam-integration.conf"
+
+/**
+ * Determine the home directory
+ */
+static const char *lsi_get_home_dir(void)
 {
-        fputs("lsi_config_load(): Not yet implemented\n", stderr);
+        char *c = NULL;
+        struct passwd *p = NULL;
+
+        c = getenv("HOME");
+        if (c) {
+                return c;
+        }
+        p = getpwuid(getuid());
+        if (!p) {
+                return NULL;
+        }
+        return p->pw_dir;
+}
+
+/**
+ * Determine the home config directory
+ */
+static char *lsi_get_user_config_dir(void)
+{
+        const char *home = lsi_get_home_dir();
+        char *c = NULL;
+        if (asprintf(&c, "%s/.config", home) < 0) {
+                return NULL;
+        }
+        return c;
+}
+
+/**
+ * Build the user config file path
+ */
+static char *lsi_get_user_config_file(void)
+{
+        autofree(char) *dir = lsi_get_user_config_dir();
+        char *c = NULL;
+        if (asprintf(&c, "%s/%s", dir, LSI_CONFIG_FILE) < 0) {
+                return NULL;
+        }
+        return c;
+}
+
+/**
+ * Quick helper to determine if the path exists
+ */
+__lsi_inline__ static inline bool lsi_file_exists(const char *path)
+{
+        __lsi_unused__ struct stat st = { 0 };
+        return lstat(path, &st) == 0;
+}
+
+/**
+ * A subset of values equate to a true boolean, everything else is false.
+ */
+static inline bool lsi_is_boolean_true(const char *compare)
+{
+        const char *yesses[] = { "yes", "true", "YES", "TRUE", "ON", "on" };
+        if (!compare) {
+                return false;
+        }
+        for (size_t i = 0; i < ARRAY_SIZE(yesses); i++) {
+                if (streq(compare, yesses[i])) {
+                        return true;
+                }
+        }
         return false;
+}
+
+bool lsi_config_load(LsiConfig *config)
+{
+        char *paths[] = { NULL, LSI_SYSTEM_CONFIG_FILE, LSI_VENDOR_CONFIG_FILE };
+
+        autofree(NcHashmap) *mconfig = NULL;
+        char *map_val = NULL;
+
+        paths[0] = lsi_get_user_config_file();
+        for (size_t i = 0; i < ARRAY_SIZE(paths); i++) {
+                const char *filepath = (const char *)paths[i];
+                if (!filepath) {
+                        continue;
+                }
+                /* Don't bother loading non existant paths */
+                if (!lsi_file_exists(filepath)) {
+                        continue;
+                }
+                mconfig = nc_ini_file_parse(filepath);
+                if (mconfig) {
+                        break;
+                }
+        }
+        free((char *)paths[0]);
+
+        /* Found no valid INI config */
+        if (!mconfig) {
+                return false;
+        }
+
+        /* Populate defaults now */
+        lsi_config_load_defaults(config);
+
+        /* Determine if native runtime should be used */
+        map_val = nc_hashmap_get(nc_hashmap_get(mconfig, "Steam"), "use-native-runtime");
+        if (map_val) {
+                config->use_native_runtime = lsi_is_boolean_true(map_val);
+                map_val = NULL;
+        }
+
+        /* Check if 32-bit is being forced */
+        map_val = nc_hashmap_get(nc_hashmap_get(mconfig, "Steam"), "force-32bit");
+        if (map_val) {
+                config->force_32 = lsi_is_boolean_true(map_val);
+        }
+        return true;
 }
 
 bool lsi_config_store(__lsi_unused__ LsiConfig *config)

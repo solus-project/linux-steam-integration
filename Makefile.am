@@ -12,7 +12,10 @@ AM_CFLAGS = \
 
 AM_CPPFLAGS = \
         -I $(top_srcdir)/src \
-        -I $(top_srcdir)/src/nica
+        -I $(top_srcdir)/src/nica \
+	-DSYSTEMCONFDIR=\"$(sysconfdir)\" \
+	-DVENDORDIR=\"$(datadir)/defaults/linux-steam-integration\"
+
 
 noinst_LTLIBRARIES = \
 	libnica.la
@@ -25,6 +28,10 @@ libnica_la_SOURCES = \
 	src/nica/inifile.c \
 	src/nica/util.h
 
+libnica_la_CFLAGS = \
+	$(AM_CFLAGS)
+
+
 bin_PROGRAMS = \
 	steam
 
@@ -35,3 +42,6 @@ steam_SOURCES = \
 
 steam_LDADD = \
 	libnica.la
+
+steam_CFLAGS = \
+	$(AM_CFLAGS)
