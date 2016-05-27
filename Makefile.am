@@ -18,7 +18,8 @@ AM_CPPFLAGS = \
 
 
 noinst_LTLIBRARIES = \
-	libnica.la
+	libnica.la \
+	liblsi.la
 
 # Convenience library to prevent external linking with currently unstable ABI
 libnica_la_SOURCES = \
@@ -32,16 +33,26 @@ libnica_la_CFLAGS = \
 	$(AM_CFLAGS)
 
 
+# Convenience library for shared LSI functions
+liblsi_la_SOURCES = \
+	src/shim/lsi.h \
+	src/shim/lsi.c
+
+liblsi_la_CFLAGS = \
+	$(AM_CFLAGS)
+
+liblsi_la_LIBADD = \
+	libnica.la
+
 bin_PROGRAMS = \
 	steam
 
 steam_SOURCES = \
-	src/shim/lsi.h \
-	src/shim/lsi.c \
 	src/shim/shim.c
 
 steam_LDADD = \
-	libnica.la
+	libnica.la \
+	liblsi.la
 
 steam_CFLAGS = \
 	$(AM_CFLAGS)
