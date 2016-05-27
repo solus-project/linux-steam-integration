@@ -21,7 +21,8 @@
 #include "lsi.h"
 
 /**
- * Temporary.
+ * Required to force Steam into 32-bit detection mode, which is useful for
+ * recent issues like the CS:GO 64-bit update with huge FPS drops
  */
 #define EMUL32BIN "linux32"
 
