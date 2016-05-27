@@ -151,6 +151,41 @@ bool lsi_config_load(LsiConfig *config)
         return true;
 }
 
+static inline const char *lsi_bool_to_string(bool b)
+{
+        if (b) {
+                return "true";
+        }
+        return "false";
+}
+
+bool lsi_config_store(LsiConfig *config)
+{
+        autofree(FILE) *fp = NULL;
+        autofree(char) *conf = NULL;
+
+        if (!config) {
+                return false;
+        }
+
+        conf = lsi_get_user_config_file();
+        if (!conf) {
+                return false;
+        }
+
+        fp = fopen(conf, "w");
+        if (!fp) {
+                return false;
+        }
+        if (fprintf(fp,
+                    "[Steam]\nuse-native-runtime = %s\nforce-32bit = %s\n",
+                    lsi_bool_to_string(config->use_native_runtime),
+                    lsi_bool_to_string(config->force_32)) < 0) {
+                return false;
+        }
+        return true;
+}
+
 void lsi_config_load_defaults(LsiConfig *config)
 {
         assert(config != NULL);

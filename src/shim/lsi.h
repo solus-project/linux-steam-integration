@@ -45,6 +45,13 @@ bool lsi_config_load(LsiConfig *config);
 void lsi_config_load_defaults(LsiConfig *config);
 
 /**
+ * Attempt to write the user config to disk.
+ * On failure, this function will return false, and errno will be set
+ * appropriately.
+ */
+bool lsi_config_store(LsiConfig *config);
+
+/**
  * Determine if the host system is 64-bit.
  *
  * @returns true if 64-bit, otherwise false
