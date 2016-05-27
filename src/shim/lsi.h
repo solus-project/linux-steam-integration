@@ -19,6 +19,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "config.h"
+
 /* Mark a variable/argument as unused to skip warnings */
 #define __lsi_unused__ __attribute__((unused))
 
@@ -86,7 +88,11 @@ __lsi_inline__ static inline bool lsi_system_requires_preload(void)
  */
 __lsi_inline__ static inline const char *lsi_preload_list(void)
 {
-        return "/usr/$LIB/libX11.so.6:/usr/$LIB/libstdc++.so.6";
+        /* Respect existing LD_PRELOAD in environment */
+        if (getenv("LD_PRELOAD")) {
+                return "$LD_PRELOAD:" LSI_PRELOAD_LIBS;
+        }
+        return LSI_PRELOAD_LIBS;
 }
 
 /**

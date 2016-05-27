@@ -57,6 +57,13 @@ AC_SUBST(STEAMBIN)
 AC_DEFINE_UNQUOTED(STEAM_BINARY, "$STEAMBIN",
                    [The location of the real Steam binary])
 
+# The LD_PRELOAD list required to integrate gracefully with the official Steam Runtime
+AC_ARG_WITH([preload-libs], AS_HELP_STRING([--with-preload-libs],
+        [the preload libs to use with Steams own runtime]), [preloadlibs="${withval}"],
+        [preloadlibs="/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6"])
+
+AC_DEFINE_UNQUOTED([LSI_PRELOAD_LIBS], "$preloadlibs",
+                   [Libraries to preload with Steams runtime])
 
 m4_define([gtk_required_version], [3.4.0])
 
@@ -88,6 +95,7 @@ AC_MSG_RESULT([
         New C++ ABI:            ${use_new_abi}
         Real Steam binary:      ${STEAMBIN}
         GTK+ Frontend:          ${have_frontend}
+        preload-libs:           ${preloadlibs}
 
         compiler:               ${CC}
         cflags:                 ${CFLAGS}
