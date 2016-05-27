@@ -5,7 +5,9 @@ A helper shim to enable better Steam* integration on Linux systems.
 This is part of an effort by Solus to enhance Steam for everyone.
 
 
-Note that there is nothing here to see yet as this is still in development.
+Please check back soon when we'll have a git tag and some documentation for
+integration and usage prepared. In the mean time you can check out the
+[Linux Steam Integration Announcement](https://plus.google.com/u/0/+Solus-Project/posts/FxYebbR8cxk)
 
 
         This project, and by extension Solus, is not officially endorsed by, or
