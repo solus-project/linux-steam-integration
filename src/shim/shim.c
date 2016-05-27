@@ -60,6 +60,10 @@ int main(int argc, char **argv)
                 setenv("STEAM_RUNTIME", "1", 1);
         }
 
+        /* Vanilla dbus users suffer a segfault on Steam exit, due to incorrect
+         * usage of dbus by Steam. Help them out */
+        setenv("DBUS_FATAL_WARNINGS", "0", 1);
+
         memset(&n_argv, 0, sizeof(char *) * (argc + 2));
 
         /* If we're 64-bit and 32-bit is forced, proxy via linux32 */
