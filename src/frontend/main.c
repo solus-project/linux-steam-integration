@@ -59,7 +59,7 @@ int main(int argc, char **argv)
                      NULL);
 
         /* Sort out the buttons */
-        button = gtk_dialog_add_button(GTK_DIALOG(dialog), "Apply", GTK_RESPONSE_ACCEPT);
+        button = gtk_dialog_add_button(GTK_DIALOG(dialog), "OK", GTK_RESPONSE_ACCEPT);
         gtk_style_context_add_class(gtk_widget_get_style_context(button), "suggested-action");
         (void)gtk_dialog_add_button(GTK_DIALOG(dialog), "Cancel", GTK_RESPONSE_REJECT);
 
