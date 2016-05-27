@@ -75,6 +75,12 @@ const char *lsi_preload_list(void);
  */
 bool lsi_system_requires_preload(void);
 
+/**
+ * Report a failure to the user. In the instance that DISPLAY is set, we'll
+ * attempt to make use of zenity
+ */
+void lsi_report_failure(const char *s, ...);
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *

@@ -12,7 +12,9 @@
 #define _GNU_SOURCE
 
 #include <assert.h>
+#include <errno.h>
 #include <pwd.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -182,6 +184,41 @@ bool lsi_system_requires_preload()
 const char *lsi_preload_list()
 {
         return "/usr/$LIB/libX11.so.6:/usr/$LIB/libstdc++.so.6";
+}
+
+void lsi_report_failure(const char *s, ...)
+{
+        autofree(char) *report = NULL;
+        autofree(char) *emit = NULL;
+        va_list va;
+        va_start(va, s);
+        if (vasprintf(&report, s, va) < 0) {
+                fputs("Critical internal error\n", stderr);
+                return;
+        }
+        va_end(va);
+
+        /* Display not set, just go ahead and stderr it */
+        if (!getenv("DISPLAY")) {
+                goto stderr_log;
+        }
+
+        if (asprintf(&emit,
+                     "zenity --title \"%s\" --icon-name='steam' --error --text='%s'",
+                     PACKAGE_NAME,
+                     report) < 0) {
+                goto stderr_log;
+        }
+
+        if (system(emit) != 0) {
+                fprintf(stderr, "%s: Failed to launch Zenity: %s\n", PACKAGE_NAME, strerror(errno));
+                goto stderr_log;
+        }
+        return;
+
+stderr_log:
+        fputs(PACKAGE_NAME " failure: \n\t", stderr);
+        fprintf(stderr, "%s\n", report);
 }
 
 /*
