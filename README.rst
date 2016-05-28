@@ -93,7 +93,7 @@ must be ``[Steam]``.
         If set to a true boolean value (yes/true/on), the shadowed Steam binary will
         be run via the ``linux32`` command. This will force the ``steam`` process
         and all children to believe they are running on a 32-bit system. This
-        may be useful for 64-bit games that are buggy only on 64-bit.
+        may be useful for 32-bit games that are buggy only on 64-bit.
 
         If this is set to a false boolean value (no/false/off), then the
         shadowed Steam binary will be directly executed. Note that on 32-bit
