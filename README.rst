@@ -102,6 +102,17 @@ must be ``[Steam]``.
         The default value of this variable is ``false``.
 
 
+Common issues
+=============
+
+**Missing tray icon for Steam client using native OS runtime**
+
+        Ensure you have the 32-bit version of libappindicator installed. This
+        is required for the tray icon. libappindicator falls back to a standard
+        X11 tray icon in the absence of desktop appindicator support.
+
+        Related issue: `Steam tray icon missing #2 <https://github.com/solus-project/linux-steam-integration/issues/2>`_
+
 
 License
 -------
