@@ -95,7 +95,7 @@ int main(int argc, char **argv)
         gtk_grid_attach(GTK_GRID(grid), check_native, 2, 1, 1, 1);
 
         /* Handle the 32-bit cruft */
-        label = gtk_label_new("Force 32-bit mode for Steam");
+        label = gtk_label_new("Force 32-bit mode for Steam®");
         _align_label(label);
         if (is_x86_64) {
                 gtk_widget_set_tooltip_text(label,
