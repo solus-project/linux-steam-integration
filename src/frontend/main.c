@@ -41,6 +41,7 @@ int main(int argc, char **argv)
         GtkWidget *check_native = NULL;
         GtkWidget *check_emul32 = NULL;
         GtkWidget *label = NULL;
+        GtkSettings *settings = NULL;
         int response = 0;
         bool is_x86_64 = lsi_system_is_64bit();
         LsiConfig lconfig = { 0 };
@@ -53,18 +54,22 @@ int main(int argc, char **argv)
                      "steam",
                      NULL);
 
+        settings = gtk_settings_get_default();
+        g_object_set(settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
+
         /* Sort out the buttons */
+        (void)gtk_dialog_add_button(GTK_DIALOG(dialog), "Cancel", GTK_RESPONSE_REJECT);
         button = gtk_dialog_add_button(GTK_DIALOG(dialog), "OK", GTK_RESPONSE_ACCEPT);
         gtk_style_context_add_class(gtk_widget_get_style_context(button), "suggested-action");
-        (void)gtk_dialog_add_button(GTK_DIALOG(dialog), "Cancel", GTK_RESPONSE_REJECT);
 
         /* Pack the grid */
         grid = gtk_grid_new();
-        gtk_grid_set_column_spacing(GTK_GRID(grid), 6);
-        gtk_grid_set_row_spacing(GTK_GRID(grid), 6);
+        gtk_grid_set_column_spacing(GTK_GRID(grid), 12);
+        gtk_grid_set_row_spacing(GTK_GRID(grid), 12);
 
         container = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
         gtk_container_add(GTK_CONTAINER(container), grid);
+        gtk_container_set_border_width(GTK_CONTAINER(container), 6);
 
         /* Add a splash of colour. */
         image = gtk_image_new_from_icon_name("steam", GTK_ICON_SIZE_DIALOG);
