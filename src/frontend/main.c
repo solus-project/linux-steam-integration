@@ -45,11 +45,6 @@ int main(int argc, char **argv)
         bool is_x86_64 = lsi_system_is_64bit();
         LsiConfig lconfig = { 0 };
 
-        /*dialog = gtk_dialog_new_with_buttons("Linux Steam Integration", NULL, 0,
-                                             "Apply", GTK_RESPONSE_ACCEPT,
-                                             "Cancel",
-                                             GTK_RESPONSE_REJECT,
-                                             NULL);*/
         dialog = gtk_dialog_new();
         g_object_set(G_OBJECT(dialog),
                      "title",
