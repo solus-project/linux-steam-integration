@@ -34,7 +34,7 @@
  */
 void nc_dump_file_descriptor_leaks(void);
 
-#define streq(x, y) strcmp(x, y) == 0 ? true : false
+#define streq(x, y) (strcmp(x, y) == 0 ? true : false)
 
 DEF_AUTOFREE(char, free)
 DEF_AUTOFREE(FILE, fclose)
