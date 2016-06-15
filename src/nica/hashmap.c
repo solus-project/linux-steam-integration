@@ -125,7 +125,6 @@ static bool nc_hashmap_insert_bucket(NcHashmap *self, NcHashmapEntry *buckets, i
         NcHashmapEntry *row = &(buckets[hash % n_buckets]);
         NcHashmapEntry *head = NULL;
         NcHashmapEntry *parent = head = row;
-        bool can_replace = false;
         NcHashmapEntry *tomb = NULL;
         int ret = 1;
 
@@ -134,25 +133,21 @@ static bool nc_hashmap_insert_bucket(NcHashmap *self, NcHashmapEntry *buckets, i
                         tomb = row;
                 }
                 parent = row;
-                if (row->occ && row->hash == key) {
-                        if (self->compare(row->hash, key)) {
-                                can_replace = true;
-                                break;
+                if (row->occ && self->compare(row->hash, key)) {
+                        if (self->value_free) {
+                                self->value_free(row->value);
                         }
+                        if (self->key_free) {
+                                self->key_free(row->hash);
+                        }
+                        row->hash = (void *)key;
+                        row->value = value;
+                        return 0;
                 }
                 row = row->next;
         }
 
-        if (can_replace) {
-                /* Replace existing allocations. */
-                if (self->value_free) {
-                        self->value_free(row->value);
-                }
-                if (self->key_free) {
-                        self->key_free(row->hash);
-                }
-                ret = 0;
-        } else if (tomb) {
+        if (tomb) {
                 row = tomb;
         }
 
@@ -187,7 +182,7 @@ bool nc_hashmap_put(NcHashmap *self, const void *key, void *value)
         }
         unsigned hash = nc_hashmap_get_hash(self, key);
         inc = nc_hashmap_insert_bucket(self, self->buckets, self->n_buckets, hash, key, value);
-        if (inc > 0) {
+        if (inc >= 0) {
                 self->size += inc;
                 return true;
         } else {
