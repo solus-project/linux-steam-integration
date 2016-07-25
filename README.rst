@@ -8,7 +8,7 @@ This project, and by extension Solus, is not officially endorsed by, or
 affiliated with, Steam*, or its parent company, Valve*.
 
 
-Linux Steam Integration (LSI) is a `Solus Project <https://github.com/solus-project/linux-steam-integration/issues/2>`_
+Linux Steam Integration (LSI) is a `Solus Project <https://solus-project.com/>`_
 
         .. image:: https://build.solus-project.com/logo.png
                 :align: center
