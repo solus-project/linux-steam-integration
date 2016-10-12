@@ -60,7 +60,7 @@ AC_DEFINE_UNQUOTED(STEAM_BINARY, "$STEAMBIN",
 # The LD_PRELOAD list required to integrate gracefully with the official Steam Runtime
 AC_ARG_WITH([preload-libs], AS_HELP_STRING([--with-preload-libs],
         [the preload libs to use with Steams own runtime]), [preloadlibs="${withval}"],
-        [preloadlibs="/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6"])
+        [preloadlibs="/usr/\$LIB/libxcb.so.1:/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6"])
 
 AC_DEFINE_UNQUOTED([LSI_PRELOAD_LIBS], "$preloadlibs",
                    [Libraries to preload with Steams runtime])
