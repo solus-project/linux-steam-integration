@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=LSI Steam
+Comment=Launch Steam via LSI
+Exec=/usr/bin/lsi-steam %U
+Icon=steam
+Terminal=false
+Type=Application
+Categories=Network;FileTransfer;Game;
+MimeType=x-scheme-handler/steam;

@@ -1,7 +1,8 @@
 EXTRA_DIST = \
 	LICENSE.LGPL2.1 \
 	README.rst \
-	data/lsi-settings.desktop
+	data/lsi-settings.desktop \
+	data/lsi-steam.desktop
 
 AM_CFLAGS = \
 	-fstack-protector -Wall -pedantic \
@@ -23,8 +24,9 @@ SUBDIRS = src/libnica
 noinst_LTLIBRARIES = \
 	liblsi.la
 
-bin_PROGRAMS = \
-	steam
+bin_PROGRAMS = 
+desktopdir = $(datadir)/applications
+desktop_DATA =
 
 if HAVE_FRONTEND
 bin_PROGRAMS += lsi-settings
@@ -43,7 +45,7 @@ lsi_settings_LDADD = \
 	$(GTK_LIBS)
 
 desktopdir = $(datadir)/applications
-desktop_DATA = \
+desktop_DATA += \
 	data/lsi-settings.desktop
 
 endif
@@ -60,6 +62,11 @@ liblsi_la_CFLAGS = \
 liblsi_la_LIBADD = \
 	src/libnica/libnica.la
 
+# Replace the main steam binary with our own steam file
+if REPLACE_STEAM
+
+bin_PROGRAMS += steam
+
 steam_SOURCES = \
 	src/shim/shim.c
 
@@ -69,3 +76,24 @@ steam_LDADD = \
 
 steam_CFLAGS = \
 	$(AM_CFLAGS)
+
+else
+# Don't replace steam - use a non conflicting filename
+
+bin_PROGRAMS += lsi-steam
+
+lsi_steam_SOURCES = \
+	src/shim/shim.c
+
+lsi_steam_LDADD = \
+	src/libnica/libnica.la \
+	liblsi.la
+
+lsi_steam_CFLAGS = \
+	$(AM_CFLAGS)
+
+# Install custom .desktop file for steam
+desktop_DATA += \
+	data/lsi-steam.desktop
+
+endif

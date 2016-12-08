@@ -83,6 +83,13 @@ if test "x$enable_frontend" = "xyes" ; then
 fi
 AM_CONDITIONAL([HAVE_FRONTEND], [test x$have_frontend = "xyes"])
 
+# Whether LSI should stand in for steam binary
+replace_steam="yes"
+AC_ARG_ENABLE(replace-steam, AS_HELP_STRING([--disable-replace-steam], [disable Steam binary replacement]))
+if test "x$enable_replace_steam" = "xno"; then
+    replace_steam="no"
+fi
+AM_CONDITIONAL([REPLACE_STEAM], [test x$replace_steam = "xyes"])
 
 AC_OUTPUT
 
@@ -98,6 +105,7 @@ AC_MSG_RESULT([
         datarootdir:            ${datarootdir}
 
         New C++ ABI:            ${use_new_abi}
+        Replace Steam:          ${replace_steam}
         Real Steam binary:      ${STEAMBIN}
         GTK+ Frontend:          ${have_frontend}
         preload-libs:           ${preloadlibs}

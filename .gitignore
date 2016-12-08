@@ -15,4 +15,5 @@ m4/*.m4
 *.la
 .libs
 /steam
+/lsi-steam
 /lsi-settings
