@@ -32,10 +32,17 @@ int main(int argc, char **argv)
         bool is_x86_64;
         const char *n_argv[argc + 2];
         const char *exec_command = NULL;
+        /* Use the appropriate Steam depending on configuration */
+        const char *lsi_exec_bin = NULL;
         int i = 1;
         int8_t off = 0;
         int (*vfunc)(const char *, char *const argv[]) = NULL;
 
+#ifdef REPLACE_STEAM
+        lsi_exec_bin = STEAM_BINARY;
+#else
+        lsi_exec_bin = "/usr/bin/steam";
+#endif
         /* Initialise config */
         if (!lsi_config_load(&config)) {
                 lsi_config_load_defaults(&config);
@@ -43,8 +50,8 @@ int main(int argc, char **argv)
 
         is_x86_64 = lsi_system_is_64bit();
 
-        if (!lsi_file_exists(STEAM_BINARY)) {
-                lsi_report_failure("Steam isn't currently installed at %s", STEAM_BINARY);
+        if (!lsi_file_exists(lsi_exec_bin)) {
+                lsi_report_failure("Steam isn't currently installed at %s", lsi_exec_bin);
                 return EXIT_FAILURE;
         }
 
@@ -70,14 +77,14 @@ int main(int argc, char **argv)
         if (config.force_32 && is_x86_64) {
                 exec_command = EMUL32BIN;
                 n_argv[0] = EMUL32BIN;
-                n_argv[1] = STEAM_BINARY;
+                n_argv[1] = lsi_exec_bin;
                 off = 1;
                 /* Use linux32 in the path */
                 vfunc = execvp;
         } else {
-                /* Directly call STEAM_BINARY */
-                exec_command = STEAM_BINARY;
-                n_argv[0] = STEAM_BINARY;
+                /* Directly call lsi_exec_bin */
+                exec_command = lsi_exec_bin;
+                n_argv[0] = lsi_exec_bin;
                 /* Full path here due to shadow nature */
                 vfunc = execv;
         }

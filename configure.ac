@@ -89,6 +89,9 @@ AC_ARG_ENABLE(replace-steam, AS_HELP_STRING([--disable-replace-steam], [disable 
 if test "x$enable_replace_steam" = "xno"; then
     replace_steam="no"
 fi
+if test "x$replace_steam" = "xyes" ; then
+    AC_DEFINE([REPLACE_STEAM], [1], [Steam binary will be replaced])
+fi
 AM_CONDITIONAL([REPLACE_STEAM], [test x$replace_steam = "xyes"])
 
 AC_OUTPUT
