@@ -12,15 +12,15 @@ AM_CFLAGS = \
 	-Wall -W -D_FORTIFY_SOURCE=2 -std=c99
 
 AM_CPPFLAGS = \
-        -I $(top_srcdir)/src \
-        -I $(top_srcdir)/src/shim \
-        -I $(top_srcdir)/src/nica \
+	-I $(top_srcdir)/src \
+	-I $(top_srcdir)/src/shim \
+	-I $(top_srcdir)/src/libnica/src/include \
 	-DSYSTEMCONFDIR=\"$(sysconfdir)\" \
 	-DVENDORDIR=\"$(datadir)/defaults/linux-steam-integration\"
 
+SUBDIRS = src/libnica
 
 noinst_LTLIBRARIES = \
-	libnica.la \
 	liblsi.la
 
 bin_PROGRAMS = \
@@ -48,34 +48,23 @@ desktop_DATA = \
 
 endif
 
-# Convenience library to prevent external linking with currently unstable ABI
-libnica_la_SOURCES = \
-	src/nica/hashmap.h \
-	src/nica/hashmap.c \
-	src/nica/inifile.h \
-	src/nica/inifile.c \
-	src/nica/util.h
-
-libnica_la_CFLAGS = \
-	$(AM_CFLAGS)
-
-
 # Convenience library for shared LSI functions
 liblsi_la_SOURCES = \
 	src/shim/lsi.h \
 	src/shim/lsi.c
 
 liblsi_la_CFLAGS = \
-	$(AM_CFLAGS)
+	$(AM_CFLAGS) \
+	-I$(top_srcdir)/src/libnica/src/include/nica
 
 liblsi_la_LIBADD = \
-	libnica.la
+	src/libnica/libnica.la
 
 steam_SOURCES = \
 	src/shim/shim.c
 
 steam_LDADD = \
-	libnica.la \
+	src/libnica/libnica.la \
 	liblsi.la
 
 steam_CFLAGS = \

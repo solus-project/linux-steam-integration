@@ -11,7 +11,12 @@ AM_SILENT_RULES([yes])
 LT_INIT([disable-static])
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_CONFIG_FILES([Makefile])
+# Turn on the nica submodule support
+AM_CONDITIONAL([NICA_SUBMODULE], true)
+AM_CONDITIONAL([COVERAGE], false)
+
+AC_CONFIG_FILES([Makefile
+                 src/libnica/Makefile])
 
 # Check if we're using the new C++ ABI, which will require LD_PRELOAD magic
 AC_LANG_PUSH([C++])
