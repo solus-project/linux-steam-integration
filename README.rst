@@ -147,6 +147,10 @@ License
         
         linux-steam-integration is available under the terms of the `LGPL-2.1`
 
+``data/lsi-steam.desktop``::
+
+        This file borrows translations from the official ``steam.desktop`` launcher.
+        These are copyright of Valve*.
 
 See `LICENSE.LGPL2.1 <LICENSE.LGPL2.1>`_ for more details
 
