@@ -22,11 +22,23 @@ To correctly integrate LSI, your Steam package will require modification.
 LSI must provide the /usr/bin/steam binary, so your Steam package must
 move the main launcher to a shadow location.
 
+For users who do not have access to LSI in their distribution, because it has
+not been integrated yet, please configure with ``--disable-replace-steam`` to
+preserve your existing Steam integrity. Then use the "LSI Steam" shortcut in
+your menu to launch Steam via LSI.
+
 **Configuring LSI build**
 
 There are a number of configure options you should be aware of when integrating
 LSI correctly. The prominent ones are explained here.
 
+
+``--disable-replace-steam``
+
+        This will disable building a ``steam`` binary, and instead build an
+        ``lsi-steam`` binary, and install ``lsi-steam.desktop``. Use this
+        option if you are not a distribution integrator, and wish to use
+        LSI yourself.
 
 
 ``--with-real-steam-binary=$NAME``
@@ -39,6 +51,10 @@ LSI correctly. The prominent ones are explained here.
         The default value for this option is::
 
                 /usr/lib/steam/steam
+
+        This option is only applicable for distribution integrators, when
+        Steam replacement is enabled.
+
 
 ``--with-preload-libs=$LIBS``
 
@@ -123,16 +139,6 @@ Common issues
 
 License
 -------
-
-``src/nica``::
-
-        Partial import of libnica, Copyright © Intel Corporation.
-        
-        
-        Used within the shim component to ensure it is leak free
-        and as lightweight as possible, due to needing to exec the
-        main Steam* launcher.
-        libnica is available under the terms of the `LGPL-2.1` license.
 
 ``src/shim src/frontend``::
 
