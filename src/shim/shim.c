@@ -71,6 +71,12 @@ int main(int argc, char **argv)
          * usage of dbus by Steam. Help them out */
         setenv("DBUS_FATAL_WARNINGS", "0", 1);
 
+        /* A recent regression is to interpret XMODIFIERS and then fail to
+         * make it beyond `SDL_InitSubSystem` due to `InitIME` failing to
+         * properly use D-BUS ...
+         */
+        unsetenv("XMODIFIERS");
+
         memset(&n_argv, 0, sizeof(char *) * (argc + 2));
 
         /* If we're 64-bit and 32-bit is forced, proxy via linux32 */
