@@ -66,7 +66,10 @@ int main(int argc, char **argv)
                 /* Explicitly disable the runtime */
                 setenv("STEAM_RUNTIME", "0", 1);
 #ifdef HAVE_LIBINTERCEPT
-                setenv("LD_AUDIT", AUDIT_PATH, 1);
+                /* Only use libintercept in combination with native runtime! */
+                if (config.use_libintercept) {
+                        setenv("LD_AUDIT", AUDIT_PATH, 1);
+                }
 #endif
         } else {
                 /* Only preload when needed. */
