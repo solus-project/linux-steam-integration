@@ -34,4 +34,14 @@ emul32_nica = static_library(
     c_args: ['-m32'],
 )
 
+link_main_nica = declare_dependency(
+    link_with: main_nica,
+    include_directories: nica_includes,
+)
+
+link_emul32_nica = declare_dependency(
+    link_with: emul32_nica,
+    include_directories: nica_includes,
+)
+
 subdir('intercept')
