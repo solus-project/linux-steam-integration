@@ -24,6 +24,9 @@ SUBDIRS = src/libnica
 noinst_LTLIBRARIES = \
 	liblsi.la
 
+lib_LTLIBRARIES = \
+	liblsi-intercept.la
+
 bin_PROGRAMS = 
 desktopdir = $(datadir)/applications
 desktop_DATA =
@@ -97,3 +100,20 @@ desktop_DATA += \
 	data/lsi-steam.desktop
 
 endif
+
+# TODO: If enable intercept
+liblsi_intercept_la_SOURCES = \
+	src/intercept/main.c
+
+liblsi_intercept_la_CFLAGS = \
+	$(AM_CFLAGS) \
+	-I$(top_srcdir)/src/libnica/src/include/nica
+
+liblsi_intercept_la_LIBADD = \
+	src/libnica/libnica.la
+
+liblsi_intercept_la_LDFLAGS = \
+	$(AM_LDFLAGS) \
+	-fvisibility=hidden \
+	-module \
+	-avoid-version
