@@ -81,16 +81,6 @@ _nica_public_ unsigned int la_version(unsigned int supported_version)
         return supported_version;
 }
 
-static inline bool string_has_prefix(const char *compare, const char *prefix)
-{
-        size_t size_prefix = strlen(prefix);
-        size_t size_inp = strlen(compare);
-        if (size_inp < size_prefix) {
-                return false;
-        }
-        return strncmp(compare, prefix, size_prefix) == 0;
-}
-
 /**
  * la_objsearch will allow us to blacklist certain LD_LIBRARY_PATH duplicate
  * libraries being loaded by the Steam client, such as the broken libSDL shipped
