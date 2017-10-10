@@ -53,6 +53,11 @@ if shim_behaviour == 'replacement'
     cdata.set('REPLACE_STEAM', '1')
 endif
 
+with_libintercept = get_option('with-libintercept')
+if with_libintercept == true
+    cdata.set('HAVE_LIBINTERCEPT', '1')
+endif
+
 config_h = configure_file(
      configuration: cdata,
      output: 'config.h',
