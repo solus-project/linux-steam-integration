@@ -26,6 +26,12 @@
  */
 #define EMUL32BIN "linux32"
 
+/**
+ * Audit path is used for the libintercept library to ensure Steam only uses the
+ * host SDL, etc.
+ */
+#define AUDIT_PATH "/usr/\$LIB/liblsi-intercept.so"
+
 int main(int argc, char **argv)
 {
         LsiConfig config = { 0 };
@@ -59,6 +65,7 @@ int main(int argc, char **argv)
         if (config.use_native_runtime) {
                 /* Explicitly disable the runtime */
                 setenv("STEAM_RUNTIME", "0", 1);
+                setenv("LD_AUDIT", AUDIT_PATH, 1);
         } else {
                 /* Only preload when needed. */
                 if (lsi_system_requires_preload()) {
