@@ -45,3 +45,4 @@ link_emul32_nica = declare_dependency(
 )
 
 subdir('intercept')
+subdir('intercept-emul32')
