@@ -17,3 +17,4 @@ nica_includes = [
 ]
 
 subdir('intercept')
+subdir('shim')
