@@ -67,7 +67,7 @@ static bool is_intercept_candidate(void)
                                 return true;
                         }
                         fprintf(stderr,
-                                "[LSI:%s]: debug: loading libintercept from LSI\n",
+                                "\033[32;1m[LSI:%s]\033[0m: debug: loading libintercept from LSI\n",
                                 matched_process);
                         return true;
                 }
@@ -92,9 +92,9 @@ _nica_public_ unsigned int la_version(unsigned int supported_version)
  */
 static void emit_overriden_lib(const char *lib_name)
 {
-        /* TODO: Add some colour printing */
         fprintf(stderr,
-                "[LSI:%s]: debug: blacklisted loading of vendored library: %s\n",
+                "\033[32;1m[LSI:%s]\033[0m: debug: blacklisted loading of vendored library: "
+                "\033[34;1m%s\033[0m\n",
                 matched_process,
                 lib_name);
 }
