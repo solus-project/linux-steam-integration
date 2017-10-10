@@ -24,18 +24,27 @@ For users who do not have access to LSI in their distribution, because it has no
 
 **Configuring LSI build**
 
-There are a number of configure options you should be aware of when integrating LSI correctly. The prominent ones are explained here.
+There are a number of meson configure options you should be aware of when integrating LSI correctly. The prominent ones are explained here.
 
-
+`-Dwith-shim= none | co-exist | replacement`
 `--disable-replace-steam`
 
-        This will disable building a `steam` binary, and instead build an
-        `lsi-steam` binary, and install `lsi-steam.desktop`. Use this
-        option if you are not a distribution integrator, and wish to use
-        LSI yourself.
+        Control behaviour of the shim build. `none` will disable building the main
+        shim, required for actually launching Steam in the first place.
+        
+        `co-exist` will ensure this does not conflict with the `/usr/bin/steam`
+        path, providing a new `lsi-steam` binary and desktop file.
+
+        `replacement` will provide a drop-in replacement `/usr/bin/steam` binary
+        shim responsible for bootstrapping Steam via LSI. This will require you
+        to mask the original steam binary to a new location.
+
+        The default value for this option is::
+
+                replacement
 
 
-`--with-real-steam-binary=$NAME`
+`-Dwith-steam-binary=$PATH`
 
         Set the absolute path for the shadowed Steam binary.
         LSI will execv Steam after it has initialised the environment.
@@ -50,7 +59,7 @@ There are a number of configure options you should be aware of when integrating 
         Steam replacement is enabled.
 
 
-`--with-preload-libs=$LIBS`
+`-Dwith-preload-libs=$LIBS`
 
         A colon separated list of libraries that are required to launch Steam
         when using its own runtime. LSI enables users to switch back to the Steam
@@ -61,7 +70,7 @@ There are a number of configure options you should be aware of when integrating 
 
                 /usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6
 
-`--enable-frontend`
+`-Dwith-frontend=$boolean`
 
         A small UI application is shipped to enable configuration of LSI, which presents
         a simple GTK3 Dialog to the user. It is not enabled by default, it is up
@@ -73,7 +82,7 @@ There are a number of configure options you should be aware of when integrating 
 
         The default value for this option is::
 
-                disabled
+                false
 
 
 **How LSI Works**
@@ -126,9 +135,9 @@ Related issue: [Steam tray icon missing #2](https://github.com/solus-project/lin
 License
 -------
 
-`src/shim src/frontend`:
+`src/shim src/frontend src/lsi src/intercept`:
 
-        Copyright © 2016 Ikey Doherty
+        Copyright © 2016-2017 Ikey Doherty
 
         linux-steam-integration is available under the terms of the `LGPL-2.1`
 
