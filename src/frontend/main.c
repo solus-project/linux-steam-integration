@@ -17,6 +17,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "config.h"
 #include "lsi.h"
 
 static inline void _align_label(GtkWidget *label)
@@ -40,6 +41,9 @@ int main(int argc, char **argv)
         GtkWidget *image = NULL;
         GtkWidget *check_native = NULL;
         GtkWidget *check_emul32 = NULL;
+#ifdef HAVE_LIBINTERCEPT
+        GtkWidget *check_intercept = NULL;
+#endif
         GtkWidget *label = NULL;
         GtkSettings *settings = NULL;
         int response = 0;
@@ -110,6 +114,17 @@ int main(int argc, char **argv)
 
         gtk_widget_set_sensitive(label, is_x86_64);
         gtk_widget_set_sensitive(check_emul32, is_x86_64);
+
+#ifdef HAVE_LIBINTERCEPT
+        label = gtk_label_new("Use liblsi-intercept to override Steam's library loading mechanism");
+        _align_label(label);
+        gtk_widget_set_tooltip_text(label,
+                                    "This can help with many library issues with the core client");
+        gtk_grid_attach(GTK_GRID(grid), label, 1, 3, 1, 1);
+        check_intercept = gtk_switch_new();
+        gtk_grid_attach(GTK_GRID(grid), check_intercept, 2, 3, 1, 1);
+#endif
+
         gtk_container_set_border_width(GTK_CONTAINER(grid), 6);
         gtk_widget_set_margin_bottom(grid, 18);
 
@@ -121,6 +136,10 @@ int main(int argc, char **argv)
         /* Adapt UI to match config */
         gtk_switch_set_active(GTK_SWITCH(check_native), lconfig.use_native_runtime);
         gtk_switch_set_active(GTK_SWITCH(check_emul32), lconfig.force_32);
+
+#ifdef HAVE_LIBINTERCEPT
+        gtk_switch_set_active(GTK_SWITCH(check_intercept), lconfig.use_libintercept);
+#endif
 
         /* Run the dialog */
         gtk_widget_show_all(container);
