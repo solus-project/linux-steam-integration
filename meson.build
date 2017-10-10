@@ -66,4 +66,5 @@ config_h = configure_file(
 )
 config_h_dir = include_directories('.')
 
+subdir('data')
 subdir('src')
