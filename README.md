@@ -88,6 +88,15 @@ There are a number of meson configure options you should be aware of when integr
 **How LSI Works**
 
 LSI provides a /usr/bin/steam binary to be used in place of the existing Steam script, which will then correctly set up the environment before swapping the process for the Steam process.
+When using a full build of LSI, the bootstrap shim will force a correct environment, removing any issues that can cause various older SDL versions to kill Steam. Additionally it will then
+force `STEAM_RUNTIME=0` if this is set in the config (default behaviour).
+
+When using the native runtime, and the `intercept` library is enabled, the LSI shim will also set up `LD_AUDIT` to use `liblsi-intercept`. This library will intercept all dynamic linking operations
+for the main Steam binaries and override their behaviour, allowing Steam to only load a handful of vendored libraries (`libav` fork) as well as its own private libraries. It is then forced to use
+system libraries for everything else. This means the Steam client, web helper, etc, will use the native SDL, X11, fixing many bugs with video playback, font rendering and such.
+
+If you are packaging LSI for a distribution, please ensure you provide both a 32-bit and 64-bit build of the intercept library so that the entirety of Steam's  library (`.so`) mechanism is tightly
+controlled by LSI. See the scripts in the root directory of this repository for examples of how to do this.
 
 Configuration options can be placed in an INI-style configuration file in a series of locations, which are ordered by priority in a cascade::
 
