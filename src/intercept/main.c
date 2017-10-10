@@ -104,9 +104,56 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
                 return (char *)name;
         }
 
-        /* Ugly hack for testing with some people.. */
-        if (name && strstr(name, "libSDL2") && !strstr(name, "/usr") && strstr(name, "/")) {
-                fprintf(stderr, "\n\ndebug: override SDL2: %s\n\n", name);
+        // Patterns we'll permit Steam to privately load
+        static const char *steam_allowed[] = {
+                /* general */
+                "libicui18n.so",
+                "libicuuc.so",
+                "libavcodec.so.",
+                "libavformat.so.",
+                "libavresample.so.",
+                "libavutil.so.",
+                "libswscale.so.",
+
+                /* core plugins */
+                "chromehtml.so",
+                "crashhandler.so",
+                "filesystem_stdio.so",
+                "friendsui.so",
+                "gameoverlayrenderer.so",
+                "gameoverlayui.so",
+                "libaudio.so",
+                "libicui18n.so",
+                "libicuuc.so",
+                "libmiles.so",
+                "libopenvr_api.so",
+                "liboverride.so",
+                "libsteam.so",
+                "libtier0_s.so",
+                "libv8.so",
+                "libvideo.so",
+                "libvstdlib_s.so",
+                "serverbrowser.so",
+                "steamclient.so",
+                "steamoverlayvulkanlayer.so",
+                "steamservice.so",
+                "steamui.so",
+                "vgui2_s.so",
+
+                /* big picture mode */
+                "panorama",
+                "libpangoft2-1.0.so",
+                "libpango-1.0.so",
+        };
+
+        /* Find out if its a Steam private lib.. */
+        if (name && strstr(name, "Steam/ubuntu12_")) {
+                for (size_t i = 0; i < ARRAY_SIZE(steam_allowed); i++) {
+                        if (strstr(name, steam_allowed[i])) {
+                                return (char *)name;
+                        }
+                }
+                fprintf(stderr, "\n\ndebug: override steam: %s\n\n", name);
                 return NULL;
         }
 
