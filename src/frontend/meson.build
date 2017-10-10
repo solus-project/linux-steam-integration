@@ -11,6 +11,7 @@ if with_frontend == true
         include_directories: nica_includes,
         dependencies: [
             dep_gtk3,
+            link_lsi,
         ],
         install: true,
     )
