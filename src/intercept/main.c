@@ -97,7 +97,7 @@ static inline bool string_has_prefix(const char *compare, const char *prefix)
  * as a private vendored lib
  */
 _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
-                                 unsigned int flag)
+                                 __lsi_unused__ unsigned int flag)
 {
         /* We don't know about this process, so have glibc do its thing as normal */
         if (!process_supported) {
