@@ -65,7 +65,9 @@ int main(int argc, char **argv)
         if (config.use_native_runtime) {
                 /* Explicitly disable the runtime */
                 setenv("STEAM_RUNTIME", "0", 1);
+#ifdef HAVE_LIBINTERCEPT
                 setenv("LD_AUDIT", AUDIT_PATH, 1);
+#endif
         } else {
                 /* Only preload when needed. */
                 if (lsi_system_requires_preload()) {
