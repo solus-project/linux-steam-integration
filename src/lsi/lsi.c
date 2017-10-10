@@ -185,7 +185,7 @@ bool lsi_config_store(LsiConfig *config)
                 return false;
         }
         if (fprintf(fp,
-                    "[Steam]\nuse-native-runtime = %s\nforce-32bit = %s\nuse-libintercept=%s\n",
+                    "[Steam]\nuse-native-runtime = %s\nforce-32bit = %s\nuse-libintercept = %s\n",
                     lsi_bool_to_string(config->use_native_runtime),
                     lsi_bool_to_string(config->force_32),
                     lsi_bool_to_string(config->use_libintercept)) < 0) {

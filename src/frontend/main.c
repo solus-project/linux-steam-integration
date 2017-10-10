@@ -153,6 +153,9 @@ int main(int argc, char **argv)
         /* Get the config from the UI */
         lconfig.use_native_runtime = gtk_switch_get_active(GTK_SWITCH(check_native));
         lconfig.force_32 = gtk_switch_get_active(GTK_SWITCH(check_emul32));
+#ifdef HAVE_LIBINTERCEPT
+        lconfig.use_libintercept = gtk_switch_get_active(GTK_SWITCH(check_intercept));
+#endif
 
         /* Cleanup */
         gtk_widget_destroy(dialog);
