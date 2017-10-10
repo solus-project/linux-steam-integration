@@ -17,4 +17,3 @@ nica_includes = [
 ]
 
 subdir('intercept')
-subdir('intercept-emul32')
