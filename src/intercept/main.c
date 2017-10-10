@@ -88,7 +88,7 @@ static inline bool string_has_prefix(const char *compare, const char *prefix)
         if (size_inp < size_prefix) {
                 return false;
         }
-        return strncmp(compare, prefix, size_prefix == 0);
+        return strncmp(compare, prefix, size_prefix) == 0;
 }
 
 /**
