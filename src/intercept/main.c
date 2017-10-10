@@ -101,6 +101,11 @@ static inline bool string_has_prefix(const char *compare, const char *prefix)
 _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
                                  unsigned int flag)
 {
+        /* These libraries may not be overriden */
+        static const char *never_override[] = {
+                "libSDL2-2.0.so.0",
+        };
+
         /* We don't know about this process, so have glibc do its thing as normal */
         if (!process_supported) {
                 return (char *)name;
@@ -124,9 +129,12 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
                 return (char *)name;
         }
 
-        /* Now lets use some string safety.. */
-        if (string_has_prefix(based, "libSDL2-2.0.so.0")) {
-                fprintf(stderr, "debug: override libSDL2-2.0.so.0");
+        for (size_t i = 0; i < ARRAY_SIZE(never_override); i++) {
+                const char *comp = never_override[i];
+                if (!strings_has_prefix(based, comp)) {
+                        continue;
+                }
+                fprintf(stderr, "debug: override '%s'\n", comp);
                 return NULL;
         }
 
