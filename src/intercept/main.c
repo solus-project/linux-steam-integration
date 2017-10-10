@@ -49,7 +49,10 @@ static inline char *get_process_name(void)
 static bool is_intercept_candidate(void)
 {
         static const char *wanted_processes[] = {
+                "html5app_steam",
+                "opengl-program",
                 "steam",
+                "steamwebhelper",
         };
         autofree(char) *nom = NULL;
 
