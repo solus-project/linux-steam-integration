@@ -101,43 +101,16 @@ static inline bool string_has_prefix(const char *compare, const char *prefix)
 _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
                                  unsigned int flag)
 {
-        /* These libraries may not be overriden */
-        static const char *never_override[] = {
-                "libSDL2-2.0.so.0",
-        };
-
         /* We don't know about this process, so have glibc do its thing as normal */
         if (!process_supported) {
                 return (char *)name;
         }
-        /* We're only interested in RPATH + LD_LIBRARY_PATH overrides */
-        if (flag != LA_SER_LIBPATH && flag != LA_SER_RUNPATH) {
-                return (char *)name;
-        }
-        /* We need to see a resolved path first. */
-        if (!name || !strstr(name, "/")) {
-                return (char *)name;
-        }
 
-        /* Determine the basename for this guy */
-        autofree(char) *duped_name = strdup(name);
-        if (!duped_name) {
-                return (char *)name;
-        }
-        char *based = basename(duped_name);
-        if (!based) {
-                return (char *)name;
-        }
-
-        for (size_t i = 0; i < ARRAY_SIZE(never_override); i++) {
-                const char *comp = never_override[i];
-                if (!string_has_prefix(based, comp)) {
-                        continue;
-                }
-                fprintf(stderr, "debug: override '%s'\n", comp);
+        /* Ugly hack for testing with some people.. */
+        if (name && strstr(name, "libSDL2") && !strstr(name, "/usr") && strstr(name, "/")) {
+                fprintf(stderr, "\n\ndebug: override SDL2: %s\n\n", name);
                 return NULL;
         }
 
-        /* We had no effects to apply to this. */
         return (char *)name;
 }
