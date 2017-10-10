@@ -4,8 +4,7 @@ intercept_sources = [
 
 main_intercept = shared_library(
     'lsi-intercept',
-    sources: intercept_sources,
-    include_directories: config_h_dir,
-    dependencies: link_main_nica,
+    sources: intercept_sources + nica_sources,
+    include_directories: nica_includes,
     install: true,
 )
