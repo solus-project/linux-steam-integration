@@ -1,7 +1,13 @@
 #!/bin/bash
+set -e
 
-linux32 meson build32 --prefix=/usr --sysconfdir=/etc --datadir=/usr/share --libdir=/usr/lib32 CC="gcc -m32"
-meson build64 --prefix=/usr --sysconfdir=/etc --datadir=/usr/share --libdir=/usr/lib64
+CC="gcc -m32" linux32 meson buildroot/build32 --prefix=/usr --sysconfdir=/etc --datadir=/usr/share --libdir=/usr/lib32
+meson buildroot/build64 --prefix=/usr --sysconfdir=/etc --datadir=/usr/share --libdir=/usr/lib64
 
-ninja -C build32
-ninja -C build64
+ninja -C buildroot/build32
+ninja -C buildroot/build64
+
+DESTDIR=`pwd`/buildroot/install ninja -C buildroot/build32 install
+DESTDIR=`pwd`/buildroot/install ninja -C buildroot/build64 install
+
+
