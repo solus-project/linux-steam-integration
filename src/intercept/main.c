@@ -14,6 +14,7 @@
 #include "../shim/lsi.h"
 #include "nica/nica.h"
 
+#include <link.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -21,6 +22,8 @@
  * Is this a process we're actually interested in?
  */
 static bool process_supported = false;
+
+DEF_AUTOFREE(nc_string, nc_string_free)
 
 /**
  * Determine the basename'd process
@@ -75,4 +78,55 @@ _nica_public_ unsigned int la_version(unsigned int supported_version)
         /* Unfortunately glibc will die if we tell it to skip us .. */
         process_supported = is_intercept_candidate();
         return supported_version;
+}
+
+static inline bool string_has_prefix(const char *compare, const char *prefix)
+{
+        size_t size_prefix = strlen(prefix);
+        size_t size_inp = strlen(compare);
+        if (size_inp < size_prefix) {
+                return false;
+        }
+        return strncmp(compare, prefix, size_prefix == 0);
+}
+
+/**
+ * la_objsearch will allow us to blacklist certain LD_LIBRARY_PATH duplicate
+ * libraries being loaded by the Steam client, such as the broken libSDL shipped
+ * as a private vendored lib
+ */
+_nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
+                                 unsigned int flag)
+{
+        /* We don't know about this process, so have glibc do its thing as normal */
+        if (!process_supported) {
+                return (char *)name;
+        }
+        /* We're only interested in RPATH + LD_LIBRARY_PATH overrides */
+        if (flag != LA_SER_LIBPATH && flag != LA_SER_RUNPATH) {
+                return (char *)name;
+        }
+        /* We need to see a resolved path first. */
+        if (!name || !strstr(name, "/")) {
+                return (char *)name;
+        }
+
+        /* Determine the basename for this guy */
+        autofree(char) *duped_name = strdup(name);
+        if (!duped_name) {
+                return (char *)name;
+        }
+        char *based = basename(duped_name);
+        if (!based) {
+                return (char *)name;
+        }
+
+        /* Now lets use some string safety.. */
+        if (string_has_prefix(based, "libSDL2-2.0.so.0")) {
+                fprintf(stderr, "debug: override libSDL2-2.0.so.0");
+                return NULL;
+        }
+
+        /* We had no effects to apply to this. */
+        return (char *)name;
 }
