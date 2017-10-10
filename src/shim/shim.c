@@ -76,6 +76,7 @@ int main(int argc, char **argv)
          * properly use D-BUS ...
          */
         unsetenv("XMODIFIERS");
+        unsetenv("GTK_MODULES");
 
         memset(&n_argv, 0, sizeof(char *) * (argc + 2));
 
