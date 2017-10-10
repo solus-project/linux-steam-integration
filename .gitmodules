@@ -1,3 +1,3 @@
 [submodule "src/libnica"]
 	path = src/libnica
-	url = git@github.com:ikeydoherty/libnica.git
+	url = git@github.com:intel/libnica.git
