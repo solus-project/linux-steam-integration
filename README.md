@@ -20,7 +20,7 @@ Integrating LSI
 
 To correctly integrate LSI, your Steam package will require modification. LSI must provide the /usr/bin/steam binary, so your Steam package must move the main launcher to a shadow location.
 
-For users who do not have access to LSI in their distribution, because it has not been integrated yet, please configure with `--disable-replace-steam` to preserve your existing Steam integrity. Then use the "LSI Steam" shortcut in your menu to launch Steam via LSI.
+For users who do not have access to LSI in their distribution, because it has not been integrated yet, please configure with `-Dwith-shim=co-exist` to preserve your existing Steam integrity. Then use the "LSI Steam" shortcut in your menu to launch Steam via LSI.
 
 **Configuring LSI build**
 
