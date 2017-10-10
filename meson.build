@@ -44,10 +44,14 @@ sysconfdir = join_paths(prefix, get_option('sysconfdir'))
 cdata.set_quoted('SYSTEMCONFDIR', sysconfdir)
 cdata.set_quoted('VENDORDIR', vendordir)
 
-# TODO: Make this come from the meson_options.txt
-cdata.set_quoted('LSI_PRELOAD_LIBS', '/usr/\$LIB/libxcb.so.1:/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6')
-cdata.set_quoted('STEAM_BINARY', '/usr/lib64/steam/steam')
-cdata.set('REPLACE_STEAM', '1')
+# Configurables
+cdata.set_quoted('LSI_PRELOAD_LIBS', get_option('with-preload-libs'))
+cdata.set_quoted('STEAM_BINARY', get_option('with-steam-binary'))
+
+shim_behaviour = get_option('with-shim')
+if shim_behaviour == 'replacement'
+    cdata.set('REPLACE_STEAM', '1')
+endif
 
 config_h = configure_file(
      configuration: cdata,

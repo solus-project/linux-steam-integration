@@ -1,0 +1,6 @@
+option('with-shim', type : 'combo', choices : ['replacement', 'co-exist', 'none'], default: 'replacement',
+       description : 'control how the shim is deployed')
+option('with-steam-binary', type: 'string', description: 'Set the path to the Steam binary', value: '/usr/lib/steam/steam')
+option('with-frontend', type: 'boolean', description: 'Build the LSI Settings UI', value: false)
+option('with-preload-libs', type: 'string', description: 'Colon separated list of libraries required to launch Steam games',
+        value: '/usr/\$LIB/libxcb.so.1:/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6')
