@@ -58,6 +58,8 @@ if with_libintercept == true
     cdata.set('HAVE_LIBINTERCEPT', '1')
 endif
 
+with_frontend = get_option('with-frontend')
+
 config_h = configure_file(
      configuration: cdata,
      output: 'config.h',

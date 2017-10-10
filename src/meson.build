@@ -16,6 +16,7 @@ nica_includes = [
     config_h_dir,
 ]
 
+subdir('lsi')
 subdir('frontend')
 subdir('intercept')
 subdir('shim')
