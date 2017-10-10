@@ -20,15 +20,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "../common.h"
 #include "config.h"
-
-/* Mark a variable/argument as unused to skip warnings */
-#define __lsi_unused__ __attribute__((unused))
-
-/* Force inlining of a function */
-#define __lsi_inline__ __attribute__((always_inline))
-
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 
 /**
  * Current Linux Steam Integration settings.

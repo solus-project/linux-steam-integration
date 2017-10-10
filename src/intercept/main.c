@@ -11,12 +11,12 @@
 
 #define _GNU_SOURCE
 
-#include "../shim/lsi.h"
-#include "nica/nica.h"
-
 #include <link.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "../common.h"
+#include "nica/nica.h"
 
 /**
  * Is this a process we're actually interested in?
