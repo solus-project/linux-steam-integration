@@ -12,7 +12,7 @@ fi
 ninja -C buildroot/build32
 ninja -C buildroot/build64
 
-DESTDIR=`pwd`/buildroot/install ninja -C buildroot/build32 install
-DESTDIR=`pwd`/buildroot/install ninja -C buildroot/build64 install
+sudo ninja -C buildroot/build32 install
+sudo ninja -C buildroot/build64 install
 
 
