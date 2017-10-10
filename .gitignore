@@ -17,3 +17,6 @@ m4/*.m4
 /steam
 /lsi-steam
 /lsi-settings
+
+
+/build/
