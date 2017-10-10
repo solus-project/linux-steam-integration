@@ -131,7 +131,7 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
 
         for (size_t i = 0; i < ARRAY_SIZE(never_override); i++) {
                 const char *comp = never_override[i];
-                if (!strings_has_prefix(based, comp)) {
+                if (!string_has_prefix(based, comp)) {
                         continue;
                 }
                 fprintf(stderr, "debug: override '%s'\n", comp);
