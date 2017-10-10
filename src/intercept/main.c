@@ -152,19 +152,26 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
                 "panorama",
                 "libpangoft2-1.0.so",
                 "libpango-1.0.so",
+
+                /* steamwebhelper */
+                "libcef.so",
         };
 
-        /* Find out if its a Steam private lib.. */
-        if (name && strstr(name, "Steam/ubuntu12_")) {
+        /* Find out if it exists */
+        bool file_exists = nc_file_exists(name);
+
+        /* Find out if its a Steam private lib.. These are relative "./" files too! */
+        if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
                 for (size_t i = 0; i < ARRAY_SIZE(steam_allowed); i++) {
                         if (strstr(name, steam_allowed[i])) {
                                 return (char *)name;
                         }
                 }
                 /* If LSI_DEBUG is set, spam it. */
-                if (getenv("LSI_DEBUG")) {
+                if (getenv("LSI_DEBUG") && file_exists) {
                         emit_overriden_lib(name);
                 }
+
                 return NULL;
         }
 
