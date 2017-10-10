@@ -23,8 +23,6 @@
  */
 static bool process_supported = false;
 
-DEF_AUTOFREE(nc_string, nc_string_free)
-
 /**
  * Determine the basename'd process
  */
