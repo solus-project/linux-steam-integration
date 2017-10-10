@@ -22,6 +22,7 @@
  * Is this a process we're actually interested in?
  */
 static bool process_supported = false;
+static const char *matched_process = NULL;
 
 /**
  * Determine the basename'd process
@@ -61,9 +62,13 @@ static bool is_intercept_candidate(void)
 
         for (size_t i = 0; i < ARRAY_SIZE(wanted_processes); i++) {
                 if (streq(wanted_processes[i], nom)) {
+                        matched_process = wanted_processes[i];
+                        if (!getenv("LSI_DEBUG")) {
+                                return true;
+                        }
                         fprintf(stderr,
-                                "debug: loading Linux Steam Integration libintercept for %s\n",
-                                wanted_processes[i]);
+                                "[LSI:%s]: debug: loading libintercept from LSI\n",
+                                matched_process);
                         return true;
                 }
         }
@@ -79,6 +84,19 @@ _nica_public_ unsigned int la_version(unsigned int supported_version)
         /* Unfortunately glibc will die if we tell it to skip us .. */
         process_supported = is_intercept_candidate();
         return supported_version;
+}
+
+/**
+ * emit_overriden lib is used to pretty-print the debug when we blacklist
+ * a vendored library
+ */
+static void emit_overriden_lib(const char *lib_name)
+{
+        /* TODO: Add some colour printing */
+        fprintf(stderr,
+                "[LSI:%s]: debug: blacklisted loading of vendored library: %s\n",
+                matched_process,
+                lib_name);
 }
 
 /**
@@ -143,7 +161,10 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
                                 return (char *)name;
                         }
                 }
-                fprintf(stderr, "\n\ndebug: override steam: %s\n\n", name);
+                /* If LSI_DEBUG is set, spam it. */
+                if (getenv("LSI_DEBUG")) {
+                        emit_overriden_lib(name);
+                }
                 return NULL;
         }
 
