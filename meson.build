@@ -33,4 +33,13 @@ add_global_arguments(am_cflags, language: 'c')
 
 dep_gtk3 = dependency('gtk+-3.0', version: '>= 3.4.0')
 
+cdata = configuration_data()
+# TODO: Make this come from the meson_options.txt
+cdata.set_quoted('LSI_PRELOAD_LIBS', '/usr/\$LIB/libxcb.so.1:/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6')
+config_h = configure_file(
+     configuration: cdata,
+     output: 'config.h',
+)
+config_h_dir = include_directories('.')
+
 subdir('src')
