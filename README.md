@@ -55,6 +55,14 @@ Linux Steam Integration is a [Solus project](https://solus-project.com/)
 
 ![logo](https://build.solus-project.com/logo.png)
 
+## Getting LSI
+
+LSI may not yet be available for your distribution, however some community maintained repositories do exist.
+
+ - [Arch Linux](https://aur.archlinux.org/packages/linux-steam-integration/)
+ - [Fedora](https://copr.fedorainfracloud.org/coprs/alunux/linux-steam-integration/)
+ - Solus uses LSI by default, just install the steam package.
+
 
 ## Integrating LSI
 
