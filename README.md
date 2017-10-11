@@ -158,7 +158,7 @@ Configuration options can be placed in an INI-style configuration file in a seri
 
 The user configuration takes immediate priority. Secondly we have the system-wide configuration for affecting all accounts, and lastly the vendor configuration, which may be provided by the integrator.
 
-Currently this INI file supports two options. The root section in this INI file must be `[Steam]`.
+Currently this INI file supports three options. The root section in this INI file must be `[Steam]`.
 
 `use-native-runtime = $boolean`
 
@@ -181,6 +181,16 @@ Currently this INI file supports two options. The root section in this INI file 
         OSs this setting is ignored.
 
         The default value of this variable is false.
+
+`use-libintercept = $boolean`
+
+        If set to a true boolean value (yes/true/on), the `liblsi-intercept.so`
+        library will be utilised to control dynamic linking within the Steam client
+        and associated processes.
+
+        Note this requires `use-native-runtime` to be set.
+
+        The default value of this variable is true.
 
 
 ## Common issues
