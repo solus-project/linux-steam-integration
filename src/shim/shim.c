@@ -44,11 +44,8 @@ int main(int argc, char **argv)
         int8_t off = 0;
         int (*vfunc)(const char *, char *const argv[]) = NULL;
 
-#ifdef REPLACE_STEAM
         lsi_exec_bin = STEAM_BINARY;
-#else
-        lsi_exec_bin = "/usr/bin/steam";
-#endif
+
         /* Initialise config */
         if (!lsi_config_load(&config)) {
                 lsi_config_load_defaults(&config);
