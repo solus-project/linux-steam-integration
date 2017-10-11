@@ -112,7 +112,7 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
                 return (char *)name;
         }
 
-        // Patterns we'll permit Steam to privately load
+        /* Patterns we'll permit Steam to privately load */
         static const char *steam_allowed[] = {
                 /* general */
                 "libicui18n.so",
