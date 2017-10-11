@@ -2,12 +2,12 @@ linux-steam-integration
 -----------------------
 
 Linux Steam Integration is a software package aimed squarely at Linux distribution developers.
-It is designed to offer a far better Steam experience than the stock client, doing away with old
+It is designed to offer a far better Steam* experience than the stock client, doing away with old
 integration issues and crashes.
 
-**Native Libraries**
+### Native Libraries
 
-LSI enforces the use of host-native libraries, both in the Steam Client (via lsi-intercept) and
+LSI enforces the use of host-native libraries, both in the Steam Client (via `lsi-intercept`) and
 games themselves. This ensures Steam integrates properly, games run with the latest libraries
 and users get the best performance.
 
@@ -21,7 +21,7 @@ In a nut shell, LSI will force most of Steam over to using native libraries. The
 system is new as of 0.4, and will be extended in future to allow improving certain games
 on a process-name whitelisting basis.
 
-**Configurable**
+### Configurable
 
 You can easily toggle the use of the native runtime or the runtime provided with the official
 Steam package distribution. LSI doesn't butcher any files, so your local Steam directory does
@@ -31,12 +31,12 @@ Currently you can control whether the native runtime is used, force 32-bit mode 
 ports, and control whether the intercept library is enabled (which will undo the various library
 mangling tricks of the Steam distribution to force the usage of the system libs via rtld-audit)
 
-**Portable**
+### Portable
 
 You can (and should) stick this into any distro. Hit us up if you need help integrating, or need some
 portability changes made. We won't bite.
 
-**Going beyond LSI**
+### Going beyond LSI
 
 LSI solves a great many issues, however there is then still a responsibility for the integrating distribution
 to provide basic ABI compatibility, as well as being functionally comparable to the "stock" runtime.
@@ -46,7 +46,7 @@ optimised Steam runtime, usable on all Linux distributions.
 If you want to be part of that effort - and help bring a modern, optimised gaming experience to your Linux
 users, please get in contact. Let's do this once, and do it right.
 
-**We're not them.**
+### We're not them.
 
 This project, and by extension Solus, is not officially endorsed by, or affiliated with, Steam*, or its parent company, Valve*.
 
@@ -56,8 +56,7 @@ Linux Steam Integration is a [Solus project](https://solus-project.com/)
 ![logo](https://build.solus-project.com/logo.png)
 
 
-Integrating LSI
-===============
+## Integrating LSI
 
 To correctly integrate LSI, your Steam package will require modification. LSI must provide the /usr/bin/steam binary, so your Steam package must move the main launcher to a shadow location.
 
@@ -131,7 +130,7 @@ There are a number of meson configure options you should be aware of when integr
                 false
 
 
-**How LSI Works**
+## How LSI Works
 
 LSI provides a /usr/bin/steam binary to be used in place of the existing Steam script, which will then correctly set up the environment before swapping the process for the Steam process.
 When using a full build of LSI, the bootstrap shim will force a correct environment, removing any issues that can cause various older SDL versions to kill Steam. Additionally it will then
@@ -177,8 +176,7 @@ Currently this INI file supports two options. The root section in this INI file 
         The default value of this variable is false.
 
 
-Common issues
-=============
+## Common issues
 
 **Missing tray icon for Steam client using native OS runtime**
 
@@ -187,8 +185,7 @@ Ensure you have the 32-bit version of libappindicator installed. This is require
 Related issue: [Steam tray icon missing #2](https://github.com/solus-project/linux-steam-integration/issues/2)
 
 
-License
--------
+## License
 
 `src/shim src/frontend src/lsi src/intercept`:
 
