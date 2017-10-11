@@ -58,7 +58,7 @@ Linux Steam Integration is a [Solus project](https://solus-project.com/)
 
 ## Integrating LSI
 
-To correctly integrate LSI, your Steam package will require modification. LSI must provide the /usr/bin/steam binary, so your Steam package must move the main launcher to a shadow location.
+To correctly integrate LSI, your Steam package will require modification. LSI must provide the `/usr/bin/steam binary`, so your Steam package must move the main launcher to a shadow location.
 
 For users who do not have access to LSI in their distribution, because it has not been integrated yet, please configure with `-Dwith-shim=co-exist` to preserve your existing Steam integrity. Then use the "LSI Steam" shortcut in your menu to launch Steam via LSI.
 
@@ -67,7 +67,6 @@ For users who do not have access to LSI in their distribution, because it has no
 There are a number of meson configure options you should be aware of when integrating LSI correctly. The prominent ones are explained here.
 
 `-Dwith-shim= none | co-exist | replacement`
-`--disable-replace-steam`
 
         Control behaviour of the shim build. `none` will disable building the main
         shim, required for actually launching Steam in the first place.
@@ -91,7 +90,7 @@ There are a number of meson configure options you should be aware of when integr
         Note that execv, not execvp, is used, to mask programs that may be
         in the `$PATH`, hence requiring an absolute path.
 
-        The default value for this option is::
+        The default value for this option is:
 
                 /usr/lib/steam/steam
 
@@ -106,7 +105,7 @@ There are a number of meson configure options you should be aware of when integr
         runtime, and in this instance we manage the LD_PRELOAD environmental variable.
         Ensure this is correct, and escape $LIB for correct Linux usage.
 
-        The default value for this option is::
+        The default value for this option is:
 
                 /usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6
 
@@ -125,7 +124,7 @@ There are a number of meson configure options you should be aware of when integr
         The lsi-settings application will only ever write new configurations to the
         **user** settings file, and requires no special permissions.
 
-        The default value for this option is::
+        The default value for this option is:
 
                 false
 
@@ -178,11 +177,29 @@ Currently this INI file supports two options. The root section in this INI file 
 
 ## Common issues
 
-**Missing tray icon for Steam client using native OS runtime**
+Virtually all issues will come down to having the right dependencies. LSI puts an emphasis on
+host-first libraries, so make sure all the correct libraries are available for both 32-bit and
+64-bit.
+
+Steam has both 32-bit and 64-bit processes/libraries, having the full dependency set for both
+the client and common games/engines is a must. 
+
+
+### Missing tray icon for Steam client using native OS runtime
 
 Ensure you have the 32-bit version of libappindicator installed. This is required for the tray icon. libappindicator falls back to a standard X11 tray icon in the absence of desktop appindicator support.
 
 Related issue: [Steam tray icon missing #2](https://github.com/solus-project/linux-steam-integration/issues/2)
+
+### Steam fails to launch with libintercept/native-runtime
+
+Make sure you enable full debugging when first assigning dependencies to your runtime package:
+
+```bash
+$ LSI_DEBUG=1 steam
+# If you use co-exist option:
+$ LSI_DEBUG=1 lsi-steam
+```
 
 
 ## License
