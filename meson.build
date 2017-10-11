@@ -60,6 +60,10 @@ endif
 
 with_frontend = get_option('with-frontend')
 
+if get_option('with-new-libcxx-abi') == true
+    cdata.set('LSI_USE_NEW_ABI', '1')
+endif
+
 config_h = configure_file(
      configuration: cdata,
      output: 'config.h',

@@ -70,6 +70,11 @@ There are a number of meson configure options you should be aware of when integr
 
                 /usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6
 
+`-Dwith-new-libcxx-abi=$boolean`
+
+        Enable this if your distribution uses a recent libstdc++ build, from
+        GCC 6 or higher.
+
 `-Dwith-frontend=$boolean`
 
         A small UI application is shipped to enable configuration of LSI, which presents

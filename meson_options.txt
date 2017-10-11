@@ -5,3 +5,4 @@ option('with-frontend', type: 'boolean', description: 'Build the LSI Settings UI
 option('with-preload-libs', type: 'string', description: 'Colon separated list of libraries required to launch Steam games',
         value: '/usr/\$LIB/libxcb.so.1:/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6')
 option('with-libintercept', type: 'boolean', description: 'Enable libintercept library for controlling Steam linking', value: true)
+option('with-new-libcxx-abi', type: 'boolean', description: 'Enable when using the new libstdc++ ABI', value: false)
