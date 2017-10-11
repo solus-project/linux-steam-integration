@@ -1,11 +1,52 @@
 linux-steam-integration
 -----------------------
 
-Linux Steam Integration attempts to improve the Steam* gaming experience for users on Linux. In the default mode, it will disable the Steam runtime, and facilitate usage of the distro's own runtime for improved integration and performance. The Steam Runtime is a very old set of Ubuntu libraries, and as such provides a suboptimial experience for many Linux users. A key example of this is broken fontconfig, C++ ABI issues preventing loading, or even the broken theming of GTK widgets on non-Ubuntu distros. These woes have been compounded for users of the open source drivers.
+Linux Steam Integration is a software package aimed squarely at Linux distribution developers.
+It is designed to offer a far better Steam experience than the stock client, doing away with old
+integration issues and crashes.
 
-The LSI tool also allows you to use Steam's runtime if you need to, as currently not all cases are covered. It will also take care to prepare the environment, ensuring that users can load Steam using it's own runtime without hitting any of the issues common to a modern distro, i.e. ABI issues and having to `LD_PRELOAD` libraries to even make Steam start.
+**Native Libraries**
 
-More importantly, LSI achieves all of this by not having to **butcher your existing Steam installation**, as is common in some new tools.
+LSI enforces the use of host-native libraries, both in the Steam Client (via lsi-intercept) and
+games themselves. This ensures Steam integrates properly, games run with the latest libraries
+and users get the best performance.
+
+Currently the officially provided Steam runtime is based on very old Ubuntu 12.04 packages,
+and has some cherry-picked updates (SDL, for example). This causes lots of integration issues
+on most newer distributions, such as broken client behaviour with full screen videos, outright
+crashes on startup, mismatched C++ ABI, missing sound, ugly menus, broken font rendering,
+poor performance, etc.
+
+In a nut shell, LSI will force most of Steam over to using native libraries. The intercept
+system is new as of 0.4, and will be extended in future to allow improving certain games
+on a process-name whitelisting basis.
+
+**Configurable**
+
+You can easily toggle the use of the native runtime or the runtime provided with the official
+Steam package distribution. LSI doesn't butcher any files, so your local Steam directory does
+not need to be repaired or reinstalled. Just run `lsi-settings` and restart Steam.
+
+Currently you can control whether the native runtime is used, force 32-bit mode for some troublesome
+ports, and control whether the intercept library is enabled (which will undo the various library
+mangling tricks of the Steam distribution to force the usage of the system libs via rtld-audit)
+
+**Portable**
+
+You can (and should) stick this into any distro. Hit us up if you need help integrating, or need some
+portability changes made. We won't bite.
+
+**Going beyond LSI**
+
+LSI solves a great many issues, however there is then still a responsibility for the integrating distribution
+to provide basic ABI compatibility, as well as being functionally comparable to the "stock" runtime.
+Our future plans will basically involve creating a project based around LSI and a specially produced,
+optimised Steam runtime, usable on all Linux distributions.
+
+If you want to be part of that effort - and help bring a modern, optimised gaming experience to your Linux
+users, please get in contact. Let's do this once, and do it right.
+
+**We're not them.**
 
 This project, and by extension Solus, is not officially endorsed by, or affiliated with, Steam*, or its parent company, Valve*.
 
