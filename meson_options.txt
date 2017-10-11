@@ -1,4 +1,4 @@
-option('with-shim', type : 'combo', choices : ['replacement', 'co-exist', 'none'], default: 'replacement',
+option('with-shim', type : 'combo', choices : ['replacement', 'co-exist', 'none'], value: 'replacement',
        description : 'control how the shim is deployed')
 option('with-steam-binary', type: 'string', description: 'Set the path to the Steam binary', value: '/usr/lib/steam/steam')
 option('with-frontend', type: 'boolean', description: 'Build the LSI Settings UI', value: false)
