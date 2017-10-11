@@ -131,8 +131,6 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
                 "gameoverlayrenderer.so",
                 "gameoverlayui.so",
                 "libaudio.so",
-                "libicui18n.so",
-                "libicuuc.so",
                 "libmiles.so",
                 "libopenvr_api.so",
                 "liboverride.so",
