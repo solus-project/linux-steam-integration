@@ -99,9 +99,14 @@ static const char *wanted_steam_processes[] = {
  * that are KNOWN to cause issues, i.e. SDL + libstdc++
  */
 static const char *vendor_blacklist[] = {
+        /* base libraries being replaced will cause a C++ ABI issue when
+         * loading the mesalib drivers. */
         "libgcc_",
         "libstdc++",
         "libSDL",
+
+        /* general problem causer. */
+        "libopenal.so.",
 };
 
 /**
