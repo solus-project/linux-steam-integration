@@ -219,6 +219,30 @@ $ LSI_DEBUG=1 steam
 $ LSI_DEBUG=1 lsi-steam
 ```
 
+### liblsi-intercept regressing performance
+
+There exists a bug in `glibc` which incorrectly configures profiling for all PLT calls when using `LD_AUDIT` (rtld-audit)
+even if the audit library doesn't implement `la_pltenter` or `la_pltexit`. This leads to a performance hit on every
+runtime call via PLT.
+
+The issue was first reported to this project by @amonakov [here](https://github.com/solus-project/linux-steam-integration/issues/15).
+The upstream glibc issue is reported on the upstream glibc [bugzilla](https://sourceware.org/bugzilla/show_bug.cgi?id=15533).
+A patch to resolve the issue was submitted by @amonakov [here](https://sourceware.org/ml/libc-alpha/2013-05/msg00888.html).
+
+If you are noticing performance regressions, you can:
+
+ - As a user: Disable `liblsi-intercept` via `lsi-settings`. This will hurt compatibility.
+ - As a packager: Disable `liblsi-intercept` via build flags. This will hurt compatibility.
+ - As a distribution integrator: Add weight to upstream issue and import patch into your distribution.
+   This will retain LSI compatibility magic and mitigate performance issues.
+   As an example, Solus has already [integrated the patch](https://dev.solus-project.com/R927:afa5b639e8a9b62618457a304d1e6fb42a9f2066).
+
+The long term solution is to remove this burden from non-Solus Linux distributions, and for the Solus & LSI projects to
+provide a specialised runtime & strict LSI build via third party mechanisms so that all this work only needs doing once.
+This will help ensure the same gaming experience regardless of Linux distribution, remove all compatibility issues, and
+any pressures on distributions. Additionally this will allow even distributions not supporting multilib to provide a
+curated and well integrated gaming runtime.
+
 
 ## License
 
