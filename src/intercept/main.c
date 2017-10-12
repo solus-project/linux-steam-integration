@@ -24,6 +24,56 @@
 static bool process_supported = false;
 static const char *matched_process = NULL;
 
+/* Patterns we'll permit Steam to privately load */
+static const char *steam_allowed[] = {
+        /* general */
+        "libicui18n.so",
+        "libicuuc.so",
+        "libavcodec.so.",
+        "libavformat.so.",
+        "libavresample.so.",
+        "libavutil.so.",
+        "libswscale.so.",
+
+        /* core plugins */
+        "chromehtml.so",
+        "crashhandler.so",
+        "filesystem_stdio.so",
+        "friendsui.so",
+        "gameoverlayrenderer.so",
+        "gameoverlayui.so",
+        "libaudio.so",
+        "libmiles.so",
+        "libopenvr_api.so",
+        "liboverride.so",
+        "libsteam.so",
+        "libtier0_s.so",
+        "libv8.so",
+        "libvideo.so",
+        "libvstdlib_s.so",
+        "serverbrowser.so",
+        "steamclient.so",
+        "steamoverlayvulkanlayer.so",
+        "steamservice.so",
+        "steamui.so",
+        "vgui2_s.so",
+
+        /* big picture mode */
+        "panorama",
+        "libpangoft2-1.0.so",
+        "libpango-1.0.so",
+
+        /* steamwebhelper */
+        "libcef.so",
+};
+
+static const char *wanted_steam_processes[] = {
+        "html5app_steam",
+        "opengl-program",
+        "steam",
+        "steamwebhelper",
+};
+
 /**
  * Determine the basename'd process
  */
@@ -47,12 +97,6 @@ static inline char *get_process_name(void)
  */
 static bool is_intercept_candidate(void)
 {
-        static const char *wanted_processes[] = {
-                "html5app_steam",
-                "opengl-program",
-                "steam",
-                "steamwebhelper",
-        };
         autofree(char) *nom = NULL;
 
         nom = get_process_name();
@@ -60,9 +104,9 @@ static bool is_intercept_candidate(void)
                 return false;
         }
 
-        for (size_t i = 0; i < ARRAY_SIZE(wanted_processes); i++) {
-                if (streq(wanted_processes[i], nom)) {
-                        matched_process = wanted_processes[i];
+        for (size_t i = 0; i < ARRAY_SIZE(wanted_steam_processes); i++) {
+                if (streq(wanted_steam_processes[i], nom)) {
+                        matched_process = wanted_steam_processes[i];
                         if (!getenv("LSI_DEBUG")) {
                                 return true;
                         }
@@ -111,49 +155,6 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
         if (!process_supported) {
                 return (char *)name;
         }
-
-        /* Patterns we'll permit Steam to privately load */
-        static const char *steam_allowed[] = {
-                /* general */
-                "libicui18n.so",
-                "libicuuc.so",
-                "libavcodec.so.",
-                "libavformat.so.",
-                "libavresample.so.",
-                "libavutil.so.",
-                "libswscale.so.",
-
-                /* core plugins */
-                "chromehtml.so",
-                "crashhandler.so",
-                "filesystem_stdio.so",
-                "friendsui.so",
-                "gameoverlayrenderer.so",
-                "gameoverlayui.so",
-                "libaudio.so",
-                "libmiles.so",
-                "libopenvr_api.so",
-                "liboverride.so",
-                "libsteam.so",
-                "libtier0_s.so",
-                "libv8.so",
-                "libvideo.so",
-                "libvstdlib_s.so",
-                "serverbrowser.so",
-                "steamclient.so",
-                "steamoverlayvulkanlayer.so",
-                "steamservice.so",
-                "steamui.so",
-                "vgui2_s.so",
-
-                /* big picture mode */
-                "panorama",
-                "libpangoft2-1.0.so",
-                "libpango-1.0.so",
-
-                /* steamwebhelper */
-                "libcef.so",
-        };
 
         /* Find out if it exists */
         bool file_exists = nc_file_exists(name);
