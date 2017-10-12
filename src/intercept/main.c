@@ -231,6 +231,7 @@ char *lsi_blacklist_vendor(const char *name)
                         if (getenv("LSI_DEBUG") && file_exists) {
                                 emit_overriden_lib(name);
                         }
+                        return NULL;
                 }
                 /* Allowed to exist */
                 return (char *)name;
