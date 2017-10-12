@@ -19,10 +19,23 @@
 #include "nica/nica.h"
 
 /**
- * Is this a process we're actually interested in?
+ * What's the known process name?
  */
-static bool process_supported = false;
 static const char *matched_process = NULL;
+
+/**
+ * We support a number of modes, but we mostly exist to make Steam behave
+ */
+typedef enum {
+        INTERCEPT_MODE_NONE = 0,
+        INTERCEPT_MODE_STEAM,
+        INTERCEPT_MODE_VENDOR_OFFENDER,
+} InterceptMode;
+
+/**
+ * by default, we're not "on"
+ */
+static InterceptMode work_mode = INTERCEPT_MODE_NONE;
 
 /* Patterns we'll permit Steam to privately load */
 static const char *steam_allowed[] = {
@@ -92,21 +105,16 @@ static inline char *get_process_name(void)
 }
 
 /**
- * Find out if we're being executed by a process we actually need to override,
- * otherwise we'd not be loaded by rtld-audit
+ * Determine if we're in a given process set, i.e. the process name matches
+ * the given table
  */
-static bool is_intercept_candidate(void)
+static bool is_in_process_set(char *process_name, const char **processes, size_t n_processes)
 {
-        autofree(char) *nom = NULL;
-
-        nom = get_process_name();
-        if (!nom) {
-                return false;
-        }
-
-        for (size_t i = 0; i < ARRAY_SIZE(wanted_steam_processes); i++) {
-                if (streq(wanted_steam_processes[i], nom)) {
-                        matched_process = wanted_steam_processes[i];
+        /* Are we some portion of the process set? */
+        for (size_t i = 0; i < n_processes; i++) {
+                if (streq(processes[i], process_name)) {
+                        work_mode = INTERCEPT_MODE_STEAM;
+                        matched_process = processes[i];
                         if (!getenv("LSI_DEBUG")) {
                                 return true;
                         }
@@ -120,13 +128,33 @@ static bool is_intercept_candidate(void)
 }
 
 /**
+ * Find out if we're being executed by a process we actually need to override,
+ * otherwise we'd not be loaded by rtld-audit
+ */
+static void check_is_intercept_candidate(void)
+{
+        autofree(char) *nom = NULL;
+
+        nom = get_process_name();
+        if (!nom) {
+                return;
+        }
+
+        if (is_in_process_set(nom, wanted_steam_processes, ARRAY_SIZE(wanted_steam_processes))) {
+                work_mode = INTERCEPT_MODE_STEAM;
+        } else {
+                work_mode = INTERCEPT_MODE_NONE;
+        }
+}
+
+/**
  * la_version is our main entry point and will only continue if our
  * process is explicitly Steam
  */
 _nica_public_ unsigned int la_version(unsigned int supported_version)
 {
         /* Unfortunately glibc will die if we tell it to skip us .. */
-        process_supported = is_intercept_candidate();
+        check_is_intercept_candidate();
         return supported_version;
 }
 
@@ -144,18 +172,10 @@ static void emit_overriden_lib(const char *lib_name)
 }
 
 /**
- * la_objsearch will allow us to blacklist certain LD_LIBRARY_PATH duplicate
- * libraries being loaded by the Steam client, such as the broken libSDL shipped
- * as a private vendored lib
+ * lsi_search_steam handles whitelisting for the main Steam processes
  */
-_nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
-                                 __lsi_unused__ unsigned int flag)
+char *lsi_search_steam(const char *name)
 {
-        /* We don't know about this process, so have glibc do its thing as normal */
-        if (!process_supported) {
-                return (char *)name;
-        }
-
         /* Find out if it exists */
         bool file_exists = nc_file_exists(name);
 
@@ -175,6 +195,28 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
         }
 
         return (char *)name;
+}
+
+/**
+ * la_objsearch will allow us to blacklist certain LD_LIBRARY_PATH duplicate
+ * libraries being loaded by the Steam client, such as the broken libSDL shipped
+ * as a private vendored lib
+ */
+_nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
+                                 __lsi_unused__ unsigned int flag)
+{
+        /* We don't know about this process, so have glibc do its thing as normal */
+        if (work_mode == INTERCEPT_MODE_NONE) {
+                return (char *)name;
+        }
+
+        switch (work_mode) {
+        case INTERCEPT_MODE_STEAM:
+                return lsi_search_steam(name);
+        case INTERCEPT_MODE_NONE:
+        default:
+                return (char *)name;
+        }
 }
 
 /*
