@@ -88,6 +88,20 @@ static const char *wanted_steam_processes[] = {
 };
 
 /**
+ * Vendor offendors should not be allowed to load replacements for libraries
+ * that are KNOWN to cause issues, i.e. SDL + libstdc++
+ */
+static const char *vendor_offenders[] = {
+        "bms_linux",
+};
+
+static const char *vendor_blacklist[] = {
+        "libgcc_",
+        "libstdc++",
+        "libSDL",
+};
+
+/**
  * Determine the basename'd process
  */
 static inline char *get_process_name(void)
@@ -142,6 +156,8 @@ static void check_is_intercept_candidate(void)
 
         if (is_in_process_set(nom, wanted_steam_processes, ARRAY_SIZE(wanted_steam_processes))) {
                 work_mode = INTERCEPT_MODE_STEAM;
+        } else if (is_in_process_set(nom, vendor_offenders, ARRAY_SIZE(vendor_offenders))) {
+                work_mode = INTERCEPT_MODE_VENDOR_OFFENDER;
         } else {
                 work_mode = INTERCEPT_MODE_NONE;
         }
@@ -197,6 +213,30 @@ char *lsi_search_steam(const char *name)
         return (char *)name;
 }
 
+char *lsi_blacklist_vendor(const char *name)
+{
+        /* Find out if it exists */
+        bool file_exists = nc_file_exists(name);
+
+        /* Find out if its a Steam private lib.. These are relative "./" files too! */
+        if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
+                for (size_t i = 0; i < ARRAY_SIZE(vendor_blacklist); i++) {
+                        if (!strstr(name, vendor_blacklist[i])) {
+                                continue;
+                        }
+
+                        /* If LSI_DEBUG is set, spam it. */
+                        if (getenv("LSI_DEBUG") && file_exists) {
+                                emit_overriden_lib(name);
+                        }
+                }
+                /* Allowed to exist */
+                return (char *)name;
+        }
+
+        return (char *)name;
+}
+
 /**
  * la_objsearch will allow us to blacklist certain LD_LIBRARY_PATH duplicate
  * libraries being loaded by the Steam client, such as the broken libSDL shipped
@@ -205,14 +245,11 @@ char *lsi_search_steam(const char *name)
 _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
                                  __lsi_unused__ unsigned int flag)
 {
-        /* We don't know about this process, so have glibc do its thing as normal */
-        if (work_mode == INTERCEPT_MODE_NONE) {
-                return (char *)name;
-        }
-
         switch (work_mode) {
         case INTERCEPT_MODE_STEAM:
                 return lsi_search_steam(name);
+        case INTERCEPT_MODE_VENDOR_OFFENDER:
+                return lsi_blacklist_vendor(name);
         case INTERCEPT_MODE_NONE:
         default:
                 return (char *)name;
