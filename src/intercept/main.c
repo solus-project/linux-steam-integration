@@ -98,10 +98,6 @@ static const char *wanted_steam_processes[] = {
  * Vendor offendors should not be allowed to load replacements for libraries
  * that are KNOWN to cause issues, i.e. SDL + libstdc++
  */
-static const char *vendor_offenders[] = {
-        "bms_linux",
-};
-
 static const char *vendor_blacklist[] = {
         "libgcc_",
         "libstdc++",
@@ -163,10 +159,9 @@ static void check_is_intercept_candidate(void)
 
         if (is_in_process_set(nom, wanted_steam_processes, ARRAY_SIZE(wanted_steam_processes))) {
                 work_mode = INTERCEPT_MODE_STEAM;
-        } else if (is_in_process_set(nom, vendor_offenders, ARRAY_SIZE(vendor_offenders))) {
-                work_mode = INTERCEPT_MODE_VENDOR_OFFENDER;
         } else {
-                work_mode = INTERCEPT_MODE_NONE;
+                work_mode = INTERCEPT_MODE_VENDOR_OFFENDER;
+                matched_process = "vendor_offender";
         }
 }
 
