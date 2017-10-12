@@ -14,9 +14,16 @@
 #include <link.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #include "../common.h"
-#include "nica/nica.h"
+#include "nica/util.h"
+
+static inline bool lsi_file_exists(const char *path)
+{
+        struct stat st = { .st_ino = 0 };
+        return (lstat(path, &st) == 0);
+}
 
 /**
  * What's the known process name?
@@ -193,7 +200,7 @@ static void emit_overriden_lib(const char *lib_name)
 char *lsi_search_steam(const char *name)
 {
         /* Find out if it exists */
-        bool file_exists = nc_file_exists(name);
+        bool file_exists = lsi_file_exists(name);
 
         /* Find out if its a Steam private lib.. These are relative "./" files too! */
         if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
@@ -216,7 +223,7 @@ char *lsi_search_steam(const char *name)
 char *lsi_blacklist_vendor(const char *name)
 {
         /* Find out if it exists */
-        bool file_exists = nc_file_exists(name);
+        bool file_exists = lsi_file_exists(name);
 
         /* Find out if its a Steam private lib.. These are relative "./" files too! */
         if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
