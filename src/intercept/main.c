@@ -296,7 +296,12 @@ static bool lsi_override_soname(unsigned int flag, const char *orig_name, const 
                         continue;
                 }
                 *soname = vendor_transmute_target[i];
-                emit_replaced_name(orig_name, *soname);
+
+                /* If LSI_DEBUG is set, spam it. */
+                if (getenv("LSI_DEBUG")) {
+                        emit_replaced_name(orig_name, *soname);
+                }
+
                 return true;
         }
 
