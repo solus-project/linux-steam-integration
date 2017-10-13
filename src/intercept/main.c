@@ -107,6 +107,16 @@ static const char *vendor_blacklist[] = {
 
         /* general problem causer. */
         "libopenal.so.",
+
+        /* thou shalt not replace drivers (swiftshader) ! */
+        "libGLESv2.so",
+        "libGL.so",
+
+        /* glews (provide glew + glew110 in your distro for full compat) */
+        "libGLEW.so.",
+
+        /* libglu has stable soname */
+        "libGLU.so.",
 };
 
 /**
