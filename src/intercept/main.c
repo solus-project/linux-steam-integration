@@ -230,10 +230,89 @@ char *lsi_search_steam(const char *name)
         return (char *)name;
 }
 
-char *lsi_blacklist_vendor(const char *name)
+/**
+ * Source identifier patterns that indicate a soname replacement is happening.
+ * Note that this is a basic pattern match for the soname and just allows us
+ * to lookup the transmute target
+ */
+static const char *vendor_transmute_source[] = {
+        "libSDL2-2.0.",
+        "libSDL2_image-2.0.",
+};
+
+/**
+ * The transmute target is the intended replacement for any source name, assuming
+ * that the soname doesn't identically match the currently requested soname.
+ * This allows us to do on the fly replacements for re-soname'd libraries.
+ */
+static const char *vendor_transmute_target[] = {
+        "libSDL2-2.0.so.0",
+        "libSDL2_image-2.0.so.0",
+};
+
+/**
+ * emit_replaced_lib is used to pretty-print the debug when we blacklist and
+ * transform a soname to a system name
+ */
+static void emit_replaced_name(const char *lib_name, const char *new_name)
+{
+        fprintf(stderr,
+                "\033[32;1m[LSI:%s]\033[0m: debug: transforming vendor soname: "
+                "\033[31;1m%s\033[0m -> \033[34;1m%s\033[0m\n",
+                matched_process,
+                lib_name,
+                new_name);
+}
+
+/**
+ * lsi_override_soname will deal with LA_SER_ORIG entries, i.e. the original
+ * soname request when the linker tries to load a library.
+ *
+ * Certain Steam games (notably Feral Interactive ports) use their own vendored
+ * SDL libraries with changed sonames, which are implicitly blacklisted by the
+ * lsi_blacklist_vendor function.
+ *
+ * As such, we intercept those renamed libraries, and convert their names back
+ * to the ABI stable system libraries on the fly.
+ */
+static bool lsi_override_soname(unsigned int flag, const char *orig_name, const char **soname)
+{
+        *soname = NULL;
+
+        /* We only need to deal with LA_SER_ORIG */
+        if ((flag & LA_SER_ORIG) != LA_SER_ORIG) {
+                return false;
+        }
+
+        for (size_t i = 0; i < ARRAY_SIZE(vendor_transmute_source); i++) {
+                if (!strstr(orig_name, vendor_transmute_source[i])) {
+                        continue;
+                }
+                /* Ensure we're not just replacing the same thing here as the
+                 * string would be identical, no real replacement would happen,
+                 * and ld will be confused about memory and die.
+                 */
+                if (streq(orig_name, vendor_transmute_target[i])) {
+                        continue;
+                }
+                *soname = vendor_transmute_target[i];
+                emit_replaced_name(orig_name, *soname);
+                return true;
+        }
+
+        return false;
+}
+
+char *lsi_blacklist_vendor(unsigned int flag, const char *name)
 {
         /* Find out if it exists */
         bool file_exists = lsi_file_exists(name);
+        const char *override_soname = NULL;
+
+        /* Find out if we have to rename some libraries on the fly */
+        if (lsi_override_soname(flag, name, &override_soname)) {
+                return (char *)override_soname;
+        }
 
         /* Find out if its a Steam private lib.. These are relative "./" files too! */
         if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
@@ -261,13 +340,13 @@ char *lsi_blacklist_vendor(const char *name)
  * as a private vendored lib
  */
 _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
-                                 __lsi_unused__ unsigned int flag)
+                                 unsigned int flag)
 {
         switch (work_mode) {
         case INTERCEPT_MODE_STEAM:
                 return lsi_search_steam(name);
         case INTERCEPT_MODE_VENDOR_OFFENDER:
-                return lsi_blacklist_vendor(name);
+                return lsi_blacklist_vendor(flag, name);
         case INTERCEPT_MODE_NONE:
         default:
                 return (char *)name;
