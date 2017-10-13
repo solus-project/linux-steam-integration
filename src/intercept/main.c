@@ -117,6 +117,9 @@ static const char *vendor_blacklist[] = {
 
         /* libglu has stable soname */
         "libGLU.so.",
+
+        /* Nuh uh. Sorry, Feral games. libcurl MUST be up to date for security! */
+        "libcurl.so.",
 };
 
 /**
