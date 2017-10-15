@@ -242,6 +242,7 @@ char *lsi_search_steam(const char *name)
 static const char *vendor_transmute_source[] = {
         "libSDL2-2.0.",
         "libSDL2_image-2.0.",
+        "libSDL2_ttf.so",
 };
 
 /**
@@ -252,6 +253,7 @@ static const char *vendor_transmute_source[] = {
 static const char *vendor_transmute_target[] = {
         "libSDL2-2.0.so.0",
         "libSDL2_image-2.0.so.0",
+        "libSDL2_ttf-2.0.so.0",
 };
 
 /**
