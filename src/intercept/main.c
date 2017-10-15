@@ -119,10 +119,8 @@ static const char *vendor_blacklist[] = {
         /* libglu has stable soname */
         "libGLU.so.",
 
-        /* Nuh uh. Sorry, Feral games. libcurl MUST be up to date for security! */
+        /* Security sensitive libraries should not be replaced */
         "libcurl.so.",
-
-        /* Oh hell no. Seen in Game Maker bundling */
         "libcrypto.so.1.0.0",
         "libssl.so.1.0.0",
 };
