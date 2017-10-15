@@ -121,6 +121,10 @@ static const char *vendor_blacklist[] = {
 
         /* Nuh uh. Sorry, Feral games. libcurl MUST be up to date for security! */
         "libcurl.so.",
+
+        /* Oh hell no. Seen in Hyper Light Drifer */
+        "libcrypto.so.1.0.0",
+        "libssl.so.1.0.0",
 };
 
 /**
