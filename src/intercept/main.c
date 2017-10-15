@@ -12,6 +12,7 @@
 #define _GNU_SOURCE
 
 #include <link.h>
+#include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -268,6 +269,81 @@ static void emit_replaced_name(const char *lib_name, const char *new_name)
 }
 
 /**
+ * emit_dlopen_swap is used to pretty-print the debug when we convert a local
+ * dlopen path into a system one
+ */
+static void emit_dlopen_swap(const char *lib_name, const char *new_name)
+{
+        fprintf(stderr,
+                "\033[32;1m[LSI:%s]\033[0m: debug: intercepting vendor dlopen(): "
+                "\033[31;1m%s\033[0m -> \033[34;1m%s\033[0m\n",
+                matched_process,
+                lib_name,
+                new_name);
+}
+
+/**
+ * lsi_override_dlopen is used to override simple dlopen() requests typically
+ * used by Mono games, i.e.:
+ *
+ * <dllmap dll="SDL2.dll" os="linux" cpu="x86-64" target="./lib64/libSDL2-2.0.so.0"/>
+ *
+ * We'll attempt to do a trivial lookup for "/usr/./lib64/libSDL2-2.0.so.0 in this
+ * case.
+ */
+static bool lsi_override_dlopen(const char *orig_name, const char **soname)
+{
+        static char path_lookup[PATH_MAX];
+        static char path_copy[PATH_MAX];
+        char *small_name = NULL;
+        static const char *library_paths[] = {
+#if UINTPTR_MAX == 0xffffffffffffffff
+                "/usr/lib64",
+                "/usr/lib/x86_64-linux-gnu",
+                "/usr/lib",
+#else
+                "/usr/lib32",
+                "/usr/lib/i386-linux-gnu",
+                "/usr/lib",
+#endif
+        };
+
+        if (!lsi_file_exists(orig_name)) {
+                return false;
+        }
+
+        if (!strcpy(path_copy, orig_name)) {
+                return false;
+        }
+
+        small_name = basename(path_copy);
+
+        /* Iterate all of the library paths for this process architecture and try
+         * to find a system variant of the library instead of allowing the process
+         * to dlopen() the vendored version.
+         */
+        for (size_t i = 0; i < ARRAY_SIZE(library_paths); i++) {
+                if (snprintf(path_lookup,
+                             sizeof(path_lookup),
+                             "%s/%s",
+                             library_paths[i],
+                             small_name) < 0) {
+                        return false;
+                }
+                if (!lsi_file_exists(path_lookup)) {
+                        continue;
+                }
+                *soname = path_lookup;
+                if (getenv("LSI_DEBUG")) {
+                        emit_dlopen_swap(orig_name, path_lookup);
+                }
+                return true;
+        }
+
+        return false;
+}
+
+/**
  * lsi_override_soname will deal with LA_SER_ORIG entries, i.e. the original
  * soname request when the linker tries to load a library.
  *
@@ -285,6 +361,11 @@ static bool lsi_override_soname(unsigned int flag, const char *orig_name, const 
         /* We only need to deal with LA_SER_ORIG */
         if ((flag & LA_SER_ORIG) != LA_SER_ORIG) {
                 return false;
+        }
+
+        /* Don't transform dlopen */
+        if (strstr(orig_name, "/")) {
+                return lsi_override_dlopen(orig_name, soname);
         }
 
         for (size_t i = 0; i < ARRAY_SIZE(vendor_transmute_source); i++) {
