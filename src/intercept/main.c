@@ -242,9 +242,16 @@ char *lsi_search_steam(const char *name)
  * to lookup the transmute target
  */
 static const char *vendor_transmute_source[] = {
+        /* Common */
         "libSDL2-2.0.",
         "libSDL2_image-2.0.",
+
+        /* ".so" renames */
         "libSDL2_ttf.so",
+        "libSDL2_image.so",
+        "libSDL2_mixer.so",
+        "libSDL2_net.so",
+        "libSDL2_gfx.so",
 };
 
 /**
@@ -253,9 +260,16 @@ static const char *vendor_transmute_source[] = {
  * This allows us to do on the fly replacements for re-soname'd libraries.
  */
 static const char *vendor_transmute_target[] = {
+        /* Common */
         "libSDL2-2.0.so.0",
         "libSDL2_image-2.0.so.0",
+
+        /* ".so" renames */
         "libSDL2_ttf-2.0.so.0",
+        "libSDL2_image-2.0.so.0",
+        "libSDL2_mixer-2.0.so.0",
+        "libSDL2_net-2.0.so.0",
+        "libSDL2_gfx-1.0.so.0",
 };
 
 /**
