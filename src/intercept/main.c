@@ -86,6 +86,9 @@ static const char *steam_allowed[] = {
 
         /* steamwebhelper */
         "libcef.so",
+
+        /* Swift shader */
+        "libGLESv2.so",
 };
 
 static const char *wanted_steam_processes[] = {
