@@ -19,11 +19,6 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         fprintf(stderr, "Loading lsi_redirect\n");
 }
 
-__attribute__((destructor)) static void lsi_redirect_unload(void)
-{
-        fprintf(stderr, "Unloading lsi_redirect\n");
-}
-
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *
