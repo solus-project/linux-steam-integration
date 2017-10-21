@@ -16,6 +16,7 @@ if with_libredirect == true
         include_directories: nica_includes,
         dependencies: [
             libdl,
+            link_lsi_common,
         ],
         install: true,
     )

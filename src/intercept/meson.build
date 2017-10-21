@@ -6,25 +6,13 @@ if with_libintercept == true
         'main.c',
     ]
 
-    nica_build = static_library(
-        'nica',
-        sources: nica_sources,
-        include_directories: nica_includes,
-    )
-
-    link_nica = declare_dependency(
-        link_with: nica_build,
-        include_directories: nica_includes,
-    )
-
-
     main_intercept = shared_library(
         'lsi-intercept',
         sources: intercept_sources,
         c_args: ['-fvisibility=hidden'],
         include_directories: nica_includes,
         dependencies: [
-            link_nica,
+            link_lsi_common,
         ],
         install: true,
     )
