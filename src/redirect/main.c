@@ -13,11 +13,13 @@
 
 #include <dlfcn.h>
 #include <errno.h>
+#include <libgen.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "nica/util.h"
 
@@ -53,6 +55,12 @@ typedef struct LsiRedirectTable {
  * Our redirect instance, stack only.
  */
 static LsiRedirectTable lsi_table = { 0 };
+
+static inline bool lsi_file_exists(const char *path)
+{
+        struct stat st = { .st_ino = 0 };
+        return (lstat(path, &st) == 0);
+}
 
 /**
  * Determine the basename'd process
@@ -167,10 +175,46 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         fprintf(stderr, "Enabled lsi_redirect for: %s\n", process_name);
 }
 
+static char *lsi_redirect_replace_path(const char *path)
+{
+        char *dir = NULL;
+        autofree(char) *tmp = NULL;
+        char *transformed_path = NULL;
+
+        /* This is where we'd need to look at what game we are, and what we'd need
+         * to replace. For now, we're going to cheat, and give it a fixed path.
+         */
+        if (!strstr(path,
+                    "/ARK/ShooterGame/Content/PrimalEarth/Environment/Water/"
+                    "Water_DepthBlur_MIC.uasset")) {
+                return strdup(path);
+        }
+
+        tmp = strdup(path);
+        dir = dirname(tmp);
+
+        /* We want this guy: */
+        const char *new_path = "../../../Mods/TheCenter/Assets/Mic/Water_DepthBlur_MIC.uasset";
+        if (asprintf(&transformed_path, "%s/%s", dir, new_path) < 0) {
+                fputs("OUT OF MEMORY\n", stderr);
+                abort();
+        }
+
+        if (!lsi_file_exists(transformed_path)) {
+                fprintf(stderr, "Target path does not exist: %s\n", new_path);
+                free(transformed_path);
+                return strdup(path);
+        }
+
+        fprintf(stderr, "Replaced '%s' with '%s'\n", path, transformed_path);
+        return transformed_path;
+}
+
 _nica_public_ int open(const char *p, int flags, ...)
 {
         va_list va;
         mode_t mode;
+        autofree(char) *replaced_path = NULL;
 
         /* Must ensure we're **really** initialised, as we might see open happen
          * before the constructor..
@@ -187,9 +231,8 @@ _nica_public_ int open(const char *p, int flags, ...)
                 return lsi_table.open(p, flags, mode);
         }
 
-        /* TODO: Add redirection code here for paths */
-        fprintf(stderr, "begin open: %s\n", p);
-        return lsi_table.open(p, flags, mode);
+        replaced_path = lsi_redirect_replace_path(p);
+        return lsi_table.open(replaced_path, flags, mode);
 }
 
 /*
