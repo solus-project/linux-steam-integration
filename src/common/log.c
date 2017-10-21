@@ -35,7 +35,7 @@ void lsi_log_debug(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\033[32;1m[lsi:debug]\033[0m: %s\n", p);
+        fprintf(stderr, "\033[32;1m[lsi:debug]\033[0m %s\n", p);
 
 end:
         va_end(va);
@@ -53,7 +53,7 @@ void lsi_log_info(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\034[32;1m[lsi:info]\033[0m: %s\n", p);
+        fprintf(stderr, "\034[32;1m[lsi:info]\033[0m %s\n", p);
 
 end:
         va_end(va);
@@ -71,7 +71,7 @@ void lsi_log_warn(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\033[33;1m[lsi:warn]\033[0m: %s\n", p);
+        fprintf(stderr, "\033[33;1m[lsi:warn]\033[0m %s\n", p);
 
 end:
         va_end(va);
@@ -89,7 +89,7 @@ void lsi_log_error(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\033[31;1m[lsi:error]\033[0m: %s\n", p);
+        fprintf(stderr, "\033[31;1m[lsi:error]\033[0m %s\n", p);
 
 end:
         va_end(va);

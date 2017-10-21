@@ -19,6 +19,7 @@
 
 #include "../common/common.h"
 #include "../common/files.h"
+#include "../common/log.h"
 #include "nica/util.h"
 
 /**
@@ -134,12 +135,7 @@ static bool is_in_process_set(char *process_name, const char **processes, size_t
                 if (streq(processes[i], process_name)) {
                         work_mode = INTERCEPT_MODE_STEAM;
                         matched_process = processes[i];
-                        if (!getenv("LSI_DEBUG")) {
-                                return true;
-                        }
-                        fprintf(stderr,
-                                "\033[32;1m[LSI:%s]\033[0m: debug: loading libintercept from LSI\n",
-                                matched_process);
+                        lsi_log_debug("loading libintercept for '%s'", matched_process);
                         return true;
                 }
         }
@@ -179,19 +175,6 @@ _nica_public_ unsigned int la_version(unsigned int supported_version)
 }
 
 /**
- * emit_overriden lib is used to pretty-print the debug when we blacklist
- * a vendored library
- */
-static void emit_overriden_lib(const char *lib_name)
-{
-        fprintf(stderr,
-                "\033[32;1m[LSI:%s]\033[0m: debug: blacklisted loading of vendored library: "
-                "\033[34;1m%s\033[0m\n",
-                matched_process,
-                lib_name);
-}
-
-/**
  * lsi_search_steam handles whitelisting for the main Steam processes
  */
 char *lsi_search_steam(const char *name)
@@ -206,9 +189,8 @@ char *lsi_search_steam(const char *name)
                                 return (char *)name;
                         }
                 }
-                /* If LSI_DEBUG is set, spam it. */
-                if (getenv("LSI_DEBUG") && file_exists) {
-                        emit_overriden_lib(name);
+                if (file_exists) {
+                        lsi_log_debug("blacklisted loading of vendor library: %s", name);
                 }
 
                 return NULL;
@@ -252,34 +234,6 @@ static const char *vendor_transmute_target[] = {
         "libSDL2_net-2.0.so.0",
         "libSDL2_gfx-1.0.so.0",
 };
-
-/**
- * emit_replaced_lib is used to pretty-print the debug when we blacklist and
- * transform a soname to a system name
- */
-static void emit_replaced_name(const char *lib_name, const char *new_name)
-{
-        fprintf(stderr,
-                "\033[32;1m[LSI:%s]\033[0m: debug: transforming vendor soname: "
-                "\033[31;1m%s\033[0m -> \033[34;1m%s\033[0m\n",
-                matched_process,
-                lib_name,
-                new_name);
-}
-
-/**
- * emit_dlopen_swap is used to pretty-print the debug when we convert a local
- * dlopen path into a system one
- */
-static void emit_dlopen_swap(const char *lib_name, const char *new_name)
-{
-        fprintf(stderr,
-                "\033[32;1m[LSI:%s]\033[0m: debug: intercepting vendor dlopen(): "
-                "\033[31;1m%s\033[0m -> \033[34;1m%s\033[0m\n",
-                matched_process,
-                lib_name,
-                new_name);
-}
 
 /**
  * lsi_override_dlopen is used to override simple dlopen() requests typically
@@ -333,9 +287,10 @@ static bool lsi_override_dlopen(const char *orig_name, const char **soname)
                         continue;
                 }
                 *soname = path_lookup;
-                if (getenv("LSI_DEBUG")) {
-                        emit_dlopen_swap(orig_name, path_lookup);
-                }
+                lsi_log_debug(
+                    "intercepting vendor dlopen() \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
+                    orig_name,
+                    path_lookup);
                 return true;
         }
 
@@ -379,11 +334,10 @@ static bool lsi_override_soname(unsigned int flag, const char *orig_name, const 
                         continue;
                 }
                 *soname = vendor_transmute_target[i];
-
-                /* If LSI_DEBUG is set, spam it. */
-                if (getenv("LSI_DEBUG")) {
-                        emit_replaced_name(orig_name, *soname);
-                }
+                lsi_log_debug(
+                    "transforming vendor  soname: \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
+                    orig_name,
+                    *soname);
 
                 return true;
         }
@@ -409,9 +363,10 @@ char *lsi_blacklist_vendor(unsigned int flag, const char *name)
                                 continue;
                         }
 
-                        /* If LSI_DEBUG is set, spam it. */
-                        if (getenv("LSI_DEBUG") && file_exists) {
-                                emit_overriden_lib(name);
+                        if (file_exists) {
+                                lsi_log_debug(
+                                    "blacklisted loading of vendor library: \033[34;1m%s\033[0m",
+                                    name);
                         }
                         return NULL;
                 }
