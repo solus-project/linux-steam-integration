@@ -58,6 +58,11 @@ if with_libintercept == true
     cdata.set('HAVE_LIBINTERCEPT', '1')
 endif
 
+with_libredirect = get_option('with-libredirect')
+if with_libredirect == true
+    cdata.set('HAVE_LIBREDIRECT', '1')
+endif
+
 with_frontend = get_option('with-frontend')
 
 if get_option('with-new-libcxx-abi') == true

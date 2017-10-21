@@ -19,4 +19,5 @@ nica_includes = [
 subdir('lsi')
 subdir('frontend')
 subdir('intercept')
+subdir('redirect')
 subdir('shim')
