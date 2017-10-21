@@ -32,6 +32,13 @@
  */
 #define AUDIT_PATH "/usr/\$LIB/liblsi-intercept.so"
 
+/**
+ * Redirect path is used for the libredirect library to perform internal
+ * redirections in functions like `open()` where needed to hotfix games
+ * at runtime.
+ */
+#define REDIRECT_PATH "/usr/\$LIB/liblsi-redirect.so"
+
 int main(int argc, char **argv)
 {
         LsiConfig config = { 0 };
@@ -66,6 +73,14 @@ int main(int argc, char **argv)
                 /* Only use libintercept in combination with native runtime! */
                 if (config.use_libintercept) {
                         setenv("LD_AUDIT", AUDIT_PATH, 1);
+                }
+#endif
+#ifdef HAVE_LIBREDIRECT
+                /* Only use libredirect in combination with native runtime!
+                 * TODO: Respect existing preload libraries?
+                 */
+                if (config.use_libredirect) {
+                        setenv("LD_PRELOAD", REDIRECT_PATH, 1);
                 }
 #endif
         } else {
