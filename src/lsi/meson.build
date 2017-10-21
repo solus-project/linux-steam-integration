@@ -9,6 +9,9 @@ if shim_behaviour != 'none' or with_frontend == true
     lib_lsi = static_library(
         'lsi-lsi',
         sources: lsi_sources + nica_sources,
+        dependencies: [
+            link_lsi_common,
+        ],
         include_directories: nica_includes,
     )
     link_lsi = declare_dependency(

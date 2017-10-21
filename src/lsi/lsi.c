@@ -26,6 +26,8 @@
 #include "nica/hashmap.h"
 #include "nica/inifile.h"
 
+#include "../common/files.h"
+
 /**
  * Configuration file suffix, i.e. ~/.config/linux-steam-integration.conf
  */
@@ -41,38 +43,6 @@
  * /usr/share/defaults/linux-steam-integration/linux-steam-integration.conf
  */
 #define LSI_VENDOR_CONFIG_FILE VENDORDIR "/ " LSI_CONFIG_FILE
-
-/**
- * Determine the home directory
- */
-static const char *lsi_get_home_dir(void)
-{
-        char *c = NULL;
-        struct passwd *p = NULL;
-
-        c = getenv("HOME");
-        if (c) {
-                return c;
-        }
-        p = getpwuid(getuid());
-        if (!p) {
-                return NULL;
-        }
-        return p->pw_dir;
-}
-
-/**
- * Determine the home config directory
- */
-static char *lsi_get_user_config_dir(void)
-{
-        const char *home = lsi_get_home_dir();
-        char *c = NULL;
-        if (asprintf(&c, "%s/.config", home) < 0) {
-                return NULL;
-        }
-        return c;
-}
 
 /**
  * Build the user config file path
