@@ -21,6 +21,7 @@
 #include <sys/stat.h>
 
 #include "../common/files.h"
+#include "../common/log.h"
 #include "nica/util.h"
 
 #include "redirect.h"
@@ -149,7 +150,7 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
                 return;
         }
 
-        fprintf(stderr, "Enabled lsi_redirect for: %s\n", process_name);
+        lsi_log_debug("Enable lsi_redirect for '%s'", process_name);
 }
 
 static char *lsi_redirect_replace_path(const char *path)
@@ -178,12 +179,12 @@ static char *lsi_redirect_replace_path(const char *path)
         }
 
         if (!lsi_file_exists(transformed_path)) {
-                fprintf(stderr, "Target path does not exist: %s\n", new_path);
+                lsi_log_warn("Target path does not exist: %s", new_path);
                 free(transformed_path);
                 return strdup(path);
         }
 
-        fprintf(stderr, "Replaced '%s' with '%s'\n", path, transformed_path);
+        lsi_log_info("Replaced '%s' with '%s'", path, transformed_path);
         return transformed_path;
 }
 
