@@ -11,6 +11,7 @@
 
 #define _GNU_SOURCE
 
+#include <dlfcn.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -20,6 +21,28 @@
 #include "nica/util.h"
 
 static volatile bool lsi_init = false;
+
+/**
+ * Handle definitions
+ */
+typedef int (*lsi_open_file)(const char *p, int flags);
+
+/**
+ * Global storage of handles for nicer organisation.
+ */
+typedef struct LsiRedirectTable {
+        lsi_open_file open;
+
+        /* Allow future handle opens.. */
+        struct {
+                void *libc;
+        } handles;
+} LsiRedirectTable;
+
+/**
+ * Our redirect instance, stack only.
+ */
+static LsiRedirectTable lsi_table = { 0 };
 
 /**
  * Determine the basename'd process
@@ -48,6 +71,11 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
         }
         lsi_init = false;
         fprintf(stderr, "Unloading lsi_redirect\n");
+
+        if (lsi_table.handles.libc) {
+                dlclose(lsi_table.handles.libc);
+                lsi_table.handles.libc = NULL;
+        }
 }
 
 /**
@@ -61,6 +89,9 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
 __attribute__((constructor)) static void lsi_redirect_init(void)
 {
         autofree(char) *process_name = get_process_name();
+        void *symbol_lookup = NULL;
+        char *dl_error = NULL;
+
         if (!process_name) {
                 fprintf(stderr, "Failure to allocate memory! %s\n", strerror(errno));
                 return;
@@ -69,8 +100,38 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         fprintf(stderr, "Loading lsi_redirect for: %s\n", process_name);
         lsi_init = true;
 
+        /* Try to explicitly open libc. We can't safely rely on RTLD_NEXT
+         * as we might be dealing with a strange link order
+         */
+        lsi_table.handles.libc = dlopen("libc.so.6", RTLD_LAZY);
+        if (!lsi_table.handles.libc) {
+                fprintf(stderr, "Unable to grab libc.so.6 handle: %s\n", dlerror());
+                goto failed;
+        }
+
+        /* Safely look up the symbol */
+        symbol_lookup = dlsym(lsi_table.handles.libc, "open");
+        dl_error = dlerror();
+        if (dl_error || !symbol_lookup) {
+                fprintf(stderr, "Failed to bind 'open': %s\n", dl_error);
+                goto failed;
+        }
+
+        /* Have the symbol correctly, copy it to make it usable */
+        memcpy(&lsi_table.open, &symbol_lookup, sizeof(lsi_table.open));
+
+        fprintf(stderr, "lsi_redirect now loaded\n");
+
         /* We might not get an unload, so chain onto atexit */
         atexit(lsi_redirect_shutdown);
+        return;
+
+failed:
+
+        /* Failed to initialise so just unload ourselves and let the process continue
+         * unimpeded, so as not to break the user experience.
+         */
+        lsi_redirect_shutdown();
 }
 
 /*
