@@ -21,7 +21,16 @@
 
 #include "nica/util.h"
 
+/**
+ * Whether we've initialised yet or not.
+ */
 static volatile bool lsi_init = false;
+
+/**
+ * Whether we should actually perform overrides
+ * This is determined by the process name
+ */
+static volatile bool lsi_override = false;
 
 /**
  * Handle definitions
@@ -80,27 +89,19 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
 }
 
 /**
- * Main entry point into this redirect module.
- *
- * We'll check the process name and determine if we're interested in installing
- * some redirect hooks into this library.
+ * Responsible for setting up the vfunc redirect table so that we're able to
+ * get `open` and such working before we've hit the constructor, and ensure
+ * we only init once.
  */
-__attribute__((constructor)) static void lsi_redirect_init(void)
+static void lsi_redirect_init_tables(void)
 {
+        void *symbol_lookup = NULL;
+        char *dl_error = NULL;
+
         if (lsi_init) {
                 return;
         }
 
-        autofree(char) *process_name = get_process_name();
-        void *symbol_lookup = NULL;
-        char *dl_error = NULL;
-
-        if (!process_name) {
-                fprintf(stderr, "Failure to allocate memory! %s\n", strerror(errno));
-                return;
-        }
-
-        fprintf(stderr, "Loading lsi_redirect for: %s\n", process_name);
         lsi_init = true;
 
         /* Try to explicitly open libc. We can't safely rely on RTLD_NEXT
@@ -135,6 +136,28 @@ failed:
         abort();
 }
 
+/**
+ * Main entry point into this redirect module.
+ *
+ * We'll check the process name and determine if we're interested in installing
+ * some redirect hooks into this library.
+ * Otherwise we'll continue to operate in a pass-through mode
+ */
+__attribute__((constructor)) static void lsi_redirect_init(void)
+{
+        /* Ensure we're open. */
+        lsi_redirect_init_tables();
+
+        autofree(char) *process_name = get_process_name();
+
+        if (!process_name) {
+                fprintf(stderr, "Failure to allocate memory! %s\n", strerror(errno));
+                return;
+        }
+
+        fprintf(stderr, "Loaded lsi_redirect for: %s\n", process_name);
+}
+
 _nica_public_ int open(const char *p, int flags, ...)
 {
         va_list va;
@@ -143,7 +166,7 @@ _nica_public_ int open(const char *p, int flags, ...)
         /* Must ensure we're **really** initialised, as we might see open happen
          * before the constructor..
          */
-        lsi_redirect_init();
+        lsi_redirect_init_tables();
 
         /* Grab the mode_t */
         va_start(va, flags);
