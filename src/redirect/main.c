@@ -23,6 +23,8 @@
 
 #include "nica/util.h"
 
+#include "redirect.h"
+
 /**
  * Whether we've initialised yet or not.
  */
