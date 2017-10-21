@@ -19,6 +19,8 @@
 
 #include "nica/util.h"
 
+static volatile bool lsi_init = false;
+
 /**
  * Determine the basename'd process
  */
@@ -36,6 +38,15 @@ static inline char *get_process_name(void)
         return strdup(basep);
 }
 
+__attribute__((destructor)) static void lsi_redirect_shutdown(void)
+{
+        if (!lsi_init) {
+                return;
+        }
+        lsi_init = false;
+        fprintf(stderr, "Unloading lsi_redirect\n");
+}
+
 __attribute__((constructor)) static void lsi_redirect_init(void)
 {
         autofree(char) *process_name = get_process_name();
@@ -43,7 +54,12 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
                 fprintf(stderr, "Failure to allocate memory! %s\n", strerror(errno));
                 return;
         }
+
         fprintf(stderr, "Loading lsi_redirect for: %s\n", process_name);
+        lsi_init = true;
+
+        /* We might not get an unload, so chain onto atexit */
+        atexit(lsi_redirect_shutdown);
 }
 
 /*
