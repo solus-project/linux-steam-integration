@@ -21,6 +21,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "../common/files.h"
 #include "nica/util.h"
 
 #include "redirect.h"
@@ -57,12 +58,6 @@ typedef struct LsiRedirectTable {
  * Our redirect instance, stack only.
  */
 static LsiRedirectTable lsi_table = { 0 };
-
-static inline bool lsi_file_exists(const char *path)
-{
-        struct stat st = { .st_ino = 0 };
-        return (lstat(path, &st) == 0);
-}
 
 /**
  * Determine the basename'd process
