@@ -17,6 +17,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "../common/files.h"
 #include "config.h"
 #include "lsi.h"
 

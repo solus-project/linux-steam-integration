@@ -17,7 +17,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include "../common.h"
@@ -96,15 +95,6 @@ __lsi_inline__ static inline const char *lsi_preload_list(void)
  * attempt to make use of zenity
  */
 void lsi_report_failure(const char *s, ...);
-
-/**
- * Quick helper to determine if the path exists
- */
-__lsi_inline__ static inline bool lsi_file_exists(const char *path)
-{
-        __lsi_unused__ struct stat st = { 0 };
-        return lstat(path, &st) == 0;
-}
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html

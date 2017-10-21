@@ -13,6 +13,7 @@
 
 #define _GNU_SOURCE
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 /**
@@ -24,6 +25,16 @@ const char *lsi_get_home_dir(void);
  * Determine the home config directory
  */
 char *lsi_get_user_config_dir(void);
+
+/**
+ * Find out where Steam is installed
+ */
+char *lsi_get_steam_dir(void);
+
+/**
+ * Quick helper to determine if the path exists
+ */
+bool lsi_file_exists(const char *path);
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html

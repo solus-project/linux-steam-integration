@@ -15,11 +15,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
+#include "../common.h"
 #include "files.h"
+#include "nica/util.h"
 
-const char *lsi_get_home_dir(void)
+bool lsi_file_exists(const char *path)
+{
+        __lsi_unused__ struct stat st = { 0 };
+        return lstat(path, &st) == 0;
+}
+
+const char *lsi_get_home_dir()
 {
         char *c = NULL;
         struct passwd *p = NULL;
@@ -35,7 +44,7 @@ const char *lsi_get_home_dir(void)
         return p->pw_dir;
 }
 
-char *lsi_get_user_config_dir(void)
+char *lsi_get_user_config_dir()
 {
         const char *home = lsi_get_home_dir();
         char *c = NULL;
@@ -43,6 +52,36 @@ char *lsi_get_user_config_dir(void)
                 return NULL;
         }
         return c;
+}
+
+/**
+ * Just use .local/share/Steam at this point..
+ */
+static inline char *lsi_get_fallback_steam_dir(const char *home)
+{
+        char *p = NULL;
+        if (asprintf(&p, "%s/.local/share/Steam", home) < 0) {
+                return NULL;
+        }
+        return p;
+}
+
+char *lsi_get_steam_dir()
+{
+        const char *homedir = NULL;
+        autofree(char) *candidate = NULL;
+        autofree(char) *resolv = NULL;
+
+        homedir = lsi_get_home_dir();
+        if (asprintf(&candidate, "%s/.steam/root", homedir) < 0) {
+                return NULL;
+        }
+
+        resolv = realpath(candidate, NULL);
+        if (!resolv || !lsi_file_exists(resolv)) {
+                return lsi_get_fallback_steam_dir(homedir);
+        }
+        return strdup(resolv);
 }
 
 /*
