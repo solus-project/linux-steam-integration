@@ -88,7 +88,6 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
                 return;
         }
         lsi_init = false;
-        fprintf(stderr, "Unloading lsi_redirect\n");
 
         if (lsi_table.handles.libc) {
                 dlclose(lsi_table.handles.libc);
@@ -131,8 +130,6 @@ static void lsi_redirect_init_tables(void)
 
         /* Have the symbol correctly, copy it to make it usable */
         memcpy(&lsi_table.open, &symbol_lookup, sizeof(lsi_table.open));
-
-        fprintf(stderr, "lsi_redirect now loaded\n");
 
         /* We might not get an unload, so chain onto atexit */
         atexit(lsi_redirect_shutdown);
