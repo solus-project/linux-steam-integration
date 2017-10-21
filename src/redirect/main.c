@@ -12,7 +12,6 @@
 #define _GNU_SOURCE
 
 #include <dlfcn.h>
-#include <errno.h>
 #include <libgen.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -132,11 +131,12 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
 {
         /* Ensure we're open. */
         lsi_redirect_init_tables();
+        autofree(char) *process_name = NULL;
 
-        autofree(char) *process_name = lsi_get_process_name();
+        process_name = lsi_get_process_name();
 
         if (!process_name) {
-                fprintf(stderr, "Failure to allocate memory! %s\n", strerror(errno));
+                fputs("Out of memory!\n", stderr);
                 return;
         }
 
