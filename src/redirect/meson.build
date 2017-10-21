@@ -10,6 +10,7 @@ if with_libredirect == true
         'lsi-redirect',
         sources: redirect_sources,
         c_args: ['-fvisibility=hidden'],
+        include_directories: nica_includes,
         install: true,
     )
 endif

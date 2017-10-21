@@ -11,12 +11,39 @@
 
 #define _GNU_SOURCE
 
+#include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "nica/util.h"
+
+/**
+ * Determine the basename'd process
+ */
+static inline char *get_process_name(void)
+{
+        autofree(char) *realp = NULL;
+        char *basep = NULL;
+
+        realp = realpath("/proc/self/exe", NULL);
+        if (!realp) {
+                return false;
+        }
+
+        basep = basename(realp);
+        return strdup(basep);
+}
 
 __attribute__((constructor)) static void lsi_redirect_init(void)
 {
-        fprintf(stderr, "Loading lsi_redirect\n");
+        autofree(char) *process_name = get_process_name();
+        if (!process_name) {
+                fprintf(stderr, "Failure to allocate memory! %s\n", strerror(errno));
+                return;
+        }
+        fprintf(stderr, "Loading lsi_redirect for: %s\n", process_name);
 }
 
 /*
