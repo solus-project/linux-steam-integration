@@ -30,6 +30,7 @@ typedef struct LsiConfig {
         bool force_32;           /**<Do we force 32-bit? */
         bool use_native_runtime; /**<Do we force our native runtime? */
         bool use_libintercept;   /**<Do we force libintercept? */
+        bool use_libredirect;    /**<Do we force libredirect? */
 } LsiConfig;
 
 /**

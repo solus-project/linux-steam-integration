@@ -150,6 +150,13 @@ bool lsi_config_load(LsiConfig *config)
                 map_val = NULL;
         }
 
+        /* Do we want libredirect? */
+        map_val = nc_hashmap_get(nc_hashmap_get(mconfig, "Steam"), "use-libredirect");
+        if (map_val) {
+                config->use_libredirect = lsi_is_boolean_true(map_val);
+                map_val = NULL;
+        }
+
         /* Check if 32-bit is being forced */
         map_val = nc_hashmap_get(nc_hashmap_get(mconfig, "Steam"), "force-32bit");
         if (map_val) {
@@ -185,10 +192,12 @@ bool lsi_config_store(LsiConfig *config)
                 return false;
         }
         if (fprintf(fp,
-                    "[Steam]\nuse-native-runtime = %s\nforce-32bit = %s\nuse-libintercept = %s\n",
+                    "[Steam]\nuse-native-runtime = %s\nforce-32bit = %s\nuse-libintercept = "
+                    "%s\nuse-libredirect = %s\n",
                     lsi_bool_to_string(config->use_native_runtime),
                     lsi_bool_to_string(config->force_32),
-                    lsi_bool_to_string(config->use_libintercept)) < 0) {
+                    lsi_bool_to_string(config->use_libintercept),
+                    lsi_bool_to_string(config->use_libredirect)) < 0) {
                 return false;
         }
         return true;
@@ -203,6 +212,7 @@ void lsi_config_load_defaults(LsiConfig *config)
         config->force_32 = false;
         config->use_native_runtime = true;
         config->use_libintercept = true;
+        config->use_libredirect = true;
 }
 
 void lsi_report_failure(const char *s, ...)
