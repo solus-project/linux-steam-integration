@@ -1,4 +1,4 @@
-# Only build libintercept if told to!
+# Only build libredirect if told to!
 
 if with_libredirect == true
 
