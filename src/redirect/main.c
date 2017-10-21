@@ -38,6 +38,9 @@ static inline char *get_process_name(void)
         return strdup(basep);
 }
 
+/**
+ * We'll only perform teardown code if the process doesn't `abort()` or `_exit()`
+ */
 __attribute__((destructor)) static void lsi_redirect_shutdown(void)
 {
         if (!lsi_init) {
@@ -47,6 +50,14 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
         fprintf(stderr, "Unloading lsi_redirect\n");
 }
 
+/**
+ * Main entry point into this redirect module.
+ *
+ * We'll check the process name and determine if we're interested in installing
+ * some redirect hooks into this library.
+ * If we register interest, we'll install an `atexit` handler and mark ourselves
+ * with `lsi_init`, so that we'll attempt to cleanly tear down resources on exit.
+ */
 __attribute__((constructor)) static void lsi_redirect_init(void)
 {
         autofree(char) *process_name = get_process_name();
