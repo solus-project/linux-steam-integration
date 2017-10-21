@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../common.h"
+#include "common.h"
 #include "files.h"
 #include "nica/util.h"
 

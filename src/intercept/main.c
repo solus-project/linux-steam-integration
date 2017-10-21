@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-#include "../common.h"
+#include "../common/common.h"
 #include "nica/util.h"
 
 static inline bool lsi_file_exists(const char *path)
