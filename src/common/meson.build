@@ -2,6 +2,7 @@
 
 lsi_common_sources = [
     'files.c',
+    'log.c',
 ]
 
 lib_lsi_common = static_library(
