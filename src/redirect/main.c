@@ -173,6 +173,12 @@ _nica_public_ int open(const char *p, int flags, ...)
         mode = va_arg(va, mode_t);
         va_end(va);
 
+        /* Not interested in this guy apparently */
+        if (!lsi_override) {
+                return lsi_table.open(p, flags, mode);
+        }
+
+        /* TODO: Add redirection code here for paths */
         fprintf(stderr, "begin open: %s\n", p);
         return lsi_table.open(p, flags, mode);
 }
