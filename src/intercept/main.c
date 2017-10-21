@@ -18,13 +18,8 @@
 #include <sys/stat.h>
 
 #include "../common/common.h"
+#include "../common/files.h"
 #include "nica/util.h"
-
-static inline bool lsi_file_exists(const char *path)
-{
-        struct stat st = { .st_ino = 0 };
-        return (lstat(path, &st) == 0);
-}
 
 /**
  * What's the known process name?
@@ -129,23 +124,6 @@ static const char *vendor_blacklist[] = {
 };
 
 /**
- * Determine the basename'd process
- */
-static inline char *get_process_name(void)
-{
-        autofree(char) *realp = NULL;
-        char *basep = NULL;
-
-        realp = realpath("/proc/self/exe", NULL);
-        if (!realp) {
-                return false;
-        }
-
-        basep = basename(realp);
-        return strdup(basep);
-}
-
-/**
  * Determine if we're in a given process set, i.e. the process name matches
  * the given table
  */
@@ -176,7 +154,7 @@ static void check_is_intercept_candidate(void)
 {
         autofree(char) *nom = NULL;
 
-        nom = get_process_name();
+        nom = lsi_get_process_name();
         if (!nom) {
                 return;
         }

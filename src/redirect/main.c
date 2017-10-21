@@ -60,23 +60,6 @@ typedef struct LsiRedirectTable {
 static LsiRedirectTable lsi_table = { 0 };
 
 /**
- * Determine the basename'd process
- */
-static inline char *get_process_name(void)
-{
-        autofree(char) *realp = NULL;
-        char *basep = NULL;
-
-        realp = realpath("/proc/self/exe", NULL);
-        if (!realp) {
-                return false;
-        }
-
-        basep = basename(realp);
-        return strdup(basep);
-}
-
-/**
  * We'll only perform teardown code if the process doesn't `abort()` or `_exit()`
  */
 __attribute__((destructor)) static void lsi_redirect_shutdown(void)
@@ -150,7 +133,7 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         /* Ensure we're open. */
         lsi_redirect_init_tables();
 
-        autofree(char) *process_name = get_process_name();
+        autofree(char) *process_name = lsi_get_process_name();
 
         if (!process_name) {
                 fprintf(stderr, "Failure to allocate memory! %s\n", strerror(errno));

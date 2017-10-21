@@ -84,6 +84,20 @@ char *lsi_get_steam_dir()
         return strdup(resolv);
 }
 
+char *lsi_get_process_name(void)
+{
+        autofree(char) *realp = NULL;
+        char *basep = NULL;
+
+        realp = realpath("/proc/self/exe", NULL);
+        if (!realp) {
+                return false;
+        }
+
+        basep = basename(realp);
+        return strdup(basep);
+}
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *
