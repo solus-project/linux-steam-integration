@@ -13,6 +13,7 @@
 
 #include <dlfcn.h>
 #include <errno.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +26,7 @@ static volatile bool lsi_init = false;
 /**
  * Handle definitions
  */
-typedef int (*lsi_open_file)(const char *p, int flags);
+typedef int (*lsi_open_file)(const char *p, int flags, mode_t mode);
 
 /**
  * Global storage of handles for nicer organisation.
@@ -83,11 +84,13 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
  *
  * We'll check the process name and determine if we're interested in installing
  * some redirect hooks into this library.
- * If we register interest, we'll install an `atexit` handler and mark ourselves
- * with `lsi_init`, so that we'll attempt to cleanly tear down resources on exit.
  */
 __attribute__((constructor)) static void lsi_redirect_init(void)
 {
+        if (lsi_init) {
+                return;
+        }
+
         autofree(char) *process_name = get_process_name();
         void *symbol_lookup = NULL;
         char *dl_error = NULL;
@@ -127,11 +130,28 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         return;
 
 failed:
-
-        /* Failed to initialise so just unload ourselves and let the process continue
-         * unimpeded, so as not to break the user experience.
-         */
+        /* Pretty damn fatal. */
         lsi_redirect_shutdown();
+        abort();
+}
+
+_nica_public_ int open(const char *p, int flags, ...)
+{
+        va_list va;
+        mode_t mode;
+
+        /* Must ensure we're **really** initialised, as we might see open happen
+         * before the constructor..
+         */
+        lsi_redirect_init();
+
+        /* Grab the mode_t */
+        va_start(va, flags);
+        mode = va_arg(va, mode_t);
+        va_end(va);
+
+        fprintf(stderr, "begin open: %s\n", p);
+        return lsi_table.open(p, flags, mode);
 }
 
 /*
