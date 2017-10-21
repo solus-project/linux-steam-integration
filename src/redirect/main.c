@@ -155,7 +155,16 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
                 return;
         }
 
-        fprintf(stderr, "Loaded lsi_redirect for: %s\n", process_name);
+        /* Temporary hack, we'll make this more generic later */
+        if (strcmp(process_name, "ShooterGame") == 0) {
+                lsi_override = true;
+        }
+
+        if (!lsi_override) {
+                return;
+        }
+
+        fprintf(stderr, "Enabled lsi_redirect for: %s\n", process_name);
 }
 
 _nica_public_ int open(const char *p, int flags, ...)
