@@ -7,6 +7,7 @@ lsi_common_sources = [
 lib_lsi_common = static_library(
     'lsi-lsi-common',
     sources: lsi_common_sources + nica_sources,
+    c_args: ['-fvisibility=hidden'],
     include_directories: nica_includes,
 )
 
