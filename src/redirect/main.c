@@ -164,7 +164,7 @@ static LsiRedirectProfile *lsi_redirect_profile_new_ark(void)
         }
 
         redirect = lsi_redirect_new_path_replacement(mic_source, mic_target);
-        if (!p) {
+        if (!redirect) {
                 goto failed;
         }
         lsi_redirect_profile_insert_rule(p, redirect);
@@ -219,6 +219,7 @@ _nica_public_ int open(const char *p, int flags, ...)
         autofree(char) *replaced_path = NULL;
         LsiRedirect *redirect = NULL;
         LsiRedirectOperation op = LSI_OPERATION_OPEN;
+        autofree(char) *path = NULL;
 
         /* Must ensure we're **really** initialised, as we might see open happen
          * before the constructor..
@@ -235,19 +236,25 @@ _nica_public_ int open(const char *p, int flags, ...)
                 return lsi_table.open(p, flags, mode);
         }
 
+        /* Get the absolute path here */
+        path = realpath(p, NULL);
+        if (!path) {
+                return lsi_table.open(p, flags, mode);
+        }
+
         /* find a valid replacement */
         for (redirect = lsi_profile->op_table[op]; redirect; redirect = redirect->next) {
                 /* Currently we only known path replacements */
                 if (redirect->type != LSI_REDIRECT_PATH) {
                         continue;
                 }
-                if (strcmp(redirect->path_source, p) != 0) {
+                if (strcmp(redirect->path_source, path) != 0) {
                         continue;
                 }
                 if (!lsi_file_exists(redirect->path_target)) {
                         lsi_log_warn("Replacement path does not exist: %s", redirect->path_target);
                 }
-                lsi_log_info("Replaced '%s' with '%s'", p, redirect->path_target);
+                lsi_log_info("Replaced '%s' with '%s'", path, redirect->path_target);
                 return lsi_table.open(redirect->path_target, flags, mode);
         }
 
