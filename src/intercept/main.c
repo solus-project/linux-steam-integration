@@ -190,7 +190,8 @@ char *lsi_search_steam(const char *name)
                         }
                 }
                 if (file_exists) {
-                        lsi_log_debug("blacklisted loading of vendor library: %s", name);
+                        lsi_log_debug("blacklisted loading of vendor library: \033[34;1m%s\033[0m",
+                                      name);
                 }
 
                 return NULL;
