@@ -62,6 +62,7 @@ void lsi_redirect_profile_insert_rule(LsiRedirectProfile *self, LsiRedirect *red
                 break;
         default:
                 lsi_log_error("Attempted insert of unknown rule into '%s'", self->name);
+                lsi_redirect_free(redirect);
                 break;
         }
 

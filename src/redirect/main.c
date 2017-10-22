@@ -132,6 +132,52 @@ failed:
 }
 
 /**
+ * Testing: Create profile for ARK: Survival Evolved
+ */
+static LsiRedirectProfile *lsi_redirect_profile_new_ark(void)
+{
+        LsiRedirectProfile *p = NULL;
+        LsiRedirect *redirect = NULL;
+
+        autofree(char) *steam_dir = NULL;
+        autofree(char) *mic_source = NULL;
+        autofree(char) *mic_target = NULL;
+        static const char *def_mic_source =
+            "steamapps/common/ARK/ShooterGame/Content/PrimalEarth/Environment/Water/"
+            "Water_DepthBlur_MIC.uasset";
+        static const char *def_mic_target =
+            "steamapps/common/ARK/ShooterGame/Content/Mods/TheCenter/Assets/Mic/"
+            "Water_DepthBlur_MIC.uasset";
+
+        p = lsi_redirect_profile_new("ARK: Survival Evolved");
+        if (!p) {
+                fputs("OUT OF MEMORY\n", stderr);
+                return NULL;
+        }
+
+        steam_dir = lsi_get_steam_dir();
+        if (asprintf(&mic_source, "%s/%s", steam_dir, def_mic_source) < 0) {
+                goto failed;
+        }
+        if (asprintf(&mic_target, "%s/%s", steam_dir, def_mic_target) < 0) {
+                goto failed;
+        }
+
+        redirect = lsi_redirect_new_path_replacement(mic_source, mic_target);
+        if (!p) {
+                goto failed;
+        }
+        lsi_redirect_profile_insert_rule(p, redirect);
+        return p;
+
+failed:
+        /* Dead in the water.. */
+        fputs("OUT OF MEMORY\n", stderr);
+        lsi_redirect_profile_free(p);
+        return NULL;
+}
+
+/**
  * Main entry point into this redirect module.
  *
  * We'll check the process name and determine if we're interested in installing
@@ -154,12 +200,13 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         /* Temporary hack, we'll make this more generic later */
         if (strcmp(process_name, "ShooterGame") == 0) {
                 lsi_log_set_id("ShooterGame");
-                lsi_profile = lsi_redirect_profile_new("ARK Survival Evolved");
+                lsi_profile = lsi_redirect_profile_new_ark();
         }
 
         if (!lsi_profile) {
                 return;
         }
+
         lsi_override = true;
 
         lsi_log_debug("Enable lsi_redirect for '%s'", lsi_profile->name);
