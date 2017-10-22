@@ -212,46 +212,13 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         lsi_log_debug("Enable lsi_redirect for '%s'", lsi_profile->name);
 }
 
-static char *lsi_redirect_replace_path(const char *path)
-{
-        char *dir = NULL;
-        autofree(char) *tmp = NULL;
-        char *transformed_path = NULL;
-
-        /* This is where we'd need to look at what game we are, and what we'd need
-         * to replace. For now, we're going to cheat, and give it a fixed path.
-         */
-        if (!strstr(path,
-                    "/ARK/ShooterGame/Content/PrimalEarth/Environment/Water/"
-                    "Water_DepthBlur_MIC.uasset")) {
-                return strdup(path);
-        }
-
-        tmp = strdup(path);
-        dir = dirname(tmp);
-
-        /* We want this guy: */
-        const char *new_path = "../../../Mods/TheCenter/Assets/Mic/Water_DepthBlur_MIC.uasset";
-        if (asprintf(&transformed_path, "%s/%s", dir, new_path) < 0) {
-                fputs("OUT OF MEMORY\n", stderr);
-                abort();
-        }
-
-        if (!lsi_file_exists(transformed_path)) {
-                lsi_log_warn("Target path does not exist: %s", new_path);
-                free(transformed_path);
-                return strdup(path);
-        }
-
-        lsi_log_info("Replaced '%s' with '%s'", path, transformed_path);
-        return transformed_path;
-}
-
 _nica_public_ int open(const char *p, int flags, ...)
 {
         va_list va;
         mode_t mode;
         autofree(char) *replaced_path = NULL;
+        LsiRedirect *redirect = NULL;
+        LsiRedirectOperation op = LSI_OPERATION_OPEN;
 
         /* Must ensure we're **really** initialised, as we might see open happen
          * before the constructor..
@@ -268,8 +235,24 @@ _nica_public_ int open(const char *p, int flags, ...)
                 return lsi_table.open(p, flags, mode);
         }
 
-        replaced_path = lsi_redirect_replace_path(p);
-        return lsi_table.open(replaced_path, flags, mode);
+        /* find a valid replacement */
+        for (redirect = lsi_profile->op_table[op]; redirect; redirect = redirect->next) {
+                /* Currently we only known path replacements */
+                if (redirect->type != LSI_REDIRECT_PATH) {
+                        continue;
+                }
+                if (strcmp(redirect->path_source, p) != 0) {
+                        continue;
+                }
+                if (!lsi_file_exists(redirect->path_target)) {
+                        lsi_log_warn("Replacement path does not exist: %s", redirect->path_target);
+                }
+                lsi_log_info("Replaced '%s' with '%s'", p, redirect->path_target);
+                return lsi_table.open(redirect->path_target, flags, mode);
+        }
+
+        /* No replacement */
+        return lsi_table.open(p, flags, mode);
 }
 
 /*
