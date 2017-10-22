@@ -60,10 +60,20 @@ typedef struct LsiRedirectTable {
 static LsiRedirectTable lsi_table = { 0 };
 
 /**
+ * Contains all of our replacement rules.
+ */
+static LsiRedirectProfile *lsi_profile = NULL;
+
+/**
  * We'll only perform teardown code if the process doesn't `abort()` or `_exit()`
  */
 __attribute__((destructor)) static void lsi_redirect_shutdown(void)
 {
+        if (lsi_profile) {
+                lsi_redirect_profile_free(lsi_profile);
+                lsi_profile = NULL;
+        }
+
         if (!lsi_init) {
                 return;
         }
@@ -143,14 +153,15 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
 
         /* Temporary hack, we'll make this more generic later */
         if (strcmp(process_name, "ShooterGame") == 0) {
-                lsi_override = true;
+                lsi_profile = lsi_redirect_profile_new("ARK Survival Evolved");
         }
 
-        if (!lsi_override) {
+        if (!lsi_profile) {
                 return;
         }
+        lsi_override = true;
 
-        lsi_log_debug("Enable lsi_redirect for '%s'", process_name);
+        lsi_log_debug("Enable lsi_redirect for '%s'", lsi_profile->name);
 }
 
 static char *lsi_redirect_replace_path(const char *path)
