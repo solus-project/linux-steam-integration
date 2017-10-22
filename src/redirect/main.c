@@ -249,6 +249,7 @@ _nica_public_ int open(const char *p, int flags, ...)
                         continue;
                 }
                 if (strcmp(redirect->path_source, path) != 0) {
+                        fprintf(stderr, "No match: %s  vs   %s\n", redirect->path_source, path);
                         continue;
                 }
                 if (!lsi_file_exists(redirect->path_target)) {
