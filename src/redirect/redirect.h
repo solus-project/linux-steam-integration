@@ -71,6 +71,14 @@ LsiRedirectProfile *lsi_redirect_profile_new(const char *name);
  */
 void lsi_redirect_profile_free(LsiRedirectProfile *profile);
 
+/**
+ * Attempt insert of a redirect rule into this profile
+ *
+ * @param profile Pointer to a valid LsiRedirectProfile
+ * @param redirect Pointer to an allocated LsiRedirect
+ */
+void lsi_redirect_profile_insert_rule(LsiRedirectProfile *self, LsiRedirect *redirect);
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *

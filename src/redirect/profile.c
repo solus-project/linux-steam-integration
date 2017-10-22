@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../common/log.h"
 #include "redirect.h"
 
 LsiRedirectProfile *lsi_redirect_profile_new(const char *name)
@@ -39,6 +40,27 @@ void lsi_redirect_profile_free(LsiRedirectProfile *self)
         }
         free(self->name);
         free(self);
+}
+
+void lsi_redirect_profile_insert_rule(LsiRedirectProfile *self, LsiRedirect *redirect)
+{
+        LsiRedirectOperation op;
+
+        switch (redirect->type) {
+        case LSI_REDIRECT_PATH:
+                op = LSI_OPERATION_OPEN;
+                break;
+        default:
+                lsi_log_error("Attempted insert of unknown rule into '%s'", self->name);
+                break;
+        }
+
+        /* Set head or prepend the rule */
+        if (self->op_table[op]) {
+                self->op_table[op] = redirect->next = self->op_table[op];
+        } else {
+                self->op_table[op] = redirect;
+        }
 }
 
 /*

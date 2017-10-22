@@ -16,6 +16,11 @@
 #include <stdlib.h>
 
 /**
+ * Set the ID used in all log output
+ */
+void lsi_log_set_id(const char *id);
+
+/**
  * Emit some debug information if LSI_DEBUG is set
  */
 void lsi_log_debug(const char *format, ...) __attribute__((format(printf, 1, 2)));

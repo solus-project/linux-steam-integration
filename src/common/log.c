@@ -19,6 +19,13 @@
 #include "log.h"
 #include "nica/util.h"
 
+static const char *_log_id = "__init__";
+
+void lsi_log_set_id(const char *id)
+{
+        _log_id = id;
+}
+
 void lsi_log_debug(const char *format, ...)
 {
         if (!getenv("LSI_DEBUG")) {
@@ -35,7 +42,7 @@ void lsi_log_debug(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\033[32;1m[lsi:debug]\033[0m %s\n", p);
+        fprintf(stderr, "\033[32;1m[lsi:%s]\033[0m %s\n", _log_id, p);
 
 end:
         va_end(va);
@@ -53,7 +60,7 @@ void lsi_log_info(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\033[34;1m[lsi:info]\033[0m %s\n", p);
+        fprintf(stderr, "\033[34;1m[lsi:%s]\033[0m %s\n", _log_id, p);
 
 end:
         va_end(va);
@@ -71,7 +78,7 @@ void lsi_log_warn(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\033[33;1m[lsi:warn]\033[0m %s\n", p);
+        fprintf(stderr, "\033[33;1m[lsi:%s]\033[0m %s\n", _log_id, p);
 
 end:
         va_end(va);
@@ -89,7 +96,7 @@ void lsi_log_error(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\033[31;1m[lsi:error]\033[0m %s\n", p);
+        fprintf(stderr, "\033[31;1m[lsi:%s]\033[0m %s\n", _log_id, p);
 
 end:
         va_end(va);

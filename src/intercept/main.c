@@ -161,6 +161,7 @@ static void check_is_intercept_candidate(void)
                 work_mode = INTERCEPT_MODE_VENDOR_OFFENDER;
                 matched_process = "vendor_offender";
         }
+        lsi_log_set_id(matched_process);
 }
 
 /**
