@@ -53,7 +53,7 @@ void lsi_log_info(const char *format, ...)
                 goto end;
         }
 
-        fprintf(stderr, "\034[32;1m[lsi:info]\033[0m %s\n", p);
+        fprintf(stderr, "\033[34;1m[lsi:info]\033[0m %s\n", p);
 
 end:
         va_end(va);
