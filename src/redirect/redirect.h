@@ -30,9 +30,8 @@ typedef struct LsiRedirect {
         union {
                 /* Path replacement */
                 struct {
-                        const char *path_source;
-                        const char *path_target;
-                        bool path_relative;
+                        char *path_source;
+                        char *path_target;
                 };
         };
         struct LsiRedirect *next;
@@ -78,6 +77,20 @@ void lsi_redirect_profile_free(LsiRedirectProfile *profile);
  * @param redirect Pointer to an allocated LsiRedirect
  */
 void lsi_redirect_profile_insert_rule(LsiRedirectProfile *self, LsiRedirect *redirect);
+
+/* LsiRedirect APIs follow */
+
+/**
+ * Construct a new LsiRedirect to perform path replacements
+ */
+LsiRedirect *lsi_redirect_new_path_replacement(const char *source_path, const char *target_path);
+
+/**
+ * Attempt to free this redirect
+ *
+ * @param redirect Pointer to allocated LsiRedirect
+ */
+void lsi_redirect_free(LsiRedirect *self);
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html

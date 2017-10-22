@@ -38,6 +38,16 @@ void lsi_redirect_profile_free(LsiRedirectProfile *self)
         if (!self) {
                 return;
         }
+
+        /* Free all chains */
+        for (unsigned int i = 0; i < LSI_NUM_OPERATIONS; i++) {
+                LsiRedirect *r = self->op_table[i];
+                if (!r) {
+                        continue;
+                }
+                lsi_redirect_free(r);
+        }
+
         free(self->name);
         free(self);
 }
@@ -61,6 +71,47 @@ void lsi_redirect_profile_insert_rule(LsiRedirectProfile *self, LsiRedirect *red
         } else {
                 self->op_table[op] = redirect;
         }
+}
+
+LsiRedirect *lsi_redirect_new_path_replacement(const char *source_path, const char *target_path)
+{
+        LsiRedirect *ret = NULL;
+
+        ret = calloc(1, sizeof(LsiRedirect));
+        if (!ret) {
+                return NULL;
+        }
+        ret->type = LSI_REDIRECT_PATH;
+        ret->path_source = strdup(source_path);
+        ret->path_target = strdup(target_path);
+
+        if (!ret->path_source || !ret->path_target) {
+                lsi_redirect_free(ret);
+                return NULL;
+        }
+        return ret;
+}
+
+void lsi_redirect_free(LsiRedirect *self)
+{
+        if (!self) {
+                return;
+        }
+
+        /* Pass it along */
+        if (self->next) {
+                lsi_redirect_free(self->next);
+        }
+
+        switch (self->type) {
+        case LSI_REDIRECT_PATH:
+        default:
+                free(self->path_source);
+                free(self->path_target);
+                break;
+        }
+
+        free(self);
 }
 
 /*
