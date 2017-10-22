@@ -11,6 +11,9 @@
 
 #pragma once
 
+#include <stdbool.h>
+#include <stdlib.h>
+
 /**
  * The type of redirect required
  */
@@ -48,10 +51,27 @@ typedef enum { LSI_OPERATION_OPEN = 0, LSI_NUM_OPERATIONS } LsiRedirectOperation
  *      op_table[LSI_OPERATION_OPEN]
  */
 typedef struct LsiRedirectProfile {
-        const char *name; /**< Name for this profile */
+        char *name; /**< Name for this profile */
 
         LsiRedirect op_table[LSI_NUM_OPERATIONS]; /* vtable information */
 } LsiRedirectProfile;
+
+
+/**
+ * Construct a new LsiRedirectProfile
+ *
+ * @param name Profile name
+ * @returns A newly allocated LsiRedirectProfile
+ */
+LsiRedirectProfile *lsi_redirect_profile_new(const char *name);
+
+/**
+ * Free a previously allocated LsiRedirectProfile
+ *
+ * @param profile Pointer to an allocated LsiRedirectProfile
+ */
+void lsi_redirect_profile_free(LsiRedirectProfile *profile);
+
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
