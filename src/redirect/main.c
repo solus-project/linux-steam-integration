@@ -139,15 +139,15 @@ static LsiRedirectProfile *lsi_redirect_profile_new_ark(void)
         LsiRedirectProfile *p = NULL;
         LsiRedirect *redirect = NULL;
 
+#define ARK_BASE "steamapps/common/ARK/ShooterGame/Content"
         autofree(char) *steam_dir = NULL;
         autofree(char) *mic_source = NULL;
         autofree(char) *mic_target = NULL;
         static const char *def_mic_source =
-            "steamapps/common/ARK/ShooterGame/Content/PrimalEarth/Environment/Water/"
-            "Water_DepthBlur_MIC.uasset";
+            ARK_BASE "/PrimalEarth/Environment/Water/Water_DepthBlur_MIC.uasset";
         static const char *def_mic_target =
-            "steamapps/common/ARK/ShooterGame/Content/Mods/TheCenter/Assets/Mic/"
-            "Water_DepthBlur_MIC.uasset";
+            ARK_BASE "/Mods/TheCenter/Assets/Mic/Water_DepthBlur_MIC.uasset";
+#undef ARK_BASE
 
         p = lsi_redirect_profile_new("ARK: Survival Evolved");
         if (!p) {
