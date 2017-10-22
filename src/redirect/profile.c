@@ -68,7 +68,8 @@ void lsi_redirect_profile_insert_rule(LsiRedirectProfile *self, LsiRedirect *red
 
         /* Set head or prepend the rule */
         if (self->op_table[op]) {
-                self->op_table[op] = redirect->next = self->op_table[op];
+                redirect->next = self->op_table[op];
+                self->op_table[op] = redirect;
         } else {
                 self->op_table[op] = redirect;
         }
