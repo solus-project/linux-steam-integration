@@ -18,10 +18,7 @@
 
 LsiRedirectProfile *lsi_redirect_profile_new(const char *name)
 {
-        LsiRedirectProfile p = {
-                .name = strdup(name),
-                .op_table = {{ 0 }},
-        };
+        LsiRedirectProfile p = { .name = strdup(name), { 0 } };
         LsiRedirectProfile *ret = NULL;
         if (!p.name) {
                 return NULL;

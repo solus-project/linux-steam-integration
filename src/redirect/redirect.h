@@ -53,9 +53,8 @@ typedef enum { LSI_OPERATION_OPEN = 0, LSI_NUM_OPERATIONS } LsiRedirectOperation
 typedef struct LsiRedirectProfile {
         char *name; /**< Name for this profile */
 
-        LsiRedirect op_table[LSI_NUM_OPERATIONS]; /* vtable information */
+        LsiRedirect *op_table[LSI_NUM_OPERATIONS]; /* vtable information */
 } LsiRedirectProfile;
-
 
 /**
  * Construct a new LsiRedirectProfile
@@ -71,7 +70,6 @@ LsiRedirectProfile *lsi_redirect_profile_new(const char *name);
  * @param profile Pointer to an allocated LsiRedirectProfile
  */
 void lsi_redirect_profile_free(LsiRedirectProfile *profile);
-
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
