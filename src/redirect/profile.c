@@ -84,8 +84,8 @@ LsiRedirect *lsi_redirect_new_path_replacement(const char *source_path, const ch
                 return NULL;
         }
         ret->type = LSI_REDIRECT_PATH;
-        ret->path_source = strdup(source_path);
-        ret->path_target = strdup(target_path);
+        ret->path_source = realpath(source_path, NULL);
+        ret->path_target = realpath(target_path, NULL);
 
         if (!ret->path_source || !ret->path_target) {
                 lsi_redirect_free(ret);
