@@ -18,6 +18,10 @@
 #include "profile.h"
 #include "redirect.h"
 
+#define ARK_BASE "steamapps/common/ARK/ShooterGame"
+#define ARK_CONTENT ARK_BASE "Content"
+#define ARK_BINARY ARK_BASE "Binaries/Linux/ShooterGame"
+
 /**
  * This generator function is responsible for supporting ARK: Survival Evolved
  *
@@ -30,18 +34,28 @@ LsiRedirectProfile *lsi_redirect_profile_new_ark(char *process_name, char *steam
         LsiRedirect *redirect = NULL;
         autofree(char) *mic_source = NULL;
         autofree(char) *mic_target = NULL;
+        autofree(char) *match_process = NULL;
+        autofree(char) *test_process = NULL;
 
-        /* TODO: Switch to not using base names.. */
-        if (strcmp(process_name, "ShooterGame") != 0) {
+        if (asprintf(&match_process, "%s/%s", steam_path, ARK_BINARY)) {
                 return NULL;
         }
 
-#define ARK_BASE "steamapps/common/ARK/ShooterGame/Content"
+        /* Check it even exists */
+        test_process = realpath(match_process, NULL);
+        if (!test_process) {
+                return NULL;
+        }
+
+        /* Check the process name now */
+        if (strcmp(test_process, process_name) != 0) {
+                return NULL;
+        }
+
         static const char *def_mic_source =
-            ARK_BASE "/PrimalEarth/Environment/Water/Water_DepthBlur_MIC.uasset";
+            ARK_CONTENT "/PrimalEarth/Environment/Water/Water_DepthBlur_MIC.uasset";
         static const char *def_mic_target =
-            ARK_BASE "/Mods/TheCenter/Assets/Mic/Water_DepthBlur_MIC.uasset";
-#undef ARK_BASE
+            ARK_CONTENT "/Mods/TheCenter/Assets/Mic/Water_DepthBlur_MIC.uasset";
 
         p = lsi_redirect_profile_new("ARK: Survival Evolved");
         if (!p) {
