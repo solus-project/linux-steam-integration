@@ -32,6 +32,11 @@ char *lsi_get_user_config_dir(void);
 char *lsi_get_steam_dir(void);
 
 /**
+ * Grab all the valid steam installation directories
+ */
+char **lsi_get_steam_paths(void);
+
+/**
  * Quick helper to determine if the path exists
  */
 bool lsi_file_exists(const char *path);

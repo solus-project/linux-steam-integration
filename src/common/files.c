@@ -11,6 +11,7 @@
 
 #define _GNU_SOURCE
 
+#include <ctype.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +21,12 @@
 
 #include "common.h"
 #include "files.h"
+#include "log.h"
+#include "nica/array.h"
 #include "nica/util.h"
+#include "vdf.h"
+
+DEF_AUTOFREE(VdfFile, vdf_file_close)
 
 bool lsi_file_exists(const char *path)
 {
@@ -96,6 +102,95 @@ char *lsi_get_process_name(void)
 
         basep = basename(realp);
         return strdup(basep);
+}
+
+/**
+ * Quickly determine if a string is numeric..
+ */
+static inline bool lsi_is_string_numeric(char *p)
+{
+        char *s;
+
+        for (s = p; *s; s++) {
+                if (!isdigit(*s)) {
+                        return false;
+                }
+        }
+
+        /* Didn't wind, empty string */
+        if (s == p) {
+                return false;
+        }
+        return true;
+}
+
+char **lsi_get_steam_paths(void)
+{
+        autofree(char) *steam_root = NULL;
+        autofree(char) *lib_conf = NULL;
+        autofree(VdfFile) *vdf = NULL;
+        VdfNode *root = NULL;
+        VdfNode *node = NULL;
+        NcArray *array = NULL;
+
+        steam_root = lsi_get_steam_dir();
+        if (!steam_root) {
+                return NULL;
+        }
+
+        array = nc_array_new();
+        if (!nc_array_add(array, strdup(steam_root))) {
+                goto bail;
+        }
+
+        if (asprintf(&lib_conf, "%s/steamapps/libraryfolders.vdf", steam_root) < 0) {
+                return NULL;
+        }
+
+        vdf = vdf_file_open(lib_conf);
+        if (!vdf) {
+                goto fallback;
+        }
+
+        if (!vdf_file_parse(vdf)) {
+                goto fallback;
+        }
+
+        /* Look up LibraryFolders under root */
+        root = vdf_file_get_root(vdf);
+        node = vdf_node_get(root, "LibraryFolders", NULL);
+        if (!node) {
+                goto fallback;
+        }
+
+        /* Walk all nodes immediately within LibraryFolders and ignore sections */
+        for (VdfNode *n = node->child; n; n = n->sibling) {
+                if (!n->value) {
+                        continue;
+                }
+                if (lsi_is_string_numeric(n->key)) {
+                        if (!nc_array_add(array, strdup(n->value))) {
+                                goto bail;
+                        }
+                        lsi_log_debug("vdf: discovered LibraryFolders: %s", n->value);
+                }
+        }
+
+fallback:
+        /* Trick nica into storing empty value to so we can terminate the array */
+        if (!nc_array_add(array, (void *)(long)1)) {
+                goto bail;
+        }
+
+        /* Steal the blob straight out of the array */
+        char **data = (char **)array->data;
+        data[array->len - 1] = NULL;
+        free(array);
+        return data;
+
+bail:
+        nc_array_free(&array, free);
+        return NULL;
 }
 
 /*

@@ -134,13 +134,12 @@ failed:
 /**
  * Testing: Create profile for ARK: Survival Evolved
  */
-static LsiRedirectProfile *lsi_redirect_profile_new_ark(void)
+static LsiRedirectProfile *lsi_redirect_profile_new_ark(char **steam_paths)
 {
         LsiRedirectProfile *p = NULL;
         LsiRedirect *redirect = NULL;
 
 #define ARK_BASE "steamapps/common/ARK/ShooterGame/Content"
-        autofree(char) *steam_dir = NULL;
         autofree(char) *mic_source = NULL;
         autofree(char) *mic_target = NULL;
         static const char *def_mic_source =
@@ -155,19 +154,28 @@ static LsiRedirectProfile *lsi_redirect_profile_new_ark(void)
                 return NULL;
         }
 
-        steam_dir = lsi_get_steam_dir();
-        if (asprintf(&mic_source, "%s/%s", steam_dir, def_mic_source) < 0) {
-                goto failed;
-        }
-        if (asprintf(&mic_target, "%s/%s", steam_dir, def_mic_target) < 0) {
-                goto failed;
+        /* For each steam path, try to create a rule for it */
+        while (*steam_paths) {
+                char *steam_dir = *steam_paths;
+
+                if (asprintf(&mic_source, "%s/%s", steam_dir, def_mic_source) < 0) {
+                        goto failed;
+                }
+                if (asprintf(&mic_target, "%s/%s", steam_dir, def_mic_target) < 0) {
+                        goto failed;
+                }
+
+                /* Don't add a redirect if the paths don't exist. */
+                redirect = lsi_redirect_new_path_replacement(mic_source, mic_target);
+                if (!redirect) {
+                        goto next;
+                }
+
+                lsi_redirect_profile_insert_rule(p, redirect);
+        next:
+                ++steam_paths;
         }
 
-        redirect = lsi_redirect_new_path_replacement(mic_source, mic_target);
-        if (!redirect) {
-                goto failed;
-        }
-        lsi_redirect_profile_insert_rule(p, redirect);
         return p;
 
 failed:
@@ -189,6 +197,7 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         /* Ensure we're open. */
         lsi_redirect_init_tables();
         autofree(char) *process_name = NULL;
+        char **paths = NULL;
 
         process_name = lsi_get_process_name();
 
@@ -197,19 +206,33 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
                 return;
         }
 
+        /* Grab the stam installation directories */
+        paths = lsi_get_steam_paths();
+
         /* Temporary hack, we'll make this more generic later */
-        if (strcmp(process_name, "ShooterGame") == 0) {
+        if (strcmp(process_name, "ShooterGame") != 0) {
                 lsi_log_set_id("ShooterGame");
-                lsi_profile = lsi_redirect_profile_new_ark();
+                lsi_profile = lsi_redirect_profile_new_ark(paths);
         }
 
         if (!lsi_profile) {
-                return;
+                goto clean_array;
         }
 
         lsi_override = true;
-
         lsi_log_debug("Enable lsi_redirect for '%s'", lsi_profile->name);
+
+clean_array:
+
+        /* Free them again */
+        if (paths) {
+                char **orig = paths;
+                while (*paths) {
+                        free(*paths);
+                        ++paths;
+                }
+                free(orig);
+        }
 }
 
 _nica_public_ int open(const char *p, int flags, ...)
