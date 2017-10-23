@@ -210,7 +210,7 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         paths = lsi_get_steam_paths();
 
         /* Temporary hack, we'll make this more generic later */
-        if (strcmp(process_name, "ShooterGame") != 0) {
+        if (strcmp(process_name, "ShooterGame") == 0) {
                 lsi_log_set_id("ShooterGame");
                 lsi_profile = lsi_redirect_profile_new_ark(paths);
         }
