@@ -43,9 +43,6 @@ typedef enum {
  * VdfFile is the main dude required for parsing a file
  */
 struct VdfFile {
-        /* We can be cast to a VdfNode. */
-        VdfNode root;
-
         /* Input */
         size_t buffer_len;
         char *buffer;
@@ -64,6 +61,7 @@ struct VdfFile {
         char *key_id;
         int n_quote; /**only allow 2 sets per "line" */
         VdfNode *section;
+        VdfNode *root;
 
         bool error; /**< Allow breaking. */
 };
@@ -74,9 +72,9 @@ struct VdfFile {
 typedef bool (*vdf_handle_func)(VdfFile *file, char c);
 
 /**
- * Free the node and *potentially* the container
+ * Free node
  */
-static void vdf_node_free_internal(VdfNode *node, bool free_container)
+static void vdf_node_free(VdfNode *node)
 {
         if (!node) {
                 return;
@@ -88,20 +86,9 @@ static void vdf_node_free_internal(VdfNode *node, bool free_container)
                 free(node->value);
         }
 
-        vdf_node_free_internal(node->sibling, true);
-        vdf_node_free_internal(node->child, true);
-
-        if (free_container) {
-                free(node);
-        }
-}
-
-/**
- * Free a node and container
- */
-static void vdf_node_free(VdfNode *node)
-{
-        vdf_node_free_internal(node, true);
+        vdf_node_free(node->sibling);
+        vdf_node_free(node->child);
+        free(node);
 }
 
 /**
@@ -156,7 +143,7 @@ void vdf_file_close(VdfFile *file)
                 free(file->key_id);
         }
         /* TODO: Make free separate from close, so we can just keep the node */
-        vdf_node_free_internal(&file->root, false);
+        vdf_node_free(file->root);
         free(file);
 }
 
@@ -204,7 +191,7 @@ VdfNode *vdf_file_get_root(VdfFile *file)
         if (!file) {
                 return NULL;
         }
-        return &file->root;
+        return file->root;
 }
 
 /**
@@ -638,7 +625,10 @@ bool vdf_file_parse(VdfFile *file)
 
         file->flags = 0;
         file->key_id = NULL;
-        file->section = &file->root;
+        file->section = file->root = vdf_node_new(NULL, NULL);
+        if (!file->root) {
+                goto bail;
+        }
 
         while (c != '\0') {
                 /* Pass through all of our functions */
