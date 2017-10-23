@@ -20,8 +20,8 @@
 #include "redirect.h"
 
 #define ARK_BASE "steamapps/common/ARK/ShooterGame"
-#define ARK_CONTENT ARK_BASE "Content"
-#define ARK_BINARY ARK_BASE "Binaries/Linux/ShooterGame"
+#define ARK_CONTENT ARK_BASE "/Content"
+#define ARK_BINARY ARK_BASE "/Binaries/Linux/ShooterGame"
 
 /**
  * This generator function is responsible for supporting ARK: Survival Evolved
@@ -38,7 +38,7 @@ LsiRedirectProfile *lsi_redirect_profile_new_ark(char *process_name, char *steam
         autofree(char) *match_process = NULL;
         autofree(char) *test_process = NULL;
 
-        if (asprintf(&match_process, "%s/%s", steam_path, ARK_BINARY)) {
+        if (asprintf(&match_process, "%s/%s", steam_path, ARK_BINARY) < 0) {
                 return NULL;
         }
 
