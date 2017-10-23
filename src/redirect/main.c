@@ -28,6 +28,14 @@
 #include "profile.h"
 #include "redirect.h"
 
+#define _STRINGIFY(x) #x
+
+#define SYMBOL_BINDING(l, x)                                                                       \
+        {                                                                                          \
+                .handle = &lsi_table.handles.l, .name = _STRINGIFY(x),                             \
+                .func = (void **)(&lsi_table.x), .func_size = sizeof(lsi_table.x)                  \
+        }
+
 /**
  * Whether we've initialised yet or not.
  */
@@ -68,6 +76,16 @@ typedef struct LsiRedirectTable {
 } LsiRedirectTable;
 
 /**
+ * Easy mapping to make it quick and easy to add new function overrides
+ */
+typedef struct LsiSymbolBinding {
+        void **handle;
+        char *name;
+        void **func;
+        size_t func_size;
+} LsiSymbolBinding;
+
+/**
  * Our redirect instance, stack only.
  */
 static LsiRedirectTable lsi_table = { 0 };
@@ -76,6 +94,15 @@ static LsiRedirectTable lsi_table = { 0 };
  * Contains all of our replacement rules.
  */
 static LsiRedirectProfile *lsi_profile = NULL;
+
+/**
+ * Our current set of libc bindings. This sets up the LsiRedirectTable with
+ * all of our needed dlsym() functions from libc.so.6.
+ */
+static LsiSymbolBinding lsi_libc_bindings[] = {
+        SYMBOL_BINDING(libc, open),
+        SYMBOL_BINDING(libc, fopen64),
+};
 
 /**
  * We'll only perform teardown code if the process doesn't `abort()` or `_exit()`
@@ -99,15 +126,34 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
 }
 
 /**
+ * Internal helper to perform the symbol binding
+ */
+static bool lsi_redirect_bind_function(void *handle, const char *name, void **out_func,
+                                       size_t func_size)
+{
+        void *symbol_lookup = NULL;
+        char *dl_error = NULL;
+
+        /* Safely look up the symbol */
+        symbol_lookup = dlsym(handle, name);
+        dl_error = dlerror();
+        if (dl_error || !symbol_lookup) {
+                fprintf(stderr, "Failed to bind '%s': %s\n", name, dl_error);
+                return false;
+        }
+
+        /* Have the symbol correctly, copy it to make it usable */
+        memcpy(out_func, &symbol_lookup, func_size);
+        return true;
+}
+
+/**
  * Responsible for setting up the vfunc redirect table so that we're able to
  * get `open` and such working before we've hit the constructor, and ensure
  * we only init once.
  */
 static void lsi_redirect_init_tables(void)
 {
-        void *symbol_lookup = NULL;
-        char *dl_error = NULL;
-
         if (lsi_init) {
                 return;
         }
@@ -123,28 +169,16 @@ static void lsi_redirect_init_tables(void)
                 goto failed;
         }
 
-        /* Safely look up the symbol */
-        symbol_lookup = dlsym(lsi_table.handles.libc, "open");
-        dl_error = dlerror();
-        if (dl_error || !symbol_lookup) {
-                fprintf(stderr, "Failed to bind 'open': %s\n", dl_error);
-                goto failed;
+        /* Hook up all necessary symbol binding */
+        for (size_t i = 0; i < ARRAY_SIZE(lsi_libc_bindings); i++) {
+                LsiSymbolBinding *binding = &lsi_libc_bindings[i];
+                if (!lsi_redirect_bind_function(*(binding->handle),
+                                                binding->name,
+                                                binding->func,
+                                                binding->func_size)) {
+                        goto failed;
+                }
         }
-
-        /* Have the symbol correctly, copy it to make it usable */
-        memcpy(&lsi_table.open, &symbol_lookup, sizeof(lsi_table.open));
-        symbol_lookup = NULL;
-
-        /* Safely look up the fopen64 symbol */
-        symbol_lookup = dlsym(lsi_table.handles.libc, "fopen64");
-        dl_error = dlerror();
-        if (dl_error || !symbol_lookup) {
-                fprintf(stderr, "Failed to bind 'fopen64': %s\n", dl_error);
-                goto failed;
-        }
-
-        /* Have the symbol correctly, copy it to make it usable */
-        memcpy(&lsi_table.fopen64, &symbol_lookup, sizeof(lsi_table.fopen64));
 
         /* We might not get an unload, so chain onto atexit */
         atexit(lsi_redirect_shutdown);
