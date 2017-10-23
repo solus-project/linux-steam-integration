@@ -272,11 +272,11 @@ _nica_public_ int open(const char *p, int flags, ...)
                         continue;
                 }
                 if (strcmp(redirect->path_source, path) != 0) {
-                        fprintf(stderr, "No match: %s  vs   %s\n", redirect->path_source, path);
                         continue;
                 }
                 if (!lsi_file_exists(redirect->path_target)) {
                         lsi_log_warn("Replacement path does not exist: %s", redirect->path_target);
+                        return lsi_table.open(p, flags, mode);
                 }
                 lsi_log_info("Replaced '%s' with '%s'", path, redirect->path_target);
                 return lsi_table.open(redirect->path_target, flags, mode);
