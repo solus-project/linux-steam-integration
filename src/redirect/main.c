@@ -44,11 +44,14 @@ static volatile bool lsi_override = false;
  */
 typedef int (*lsi_open_file)(const char *p, int flags, mode_t mode);
 
+typedef FILE *(*lsi_fopen64_file)(const char *p, const char *modes);
+
 /**
  * Known profiles
  */
 static lsi_profile_generator_func generators[] = {
         &lsi_redirect_profile_new_ark,
+        &lsi_redirect_profile_new_project_highrise,
 };
 
 /**
@@ -56,6 +59,7 @@ static lsi_profile_generator_func generators[] = {
  */
 typedef struct LsiRedirectTable {
         lsi_open_file open;
+        lsi_fopen64_file fopen64;
 
         /* Allow future handle opens.. */
         struct {
@@ -129,6 +133,18 @@ static void lsi_redirect_init_tables(void)
 
         /* Have the symbol correctly, copy it to make it usable */
         memcpy(&lsi_table.open, &symbol_lookup, sizeof(lsi_table.open));
+        symbol_lookup = NULL;
+
+        /* Safely look up the fopen64 symbol */
+        symbol_lookup = dlsym(lsi_table.handles.libc, "fopen64");
+        dl_error = dlerror();
+        if (dl_error || !symbol_lookup) {
+                fprintf(stderr, "Failed to bind 'fopen64': %s\n", dl_error);
+                goto failed;
+        }
+
+        /* Have the symbol correctly, copy it to make it usable */
+        memcpy(&lsi_table.fopen64, &symbol_lookup, sizeof(lsi_table.fopen64));
 
         /* We might not get an unload, so chain onto atexit */
         atexit(lsi_redirect_shutdown);
@@ -200,14 +216,50 @@ clean_array:
         }
 }
 
+/**
+ * Get a redirect path from the table if it exists, otherwise return NULL
+ */
+static char *lsi_get_redirect_path(const char *syscall_id, LsiRedirectOperation op, const char *p)
+{
+        autofree(char) *path = NULL;
+        LsiRedirect *redirect = NULL;
+
+        /* Get the absolute path here */
+        path = realpath(p, NULL);
+        if (!path) {
+                return NULL;
+        }
+
+        /* find a valid replacement */
+        for (redirect = lsi_profile->op_table[op]; redirect; redirect = redirect->next) {
+                /* Currently we only known path replacements */
+                if (redirect->type != LSI_REDIRECT_PATH) {
+                        continue;
+                }
+                if (strcmp(redirect->path_source, path) != 0) {
+                        continue;
+                }
+                if (!lsi_file_exists(redirect->path_target)) {
+                        lsi_log_warn("Replacement path does not exist: %s", redirect->path_target);
+                        return NULL;
+                }
+                lsi_log_info("%s(): Replaced '%s' with '%s'",
+                             syscall_id,
+                             path,
+                             redirect->path_target);
+                return strdup(redirect->path_target);
+        }
+
+        /* Got nothin' */
+        return NULL;
+}
+
 _nica_public_ int open(const char *p, int flags, ...)
 {
         va_list va;
         mode_t mode;
-        autofree(char) *replaced_path = NULL;
-        LsiRedirect *redirect = NULL;
         LsiRedirectOperation op = LSI_OPERATION_OPEN;
-        autofree(char) *path = NULL;
+        autofree(char) *replacement = NULL;
 
         /* Must ensure we're **really** initialised, as we might see open happen
          * before the constructor..
@@ -224,31 +276,33 @@ _nica_public_ int open(const char *p, int flags, ...)
                 return lsi_table.open(p, flags, mode);
         }
 
-        /* Get the absolute path here */
-        path = realpath(p, NULL);
-        if (!path) {
+        replacement = lsi_get_redirect_path("open", op, p);
+        if (!replacement) {
                 return lsi_table.open(p, flags, mode);
         }
+        return lsi_table.open(replacement, flags, mode);
+}
 
-        /* find a valid replacement */
-        for (redirect = lsi_profile->op_table[op]; redirect; redirect = redirect->next) {
-                /* Currently we only known path replacements */
-                if (redirect->type != LSI_REDIRECT_PATH) {
-                        continue;
-                }
-                if (strcmp(redirect->path_source, path) != 0) {
-                        continue;
-                }
-                if (!lsi_file_exists(redirect->path_target)) {
-                        lsi_log_warn("Replacement path does not exist: %s", redirect->path_target);
-                        return lsi_table.open(p, flags, mode);
-                }
-                lsi_log_info("Replaced '%s' with '%s'", path, redirect->path_target);
-                return lsi_table.open(redirect->path_target, flags, mode);
+_nica_public_ FILE *fopen64(const char *p, const char *modes)
+{
+        LsiRedirectOperation op = LSI_OPERATION_OPEN;
+        autofree(char) *replacement = NULL;
+
+        /* Must ensure we're **really** initialised, as we might see open happen
+         * before the constructor..
+         */
+        lsi_redirect_init_tables();
+
+        /* Not interested in this guy apparently */
+        if (!lsi_override) {
+                return lsi_table.fopen64(p, modes);
         }
 
-        /* No replacement */
-        return lsi_table.open(p, flags, mode);
+        replacement = lsi_get_redirect_path("fopen64", op, p);
+        if (!replacement) {
+                return lsi_table.fopen64(p, modes);
+        }
+        return lsi_table.fopen64(replacement, modes);
 }
 
 /*

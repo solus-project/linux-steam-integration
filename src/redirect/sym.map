@@ -1,5 +1,6 @@
 {
   global:
+    fopen64;
     open;
   local:
     *;

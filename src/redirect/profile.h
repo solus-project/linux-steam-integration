@@ -27,6 +27,11 @@ typedef LsiRedirectProfile *(*lsi_profile_generator_func)(char *process_name, ch
  */
 LsiRedirectProfile *lsi_redirect_profile_new_ark(char *process_name, char *steam_root);
 
+/**
+ * Profile generator for Project Highrise
+ */
+LsiRedirectProfile *lsi_redirect_profile_new_project_highrise(char *process_name, char *steam_root);
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *
