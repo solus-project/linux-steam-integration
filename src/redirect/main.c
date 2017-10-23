@@ -20,10 +20,12 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "../common/common.h"
 #include "../common/files.h"
 #include "../common/log.h"
 #include "nica/util.h"
 
+#include "profile.h"
 #include "redirect.h"
 
 /**
@@ -41,6 +43,13 @@ static volatile bool lsi_override = false;
  * Handle definitions
  */
 typedef int (*lsi_open_file)(const char *p, int flags, mode_t mode);
+
+/**
+ * Known profiles
+ */
+static lsi_profile_generator_func generators[] = {
+        &lsi_redirect_profile_new_ark,
+};
 
 /**
  * Global storage of handles for nicer organisation.
@@ -132,60 +141,6 @@ failed:
 }
 
 /**
- * Testing: Create profile for ARK: Survival Evolved
- */
-static LsiRedirectProfile *lsi_redirect_profile_new_ark(char **steam_paths)
-{
-        LsiRedirectProfile *p = NULL;
-        LsiRedirect *redirect = NULL;
-
-#define ARK_BASE "steamapps/common/ARK/ShooterGame/Content"
-        static const char *def_mic_source =
-            ARK_BASE "/PrimalEarth/Environment/Water/Water_DepthBlur_MIC.uasset";
-        static const char *def_mic_target =
-            ARK_BASE "/Mods/TheCenter/Assets/Mic/Water_DepthBlur_MIC.uasset";
-#undef ARK_BASE
-
-        p = lsi_redirect_profile_new("ARK: Survival Evolved");
-        if (!p) {
-                fputs("OUT OF MEMORY\n", stderr);
-                return NULL;
-        }
-
-        /* For each steam path, try to create a rule for it */
-        while (*steam_paths) {
-                char *steam_dir = *steam_paths;
-                autofree(char) *mic_source = NULL;
-                autofree(char) *mic_target = NULL;
-
-                if (asprintf(&mic_source, "%s/%s", steam_dir, def_mic_source) < 0) {
-                        goto failed;
-                }
-                if (asprintf(&mic_target, "%s/%s", steam_dir, def_mic_target) < 0) {
-                        goto failed;
-                }
-
-                /* Don't add a redirect if the paths don't exist. */
-                redirect = lsi_redirect_new_path_replacement(mic_source, mic_target);
-                if (!redirect) {
-                        goto next;
-                }
-
-                lsi_redirect_profile_insert_rule(p, redirect);
-        next:
-                ++steam_paths;
-        }
-
-        return p;
-
-failed:
-        /* Dead in the water.. */
-        fputs("OUT OF MEMORY\n", stderr);
-        lsi_redirect_profile_free(p);
-        return NULL;
-}
-
-/**
  * Main entry point into this redirect module.
  *
  * We'll check the process name and determine if we're interested in installing
@@ -198,6 +153,7 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         lsi_redirect_init_tables();
         autofree(char) *process_name = NULL;
         char **paths = NULL;
+        char **orig = NULL;
 
         process_name = lsi_get_process_name();
 
@@ -207,13 +163,22 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         }
 
         /* Grab the stam installation directories */
-        paths = lsi_get_steam_paths();
+        orig = paths = lsi_get_steam_paths();
 
-        /* Temporary hack, we'll make this more generic later */
-        if (strcmp(process_name, "ShooterGame") == 0) {
-                lsi_log_set_id("ShooterGame");
-                lsi_profile = lsi_redirect_profile_new_ark(paths);
+        /* For each path try to form a valid profile for the process name and Steam directory */
+        while (*paths) {
+                for (size_t i = 0; i < ARRAY_SIZE(generators); i++) {
+                        lsi_profile = generators[i](process_name, *paths);
+                        if (lsi_profile) {
+                                goto use_profile;
+                        }
+                }
+                ++paths;
         }
+
+use_profile:
+        /* Rewind path set */
+        paths = orig;
 
         if (!lsi_profile) {
                 goto clean_array;
@@ -226,7 +191,6 @@ clean_array:
 
         /* Free them again */
         if (paths) {
-                char **orig = paths;
                 while (*paths) {
                         free(*paths);
                         ++paths;

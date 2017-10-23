@@ -8,6 +8,7 @@ if with_libredirect == true
     redirect_sources = [
         'main.c',
         'profile.c',
+        'profiles/ark.c',
     ]
 
     main_redirect = shared_library(
