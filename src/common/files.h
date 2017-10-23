@@ -42,6 +42,11 @@ char **lsi_get_steam_paths(void);
 bool lsi_file_exists(const char *path);
 
 /**
+ * Return the full process name
+ */
+char *lsi_get_process_name(void);
+
+/**
  * Determine the basename'd process
  */
 char *lsi_get_process_base_name(void);
