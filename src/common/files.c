@@ -90,7 +90,7 @@ char *lsi_get_steam_dir()
         return strdup(resolv);
 }
 
-char *lsi_get_process_name(void)
+char *lsi_get_process_base_name(void)
 {
         autofree(char) *realp = NULL;
         char *basep = NULL;

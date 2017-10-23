@@ -150,7 +150,7 @@ static void check_is_intercept_candidate(void)
 {
         autofree(char) *nom = NULL;
 
-        nom = lsi_get_process_name();
+        nom = lsi_get_process_base_name();
         if (!nom) {
                 return;
         }

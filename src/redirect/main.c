@@ -155,7 +155,7 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         char **paths = NULL;
         char **orig = NULL;
 
-        process_name = lsi_get_process_name();
+        process_name = lsi_get_process_base_name();
 
         if (!process_name) {
                 fputs("Out of memory!\n", stderr);

@@ -44,7 +44,7 @@ bool lsi_file_exists(const char *path);
 /**
  * Determine the basename'd process
  */
-char *lsi_get_process_name(void);
+char *lsi_get_process_base_name(void);
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
