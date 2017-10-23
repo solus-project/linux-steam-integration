@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../common/log.h"
 #include "nica/util.h"
 #include "profile.h"
 #include "redirect.h"
@@ -75,6 +76,9 @@ LsiRedirectProfile *lsi_redirect_profile_new_ark(char *process_name, char *steam
         if (!redirect) {
                 goto unused;
         }
+
+        /* We're in, set our log ID now */
+        lsi_log_set_id("ARK");
 
         lsi_redirect_profile_insert_rule(p, redirect);
 
