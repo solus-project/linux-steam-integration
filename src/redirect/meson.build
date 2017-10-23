@@ -11,10 +11,13 @@ if with_libredirect == true
         'profiles/ark.c',
     ]
 
+    sym_map = join_paths(meson.current_source_dir(), 'sym.map')
+
     main_redirect = shared_library(
         'lsi-redirect',
         sources: redirect_sources,
         c_args: ['-fvisibility=hidden'],
+        link_args: ['-Wl,--version-script=@0@'.format(sym_map)],
         include_directories: nica_includes,
         dependencies: [
             libdl,

@@ -1,0 +1,7 @@
+{
+  global:
+    la_objsearch;
+    la_version;
+  local:
+    *;
+};

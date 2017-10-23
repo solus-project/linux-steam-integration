@@ -6,10 +6,13 @@ if with_libintercept == true
         'main.c',
     ]
 
+    sym_map = join_paths(meson.current_source_dir(), 'sym.map')
+
     main_intercept = shared_library(
         'lsi-intercept',
         sources: intercept_sources,
         c_args: ['-fvisibility=hidden'],
+        link_args: ['-Wl,--version-script=@0@'.format(sym_map)],
         include_directories: nica_includes,
         dependencies: [
             link_lsi_common,

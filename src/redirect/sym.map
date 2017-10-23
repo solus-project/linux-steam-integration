@@ -1,0 +1,6 @@
+{
+  global:
+    open;
+  local:
+    *;
+};
