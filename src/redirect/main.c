@@ -140,8 +140,6 @@ static LsiRedirectProfile *lsi_redirect_profile_new_ark(char **steam_paths)
         LsiRedirect *redirect = NULL;
 
 #define ARK_BASE "steamapps/common/ARK/ShooterGame/Content"
-        autofree(char) *mic_source = NULL;
-        autofree(char) *mic_target = NULL;
         static const char *def_mic_source =
             ARK_BASE "/PrimalEarth/Environment/Water/Water_DepthBlur_MIC.uasset";
         static const char *def_mic_target =
@@ -157,6 +155,8 @@ static LsiRedirectProfile *lsi_redirect_profile_new_ark(char **steam_paths)
         /* For each steam path, try to create a rule for it */
         while (*steam_paths) {
                 char *steam_dir = *steam_paths;
+                autofree(char) *mic_source = NULL;
+                autofree(char) *mic_target = NULL;
 
                 if (asprintf(&mic_source, "%s/%s", steam_dir, def_mic_source) < 0) {
                         goto failed;
