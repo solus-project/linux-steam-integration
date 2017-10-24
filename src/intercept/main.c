@@ -240,6 +240,42 @@ static const char *vendor_transmute_target[] = {
 };
 
 /**
+ * Every so often a game comes along that does the following:
+ *
+ * open("path") ? dlopen("path").
+ * Except: path = "*.dll", dlopen() is transformed to ".dll.so"
+ *
+ * This is unrelated to the ".la" errors
+ */
+static bool lsi_override_dll_fail(const char *orig_name, const char **soname)
+{
+        size_t len = strlen(orig_name);
+        static char path_lookup[PATH_MAX];
+
+        if (len < 7) {
+                return false;
+        }
+
+        if (strncmp(orig_name + (len - 7), ".dll.so", 7) != 0) {
+                return false;
+        }
+
+        if (!strncpy(path_lookup, orig_name, len - 3)) {
+                return false;
+        }
+
+        if (!lsi_file_exists(path_lookup)) {
+                return false;
+        }
+
+        *soname = path_lookup;
+        lsi_log_debug("fixed invalid suffix dlopen() \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
+                      orig_name,
+                      path_lookup);
+        return true;
+}
+
+/**
  * Mono games might try looking for /x86/ plugin directory for a 64-bit process,
  * as seen with testing with Project Highrise.
  *
@@ -315,6 +351,10 @@ static bool lsi_override_dlopen(const char *orig_name, const char **soname)
                 "/usr/lib",
 #endif
         };
+
+        if (lsi_override_dll_fail(orig_name, soname)) {
+                return true;
+        }
 
         if (!lsi_file_exists(orig_name)) {
                 return false;
