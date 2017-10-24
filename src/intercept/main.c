@@ -11,6 +11,7 @@
 
 #define _GNU_SOURCE
 
+#include <libgen.h>
 #include <link.h>
 #include <linux/limits.h>
 #include <stdio.h>
@@ -239,6 +240,57 @@ static const char *vendor_transmute_target[] = {
 };
 
 /**
+ * Mono games might try looking for /x86/ plugin directory for a 64-bit process,
+ * as seen with testing with Project Highrise.
+ *
+ * This function simply redirects the dlopen to the file in the x86_64 directory,
+ * if it actually exists.
+ *
+ * Typically this is for libCSteamWorks, libsteam_api, and Unity ScreenSelector.so
+ */
+#if UINTPTR_MAX == 0xffffffffffffffff
+static bool lsi_override_x86_derp(const char *orig_name, const char **soname)
+{
+        static char path_copy[PATH_MAX];
+        static char path_lookup[PATH_MAX];
+        char *small_name = NULL;
+        char *dir = NULL;
+
+        if (!(strstr(orig_name, "/Plugins/x86/") && strstr(orig_name, ".so"))) {
+                return false;
+        }
+
+        if (!strcpy(path_copy, orig_name)) {
+                return false;
+        }
+
+        small_name = basename(path_copy);
+        dir = dirname(path_copy);
+
+        if (snprintf(path_lookup, sizeof(path_lookup), "%s/../x86_64/%s", dir, small_name) < 0) {
+                return false;
+        }
+
+        if (!lsi_file_exists(path_lookup)) {
+                return false;
+        }
+
+        *soname = path_lookup;
+        lsi_log_debug(
+            "fixed invalid architecture dlopen() \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
+            orig_name,
+            path_lookup);
+        return true;
+#else
+static bool lsi_override_x86_derp(__lsi_unused__ const char *orig_name,
+                                  __lsi_unused__ const char **soname)
+{
+        /* Don't perform x86 translation on 32-bit machines */
+        return false;
+#endif
+}
+
+/**
  * lsi_override_dlopen is used to override simple dlopen() requests typically
  * used by Mono games, i.e.:
  *
@@ -266,6 +318,10 @@ static bool lsi_override_dlopen(const char *orig_name, const char **soname)
 
         if (!lsi_file_exists(orig_name)) {
                 return false;
+        }
+
+        if (lsi_override_x86_derp(orig_name, soname)) {
+                return true;
         }
 
         if (!strcpy(path_copy, orig_name)) {
