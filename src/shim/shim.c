@@ -12,6 +12,7 @@
 #define _GNU_SOURCE
 
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,6 +40,29 @@
  * at runtime.
  */
 #define REDIRECT_PATH "/usr/\$LIB/liblsi-redirect.so"
+
+/**
+ * Set up LD_PRELOAD, respecting an existing LD_PRELOAD and forcing ourselves
+ * to be first in the list.
+ */
+static void shim_set_ld_preload(void)
+{
+        const char *preload = NULL;
+        static char tgt[PATH_MAX] = { 0 };
+
+        preload = getenv("LD_PRELOAD");
+        if (!preload) {
+                setenv("LD_PRELOAD", REDIRECT_PATH, 1);
+                return;
+        }
+
+        if (snprintf(tgt, sizeof(tgt), "%s:%s", REDIRECT_PATH, preload) < 0) {
+                setenv("LD_PRELOAD", REDIRECT_PATH, 1);
+                return;
+        }
+
+        setenv("LD_PRELOAD", tgt, 1);
+}
 
 int main(int argc, char **argv)
 {
@@ -77,11 +101,9 @@ int main(int argc, char **argv)
                 }
 #endif
 #ifdef HAVE_LIBREDIRECT
-                /* Only use libredirect in combination with native runtime!
-                 * TODO: Respect existing preload libraries?
-                 */
+                /* Only use libredirect in combination with native runtime! */
                 if (config.use_libredirect) {
-                        setenv("LD_PRELOAD", REDIRECT_PATH, 1);
+                        shim_set_ld_preload();
                 }
 #endif
         } else {
