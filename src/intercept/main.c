@@ -52,6 +52,7 @@ static const char *steam_allowed[] = {
         "libavresample.so.",
         "libavutil.so.",
         "libswscale.so.",
+        "libx264.so.",
 
         /* core plugins */
         "chromehtml.so",
