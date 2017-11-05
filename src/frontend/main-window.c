@@ -125,10 +125,14 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_window_set_title(GTK_WINDOW(self), "Linux Steam® Integration");
         gtk_window_set_icon_name(GTK_WINDOW(self), "steam");
         gtk_window_set_position(GTK_WINDOW(self), GTK_WIN_POS_CENTER);
+        gtk_widget_set_size_request(GTK_WIDGET(self), 320, 500);
+        gtk_window_set_resizable(GTK_WINDOW(self), FALSE);
 
         /* Add main layout */
         layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
         gtk_container_add(GTK_CONTAINER(self), layout);
+        gtk_container_set_border_width(GTK_CONTAINER(self), 12);
+        gtk_widget_set_valign(GTK_WIDGET(layout), GTK_ALIGN_START);
 
         /* Header box */
         header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -186,6 +190,10 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
             "Force 32-bit mode for Steam",
             "This may workaround some broken games, but will in turn stop the Steam store working");
 
+        /* Load in the existing configuration */
+        gtk_switch_set_active(GTK_SWITCH(self->check_native), self->config.use_native_runtime);
+        gtk_switch_set_active(GTK_SWITCH(self->check_emul32), self->config.force_32);
+
 #ifdef HAVE_LIBINTERCEPT
         self->check_intercept =
             insert_grid_toggle(grid,
@@ -194,6 +202,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
                                "Override how library files are loaded to maximise "
                                "compatibility, this option is recommended");
         set_row_sensitive(self->check_intercept, FALSE);
+        gtk_switch_set_active(GTK_SWITCH(self->check_intercept), self->config.use_libintercept);
 #endif
 
 #ifdef HAVE_LIBREDIRECT
@@ -203,14 +212,11 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
                                                   "Override system calls to fix known bugs in some "
                                                   "Linux ports. This option is recommended.");
         set_row_sensitive(self->check_redirect, FALSE);
+        gtk_switch_set_active(GTK_SWITCH(self->check_redirect), self->config.use_libredirect);
 #endif
 
         /* Finally, make sure we're visible will we. */
-        gtk_container_set_border_width(GTK_CONTAINER(self), 12);
-        gtk_widget_set_valign(GTK_WIDGET(layout), GTK_ALIGN_START);
         gtk_widget_show_all(GTK_WIDGET(self));
-        gtk_widget_set_size_request(GTK_WIDGET(self), 320, 500);
-        gtk_window_set_resizable(GTK_WINDOW(self), FALSE);
 }
 
 static void _align_label(GtkWidget *label)
