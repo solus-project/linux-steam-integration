@@ -49,6 +49,7 @@ static void insert_grid(GtkWidget *grid, int *row, const char *title, const char
 static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
                                      const char *description);
 static void set_row_sensitive(GtkWidget *toggle, gboolean sensitive);
+static void lsi_native_swapped(LsiSettingsWindow *window, gpointer v);
 
 /**
  * lsi_settings_window_new:
@@ -215,6 +216,17 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_switch_set_active(GTK_SWITCH(self->check_redirect), self->config.use_libredirect);
 #endif
 
+        /* Hook up our signals. Basically the "native runtime" option controls the two library
+         * options, they must be used in conjunction.
+         */
+        g_signal_connect_swapped(self->check_native,
+                                 "notify::active",
+                                 G_CALLBACK(lsi_native_swapped),
+                                 self);
+
+        /* Ensure our properties are now in sync. */
+        lsi_native_swapped(self, self->check_native);
+
         /* Finally, make sure we're visible will we. */
         gtk_widget_show_all(GTK_WIDGET(self));
 }
@@ -311,6 +323,26 @@ static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *titl
         insert_grid(grid, row, title, description, toggle);
         return toggle;
 }
+
+/**
+ * Update the sensitivity of the UI controls based on whether or not we have
+ * native runtime turned on
+ */
+static void lsi_native_swapped(LsiSettingsWindow *self, __lsi_unused__ gpointer v)
+{
+        gboolean native_runtime;
+
+        native_runtime = gtk_switch_get_active(GTK_SWITCH(self->check_native));
+
+#ifdef HAVE_LIBREDIRECT
+        set_row_sensitive(self->check_redirect, native_runtime);
+#endif
+
+#ifdef HAVE_LIBINTERCEPT
+        set_row_sensitive(self->check_intercept, native_runtime);
+#endif
+}
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *
