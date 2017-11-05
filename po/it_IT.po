@@ -10,12 +10,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-05 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Marius Quabeck <marius.quabeck@ubuntu.com>, 2017\n"
-"Language-Team: German (https://www.transifex.com/solus-project/teams/68407/de/)\n"
+"Last-Translator: Fabio Forni <fabio94xx@gmail.com>, 2017\n"
+"Language-Team: Italian (Italy) (https://www.transifex.com/solus-project/teams/68407/it_IT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
+"Language: it_IT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Sort out window bits
@@ -30,57 +30,57 @@ msgid ""
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 msgstr ""
-"Beeinflusse das Verhalten vom Steam Client und Spielen. Die Einstellungen "
-"werden erst aktiv nachdem der Steam Client neu gestartet wurde. Nutze 'Steam"
-" beenden\" um sicherzugehen das es beendet wird."
+"Controlla il comportamento del client Steam e dei giochi. Le impostazioni "
+"non saranno applicate finché non verrà riavviato il client Steam. Usa "
+"l'opzione \"Esci da Steam\" per assicurarti che venga davvero chiuso."
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
-msgstr "Nutze native Laufzeit"
+msgstr "Use ambiente di runtime nativo"
 
 #: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
-msgstr "Wechsel zwischen der nativen Laufzeit und der Steam Laufzeit."
+msgstr "Scegli tra l'ambiente di runtime nativo e quello integrato in Steam."
 
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
 msgid "This option has been disabled as the system is already 32-bit"
-msgstr "Diese Option ist deaktiviert da dies bereits ein 32-bit System ist."
+msgstr "Questa opzione è disabilitata perché il sistema è già a 32-bit"
 
 #: src/frontend/main-window.c:205
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 msgstr ""
-"Dies behebt möglicherweise Fehler bei kaputten Steam Spielen, wird aber den "
-"Steam Store Browser deaktivieren."
+"Può correggere alcuni giochi non funzionanti, ma disabiliterà la navigazione"
+" del negozio Steam."
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
-msgstr "Erzwinge 32-bit Modus für Steam"
+msgstr "Forza Steam a 32-bit"
 
 #: src/frontend/main-window.c:218
 msgid "Use the intercept library"
-msgstr "Nutze die intercept Bibliothek"
+msgstr "Usa la libreria di intercettazione"
 
 #: src/frontend/main-window.c:219
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
-"Zwinge Steam Anwendungen dazu mehr native Bibliotheken zu nutzen um die "
-"Kompatibilität zu maximieren."
+"Forza le applicazioni di Steam a usare ancor più librerie native per "
+"massimizzare la compatibilità."
 
 #: src/frontend/main-window.c:228
 msgid "Use the redirect library"
-msgstr "Nutze die umgeleitete Bibliothek"
+msgstr "Usa la libreria di redirezione"
 
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
-"Überschreibe System Calls um bekannte Bugs in manchen Linux Ports zu "
-"beheben."
+"Rimpiazza le chiamate di sistema per correggere i bug noti di alcuni porting"
+" su Linux."
 
 #: src/frontend/main-window.c:383
 msgid "Failed to save configuration"
-msgstr "Konfiguration konnte nicht gespeichert werden"
+msgstr "Errore durante il salvataggio della configurazione"
