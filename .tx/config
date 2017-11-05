@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[linux-steam-integration.linux-steam-integrationpot]
+file_filter = po/<lang>.po
+source_lang = en
+type = PO
+
