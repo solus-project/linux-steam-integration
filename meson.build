@@ -41,8 +41,11 @@ prefix = get_option('prefix')
 datadir = join_paths(prefix, get_option('datadir'))
 vendordir = join_paths(datadir, 'defaults', meson.project_name())
 sysconfdir = join_paths(prefix, get_option('sysconfdir'))
+localedir = join_paths(prefix, get_option('localedir'))
 cdata.set_quoted('SYSTEMCONFDIR', sysconfdir)
 cdata.set_quoted('VENDORDIR', vendordir)
+cdata.set_quoted('LOCALEDIR', localedir)
+cdata.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 
 # Configurables
 cdata.set_quoted('LSI_PRELOAD_LIBS', get_option('with-preload-libs'))

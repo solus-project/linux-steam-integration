@@ -11,8 +11,10 @@
 
 #define _GNU_SOURCE
 
+#include <glib/gi18n.h>
 #include <stdlib.h>
 
+#include "config.h"
 #include "main-window.h"
 
 /**
@@ -21,6 +23,11 @@
 int main(int argc, char **argv)
 {
         GtkWidget *window = NULL;
+
+        setlocale(LC_ALL, "");
+        bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+        textdomain(GETTEXT_PACKAGE);
 
         gtk_init(&argc, &argv);
 
