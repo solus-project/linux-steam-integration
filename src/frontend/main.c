@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "lsi.h"
+#include "main-window.h"
 
 static inline void _align_label(GtkWidget *label)
 {
@@ -36,7 +37,25 @@ static void insert_grid(GtkWidget *grid, int *row, const char *title, const char
 static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
                                      const char *description);
 
+/**
+ * Temporary new entry point.
+ */
 int main(int argc, char **argv)
+{
+        GtkWidget *window = NULL;
+
+        gtk_init(&argc, &argv);
+
+        window = lsi_settings_window_new();
+        gtk_widget_show(window);
+
+        gtk_main();
+
+        return EXIT_SUCCESS;
+}
+
+/* Keeping for reference. */
+int old_main(int argc, char **argv)
 {
         gtk_init(&argc, &argv);
         GtkWidget *dialog = NULL;
