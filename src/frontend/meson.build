@@ -3,6 +3,7 @@ if with_frontend == true
 
     frontend_sources = [
         'main.c',
+        'main-window.c',
     ]
 
     frontend = executable(
