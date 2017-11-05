@@ -169,10 +169,10 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_box_pack_start(GTK_BOX(layout), widget, TRUE, TRUE, 0);
         style = gtk_widget_get_style_context(widget);
         gtk_style_context_add_class(style, GTK_STYLE_CLASS_DIM_LABEL);
-#if GTK_MINOR_VERSION <= 12
-        gtk_widget_set_margin_right(widget, 100);
-#else
+#if GTK_CHECK_VERSION(3, 12, 0)
         gtk_widget_set_margin_end(widget, 100);
+#else
+        gtk_widget_set_margin_right(widget, 100);
 #endif
         /* add a separator now */
         widget = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
@@ -247,10 +247,10 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
 
 static void _align_label(GtkWidget *label)
 {
-#if GTK_MINOR_VERSION <= 12
-        gtk_misc_set_alignment(GTK_MISC(label), 0.0f, 0.5f);
-#else
+#if GTK_CHECK_VERSION(3, 12, 0)
         gtk_widget_set_halign(label, GTK_ALIGN_START);
+#else
+        gtk_misc_set_alignment(GTK_MISC(label), 0.0f, 0.5f);
 #endif
         gtk_widget_set_hexpand(label, FALSE);
         gtk_widget_set_valign(label, GTK_ALIGN_START);
@@ -289,10 +289,10 @@ static void insert_grid(GtkWidget *grid, int *row, const char *title, const char
         _align_label(desc);
         style = gtk_widget_get_style_context(desc);
         gtk_style_context_add_class(style, GTK_STYLE_CLASS_DIM_LABEL);
-#if GTK_MINOR_VERSION <= 12
-        gtk_widget_set_margin_right(desc, 12);
-#else
+#if GTK_CHECK_VERSION(3, 12, 0)
         gtk_widget_set_margin_end(desc, 12);
+#else
+        gtk_widget_set_margin_right(desc, 12);
 #endif
         /* Deprecated but line wrap is busted without it.. */
         g_object_set(desc, "xalign", 0.0, NULL);
