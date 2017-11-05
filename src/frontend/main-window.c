@@ -15,6 +15,7 @@
 #include "config.h"
 #include "lsi.h"
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -50,6 +51,7 @@ static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *titl
                                      const char *description);
 static void set_row_sensitive(GtkWidget *toggle, gboolean sensitive);
 static void lsi_native_swapped(LsiSettingsWindow *window, gpointer v);
+static gboolean lsi_window_closed(LsiSettingsWindow *window, GdkEvent *event, gpointer v);
 
 /**
  * lsi_settings_window_new:
@@ -120,7 +122,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
 #endif
 
         /* For now we'll just exit on close */
-        g_signal_connect(self, "delete-event", gtk_main_quit, NULL);
+        g_signal_connect(self, "delete-event", G_CALLBACK(lsi_window_closed), NULL);
 
         /* Sort out window bits */
         gtk_window_set_title(GTK_WINDOW(self), "Linux Steam® Integration");
@@ -343,6 +345,32 @@ static void lsi_native_swapped(LsiSettingsWindow *self, __lsi_unused__ gpointer 
 #endif
 }
 
+/**
+ * Window is closed, so let's write our config out
+ */
+static gboolean lsi_window_closed(LsiSettingsWindow *self, __lsi_unused__ GdkEvent *event,
+                                  __lsi_unused__ gpointer v)
+{
+        /* Just pop the properties back into the struct */
+        self->config.force_32 = gtk_switch_get_active(GTK_SWITCH(self->check_emul32));
+        self->config.use_native_runtime = gtk_switch_get_active(GTK_SWITCH(self->check_native));
+
+#ifdef HAVE_LIBREDIRECT
+        self->config.use_libredirect = gtk_switch_get_active(GTK_SWITCH(self->check_redirect));
+#endif
+
+#ifdef HAVE_LIBINTERCEPT
+        self->config.use_libredirect = gtk_switch_get_active(GTK_SWITCH(self->check_redirect));
+#endif
+
+        /* Try to write new config */
+        if (!lsi_config_store(&self->config)) {
+                lsi_report_failure("Failed to save configuration: %s", strerror(errno));
+        }
+
+        gtk_main_quit();
+        return FALSE;
+}
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *
