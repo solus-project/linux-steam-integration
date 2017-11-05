@@ -1,0 +1,86 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linux-steam-integration package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: linux-steam-integration\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-05 19:28+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Víctor Rodríguez <vhugo642@gmail.com>, 2017\n"
+"Language-Team: Spanish (Latin America) (https://www.transifex.com/solus-project/teams/68407/es_419/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_419\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Sort out window bits
+#. header label
+#: src/frontend/main-window.c:131 src/frontend/main-window.c:148
+msgid "Linux Steam® Integration"
+msgstr "Linux Steam® Integration"
+
+#: src/frontend/main-window.c:162
+msgid ""
+"Control the behaviour of the Steam client and games. Settings will not take "
+"effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
+"ensure it closes."
+msgstr ""
+"Controla el comportamiento del cliente y los juegos de Steam. La "
+"configuración no tendrá efecto hasta que el cliente de Steam se reinicie. "
+"Use la opción 'Salir de Steam' para asegurarse de que se cierre."
+
+#: src/frontend/main-window.c:191
+msgid "Use native runtime"
+msgstr "Usar tiempo de ejecución nativo"
+
+#: src/frontend/main-window.c:192
+msgid "Switch between the native runtime and the bundled Steam runtime."
+msgstr "Cambie entre el tiempo de ejecución nativo y el incluído por Steam"
+
+#. Label is shown to indicate we can't enable 32-bit option
+#: src/frontend/main-window.c:201
+msgid "This option has been disabled as the system is already 32-bit"
+msgstr "Esta opción ha sido desactivada ya que el sistema ya es de 32-bit"
+
+#: src/frontend/main-window.c:205
+msgid ""
+"This may workaround some broken games, but will disable the Steam store "
+"browser."
+msgstr ""
+"Esto puede mejorar algunos juegos rotos, pero desactivará el navegadorde la "
+"tienda de Steam."
+
+#: src/frontend/main-window.c:210
+msgid "Force 32-bit mode for Steam"
+msgstr "Forzar modo de 32-bit para Steam"
+
+#: src/frontend/main-window.c:218
+msgid "Use the intercept library"
+msgstr "Utilizar la biblioteca de intercepción"
+
+#: src/frontend/main-window.c:219
+msgid ""
+"Force Steam applications to use more native libraries to maximise "
+"compatibility."
+msgstr ""
+"Forzar a las aplicaciones de Steam a usar más librerías nativas "
+"paramaximizar la compatibilidad."
+
+#: src/frontend/main-window.c:228
+msgid "Use the redirect library"
+msgstr "Utilizar la biblioteca de redirección"
+
+#: src/frontend/main-window.c:229
+msgid "Override system calls to fix known bugs in some Linux ports."
+msgstr ""
+"Anular las llamadas del sistema para solucionar algunos problemas conocidos "
+"en adaptaciones de Linux."
+
+#: src/frontend/main-window.c:383
+msgid "Failed to save configuration"
+msgstr "Error al guardar la configuración"
