@@ -355,12 +355,8 @@ static bool vdf_file_handle_quote(VdfFile *file, char c)
 
         /* Store the new key->value mapping */
         t->parent = file->section->parent;
-        if (!file->section->child) {
-                file->section->child = t;
-        } else {
-                t->sibling = file->section->child;
-                file->section->child = t;
-        }
+        t->sibling = file->section->child;
+        file->section->child = t;
 
         return true;
 
@@ -405,12 +401,8 @@ static bool vdf_file_handle_section_open(VdfFile *file)
         file->key_id = NULL;
 
         node->parent = file->section;
-        if (!file->section->child) {
-                file->section->child = node;
-        } else {
-                node->sibling = file->section->child;
-                file->section->child = node;
-        }
+        node->sibling = file->section->child;
+        file->section->child = node;
 
         file->section = node;
         return true;
