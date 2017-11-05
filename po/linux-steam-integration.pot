@@ -1,0 +1,76 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linux-steam-integration package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: linux-steam-integration\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-05 19:23+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Sort out window bits
+#. header label
+#: src/frontend/main-window.c:130 src/frontend/main-window.c:147
+msgid "Linux Steam® Integration"
+msgstr ""
+
+#: src/frontend/main-window.c:161
+msgid ""
+"Control the behaviour of the Steam client and games. Settings will not take "
+"effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
+"ensure it closes."
+msgstr ""
+
+#: src/frontend/main-window.c:190
+msgid "Use native runtime"
+msgstr ""
+
+#: src/frontend/main-window.c:191
+msgid "Switch between the native runtime and the bundled Steam runtime."
+msgstr ""
+
+#. Label is shown to indicate we can't enable 32-bit option
+#: src/frontend/main-window.c:200
+msgid "This option has been disabled as the system is already 32-bit"
+msgstr ""
+
+#: src/frontend/main-window.c:204
+msgid ""
+"This may workaround some broken games, but will disable the Steam store "
+"browser."
+msgstr ""
+
+#: src/frontend/main-window.c:209
+msgid "Force 32-bit mode for Steam"
+msgstr ""
+
+#: src/frontend/main-window.c:217
+msgid "Use the intercept library"
+msgstr ""
+
+#: src/frontend/main-window.c:218
+msgid ""
+"Force Steam applications to use more native libraries to maximise "
+"compatibility."
+msgstr ""
+
+#: src/frontend/main-window.c:227
+msgid "Use the redirect library"
+msgstr ""
+
+#: src/frontend/main-window.c:228
+msgid "Override system calls to fix known bugs in some Linux ports."
+msgstr ""
+
+#: src/frontend/main-window.c:382
+msgid "Failed to save configuration"
+msgstr ""

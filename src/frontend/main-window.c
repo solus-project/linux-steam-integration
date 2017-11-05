@@ -127,7 +127,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         g_signal_connect(self, "delete-event", G_CALLBACK(lsi_window_closed), NULL);
 
         /* Sort out window bits */
-        gtk_window_set_title(GTK_WINDOW(self), "Linux Steam® Integration");
+        gtk_window_set_title(GTK_WINDOW(self), _("Linux Steam® Integration"));
         gtk_window_set_icon_name(GTK_WINDOW(self), "steam");
         gtk_window_set_position(GTK_WINDOW(self), GTK_WIN_POS_CENTER);
         gtk_widget_set_size_request(GTK_WIDGET(self), 320, 500);
@@ -144,7 +144,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_box_pack_start(GTK_BOX(layout), header, FALSE, FALSE, 0);
 
         /* header label */
-        label = g_strdup_printf("<big>%s</big>", "Linux Steam® Integration");
+        label = g_strdup_printf("<big>%s</big>", _("Linux Steam® Integration"));
         widget = gtk_label_new(label);
         gtk_label_set_use_markup(GTK_LABEL(widget), TRUE);
         g_free(label);
@@ -158,9 +158,9 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
 
         /* small label */
         widget = gtk_label_new(
-            "Control the behaviour of the Steam client and games. Settings will not take effect "
-            "until the Steam Client is restarted. Use the 'Exit Steam' option to ensure it "
-            "closes.");
+            _("Control the behaviour of the Steam client and games. Settings will not take effect "
+              "until the Steam Client is restarted. Use the 'Exit Steam' option to ensure it "
+              "closes."));
         g_object_set(widget, "xalign", 0.0, NULL);
         gtk_label_set_max_width_chars(GTK_LABEL(widget), 80);
         gtk_label_set_line_wrap(GTK_LABEL(widget), TRUE);
@@ -184,11 +184,11 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_box_pack_start(GTK_BOX(layout), grid, FALSE, FALSE, 0);
 
         /* Start populating options into the UI */
-        self->check_native =
-            insert_grid_toggle(grid,
-                               &row,
-                               "Use native runtime",
-                               "Switch between the native runtime and the bundled Steam runtime.");
+        self->check_native = insert_grid_toggle(
+            grid,
+            &row,
+            _("Use native runtime"),
+            _("Switch between the native runtime and the bundled Steam runtime."));
 
         /* Load in the existing configuration */
         gtk_switch_set_active(GTK_SWITCH(self->check_native), self->config.use_native_runtime);
@@ -197,16 +197,16 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         /* Can only force on a 64-bit system. */
         if (!is_64bit) {
                 /* Label is shown to indicate we can't enable 32-bit option */
-                emul32_desc = "This option has been disabled as the system is already 32-bit";
+                emul32_desc = _("This option has been disabled as the system is already 32-bit");
         } else {
                 /* Label is shown on 64-bit systems only */
                 emul32_desc =
-                    "This may workaround some broken games, but will disable the Steam store "
-                    "browser.";
+                    _("This may workaround some broken games, but will disable the Steam store "
+                      "browser.");
         }
 
         self->check_emul32 =
-            insert_grid_toggle(grid, &row, "Force 32-bit mode for Steam", emul32_desc);
+            insert_grid_toggle(grid, &row, _("Force 32-bit mode for Steam"), emul32_desc);
         set_row_sensitive(self->check_emul32, is_64bit);
         gtk_switch_set_active(GTK_SWITCH(self->check_emul32), self->config.force_32);
 
@@ -214,18 +214,19 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         self->check_intercept = insert_grid_toggle(
             grid,
             &row,
-            "Use the intercept library",
-            "Force Steam applications to use more native libraries to maximise compatibility.");
+            _("Use the intercept library"),
+            _("Force Steam applications to use more native libraries to maximise compatibility."));
         set_row_sensitive(self->check_intercept, FALSE);
         gtk_switch_set_active(GTK_SWITCH(self->check_intercept), self->config.use_libintercept);
 #endif
 
 #ifdef HAVE_LIBREDIRECT
-        self->check_redirect = insert_grid_toggle(grid,
-                                                  &row,
-                                                  "Use the redirect library",
-                                                  "Override system calls to fix known bugs in some "
-                                                  "Linux ports.");
+        self->check_redirect =
+            insert_grid_toggle(grid,
+                               &row,
+                               _("Use the redirect library"),
+                               _("Override system calls to fix known bugs in some "
+                                 "Linux ports."));
         set_row_sensitive(self->check_redirect, FALSE);
         gtk_switch_set_active(GTK_SWITCH(self->check_redirect), self->config.use_libredirect);
 #endif
@@ -378,7 +379,7 @@ static gboolean lsi_window_closed(LsiSettingsWindow *self, __lsi_unused__ GdkEve
 
         /* Try to write new config */
         if (!lsi_config_store(&self->config)) {
-                lsi_report_failure("Failed to save configuration: %s", strerror(errno));
+                lsi_report_failure("%s: %s", _("Failed to save configuration"), strerror(errno));
         }
 
         gtk_main_quit();
