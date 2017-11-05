@@ -43,6 +43,7 @@ static void insert_grid(GtkWidget *grid, int *row, const char *title, const char
                         GtkWidget *widget);
 static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
                                      const char *description);
+static void set_row_sensitive(GtkWidget *toggle, gboolean sensitive);
 
 /**
  * lsi_settings_window_new:
@@ -185,6 +186,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
                                "Use the intercept library",
                                "Override how library files are loaded to maximise "
                                "compatibility, this option is recommended");
+        set_row_sensitive(self->check_intercept, FALSE);
 #endif
 
         /* Finally, make sure we're visible will we. */
@@ -248,6 +250,26 @@ static void insert_grid(GtkWidget *grid, int *row, const char *title, const char
 
         gtk_grid_attach(GTK_GRID(grid), desc, 0, *row, 1, 1);
         *row += 1;
+
+        /* Allow accessing these dynamic items again */
+        g_object_set_data(G_OBJECT(widget), "lsi_title", label);
+        g_object_set_data(G_OBJECT(widget), "lsi_desc", desc);
+}
+
+/**
+ * Set the complete row within the grid to the given sensitivity state
+ */
+static void set_row_sensitive(GtkWidget *toggle, gboolean sensitive)
+{
+        GtkWidget *title = NULL;
+        GtkWidget *desc = NULL;
+
+        title = g_object_get_data(G_OBJECT(toggle), "lsi_title");
+        desc = g_object_get_data(G_OBJECT(toggle), "lsi_desc");
+
+        gtk_widget_set_sensitive(toggle, sensitive);
+        gtk_widget_set_sensitive(title, sensitive);
+        gtk_widget_set_sensitive(desc, sensitive);
 }
 
 /**
