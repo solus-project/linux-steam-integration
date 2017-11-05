@@ -170,7 +170,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
 
         /* Start populating main grid with controls */
         grid = gtk_grid_new();
-        gtk_box_pack_start(GTK_BOX(layout), grid, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(layout), grid, FALSE, FALSE, 0);
 
         /* Start populating options into the UI */
         self->check_native = insert_grid_toggle(
@@ -205,7 +205,10 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
 
         /* Finally, make sure we're visible will we. */
         gtk_container_set_border_width(GTK_CONTAINER(self), 12);
+        gtk_widget_set_valign(GTK_WIDGET(layout), GTK_ALIGN_START);
         gtk_widget_show_all(GTK_WIDGET(self));
+        gtk_widget_set_size_request(GTK_WIDGET(self), 420, 500);
+        gtk_window_set_resizable(GTK_WINDOW(self), FALSE);
 }
 
 static void _align_label(GtkWidget *label)
