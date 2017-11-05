@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linux-steam-integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-05 19:23+0000\n"
+"POT-Creation-Date: 2017-11-05 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,58 +19,58 @@ msgstr ""
 
 #. Sort out window bits
 #. header label
-#: src/frontend/main-window.c:130 src/frontend/main-window.c:147
+#: src/frontend/main-window.c:131 src/frontend/main-window.c:148
 msgid "Linux Steam® Integration"
 msgstr ""
 
-#: src/frontend/main-window.c:161
+#: src/frontend/main-window.c:162
 msgid ""
 "Control the behaviour of the Steam client and games. Settings will not take "
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 msgstr ""
 
-#: src/frontend/main-window.c:190
+#: src/frontend/main-window.c:191
 msgid "Use native runtime"
 msgstr ""
 
-#: src/frontend/main-window.c:191
+#: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
 msgstr ""
 
 #. Label is shown to indicate we can't enable 32-bit option
-#: src/frontend/main-window.c:200
+#: src/frontend/main-window.c:201
 msgid "This option has been disabled as the system is already 32-bit"
 msgstr ""
 
-#: src/frontend/main-window.c:204
+#: src/frontend/main-window.c:205
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 msgstr ""
 
-#: src/frontend/main-window.c:209
+#: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
 msgstr ""
 
-#: src/frontend/main-window.c:217
+#: src/frontend/main-window.c:218
 msgid "Use the intercept library"
 msgstr ""
 
-#: src/frontend/main-window.c:218
+#: src/frontend/main-window.c:219
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
 
-#: src/frontend/main-window.c:227
+#: src/frontend/main-window.c:228
 msgid "Use the redirect library"
 msgstr ""
 
-#: src/frontend/main-window.c:228
+#: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
 
-#: src/frontend/main-window.c:382
+#: src/frontend/main-window.c:383
 msgid "Failed to save configuration"
 msgstr ""
