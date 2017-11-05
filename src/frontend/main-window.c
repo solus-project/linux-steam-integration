@@ -27,6 +27,11 @@ struct _LsiSettingsWindow {
         GtkWidget *check_intercept;
 #endif
 
+        /* Only when libredirect is enabled will we have this option */
+#ifdef HAVE_LIBREDIRECT
+        GtkWidget *check_redirect;
+#endif
+
         /* Always have these guys */
         GtkWidget *check_native;
         GtkWidget *check_emul32;
@@ -187,6 +192,15 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
                                "Override how library files are loaded to maximise "
                                "compatibility, this option is recommended");
         set_row_sensitive(self->check_intercept, FALSE);
+#endif
+
+#ifdef HAVE_LIBREDIRECT
+        self->check_redirect = insert_grid_toggle(grid,
+                                                  &row,
+                                                  "Use the redirect library",
+                                                  "Override system calls to fix known bugs in some "
+                                                  "Linux ports. This option is recommended.");
+        set_row_sensitive(self->check_redirect, FALSE);
 #endif
 
         /* Finally, make sure we're visible will we. */
