@@ -31,6 +31,8 @@ static inline void _align_label(GtkWidget *label)
         gtk_widget_set_valign(label, GTK_ALIGN_START);
 }
 
+static void insert_grid(GtkWidget *grid, int *row, const char *title, const char *description,
+                        GtkWidget *widget);
 static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
                                      const char *description);
 
@@ -157,12 +159,14 @@ int main(int argc, char **argv)
         return EXIT_SUCCESS;
 }
 
-static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
-                                     const char *description)
+/**
+ * Generic function to add titled description box with a custom widget into the grid.
+ */
+static void insert_grid(GtkWidget *grid, int *row, const char *title, const char *description,
+                        GtkWidget *widget)
 {
         GtkWidget *label = NULL;
         GtkWidget *desc = NULL;
-        GtkWidget *toggle = NULL;
         GtkStyleContext *style = NULL;
 
         /* Sort out title label */
@@ -171,9 +175,7 @@ static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *titl
         g_object_set(label, "margin-top", 12, "hexpand", TRUE, NULL);
         gtk_grid_attach(GTK_GRID(grid), label, 0, *row, 1, 1);
 
-        /* Sort out widget */
-        toggle = gtk_switch_new();
-        g_object_set(toggle,
+        g_object_set(widget,
                      "halign",
                      GTK_ALIGN_END,
                      "valign",
@@ -181,7 +183,7 @@ static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *titl
                      "vexpand",
                      FALSE,
                      NULL);
-        gtk_grid_attach(GTK_GRID(grid), toggle, 1, *row, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), widget, 1, *row, 1, 1);
 
         *row += 1;
 
@@ -202,7 +204,20 @@ static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *titl
 
         gtk_grid_attach(GTK_GRID(grid), desc, 0, *row, 1, 1);
         *row += 1;
+}
 
+/**
+ * Builds on the insert_grid function to insert a GtkSwitch and return only the
+ * switch widget.
+ */
+static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
+                                     const char *description)
+{
+        GtkWidget *toggle = NULL;
+
+        /* Sort out widget */
+        toggle = gtk_switch_new();
+        insert_grid(grid, row, title, description, toggle);
         return toggle;
 }
 
