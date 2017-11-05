@@ -86,6 +86,11 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
 {
         GtkWidget *grid = NULL;
         GtkWidget *layout = NULL;
+        GtkWidget *header = NULL;
+        GtkWidget *widget = NULL;
+        GtkStyleContext *style = NULL;
+        const gchar *xdg_desktop = NULL;
+        gchar *label = NULL;
         int row = 0;
 
         /* Ensure we correctly clean this up.. */
@@ -95,6 +100,17 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         if (!lsi_config_load(&self->config)) {
                 lsi_config_load_defaults(&self->config);
         }
+
+                /* Conditionally apply CSD */
+#if GTK_CHECK_VERSION(3, 12, 0)
+        xdg_desktop = g_getenv("XDG_CURRENT_DESKTOP");
+        if (xdg_desktop && (strstr(xdg_desktop, "GNOME:") || strstr(xdg_desktop, ":GNOME") ||
+                            g_str_equal(xdg_desktop, "GNOME"))) {
+                widget = gtk_header_bar_new();
+                gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(widget), TRUE);
+                gtk_window_set_titlebar(GTK_WINDOW(self), widget);
+        }
+#endif
 
         /* For now we'll just exit on close */
         g_signal_connect(self, "delete-event", gtk_main_quit, NULL);
@@ -108,6 +124,44 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
         gtk_container_add(GTK_CONTAINER(self), layout);
 
+        /* Header box */
+        header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+        gtk_box_pack_start(GTK_BOX(layout), header, FALSE, FALSE, 0);
+
+        /* header label */
+        label = g_strdup_printf("<big>%s</big>", "Linux Steam® Integration");
+        widget = gtk_label_new(label);
+        gtk_label_set_use_markup(GTK_LABEL(widget), TRUE);
+        g_free(label);
+        _align_label(widget);
+        gtk_box_pack_start(GTK_BOX(header), widget, FALSE, FALSE, 0);
+
+        /* header image */
+        widget = gtk_image_new_from_icon_name("steam", GTK_ICON_SIZE_DIALOG);
+        gtk_widget_set_valign(widget, GTK_ALIGN_START);
+        gtk_box_pack_end(GTK_BOX(header), widget, FALSE, FALSE, 0);
+
+        /* small label */
+        widget = gtk_label_new(
+            "Control the behaviour of the Steam client and games. Settings will not take effect "
+            "until Steam is restarted.");
+        g_object_set(widget, "xalign", 0.0, NULL);
+        gtk_label_set_line_wrap(GTK_LABEL(widget), TRUE);
+        gtk_label_set_line_wrap_mode(GTK_LABEL(widget), PANGO_WRAP_WORD);
+        _align_label(widget);
+        gtk_box_pack_start(GTK_BOX(layout), widget, FALSE, FALSE, 0);
+        style = gtk_widget_get_style_context(widget);
+        gtk_style_context_add_class(style, GTK_STYLE_CLASS_DIM_LABEL);
+#if GTK_MINOR_VERSION <= 12
+        gtk_widget_set_margin_right(widget, 100);
+#else
+        gtk_widget_set_margin_end(widget, 100);
+#endif
+        /* add a separator now */
+        widget = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+        gtk_box_pack_start(GTK_BOX(layout), widget, FALSE, FALSE, 0);
+        g_object_set(widget, "margin-top", 12, "margin-bottom", 4, NULL);
+
         /* Start populating main grid with controls */
         grid = gtk_grid_new();
         gtk_box_pack_start(GTK_BOX(layout), grid, TRUE, TRUE, 0);
@@ -117,11 +171,11 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
             grid,
             &row,
             "Use native runtime",
-            "Alternatively, the default Steam® runtime will be used, which may cause issues");
+            "Alternatively, the default Steam runtime will be used, which may cause issues");
         self->check_emul32 = insert_grid_toggle(
             grid,
             &row,
-            "Force 32-bit mode for Steam®",
+            "Force 32-bit mode for Steam",
             "This may workaround some broken games, but will in turn stop the Steam store working");
 
 #ifdef HAVE_LIBINTERCEPT
@@ -134,6 +188,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
 #endif
 
         /* Finally, make sure we're visible will we. */
+        gtk_container_set_border_width(GTK_CONTAINER(self), 12);
         gtk_widget_show_all(GTK_WIDGET(self));
 }
 
