@@ -31,6 +31,9 @@ static inline void _align_label(GtkWidget *label)
         gtk_widget_set_valign(label, GTK_ALIGN_START);
 }
 
+static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
+                                     const char *description);
+
 int main(int argc, char **argv)
 {
         gtk_init(&argc, &argv);
@@ -41,11 +44,13 @@ int main(int argc, char **argv)
         GtkWidget *image = NULL;
         GtkWidget *check_native = NULL;
         GtkWidget *check_emul32 = NULL;
+        GtkWidget *sep = NULL;
 #ifdef HAVE_LIBINTERCEPT
         GtkWidget *check_intercept = NULL;
 #endif
         GtkWidget *label = NULL;
         int response = 0;
+        int row = 0;
         bool is_x86_64 = lsi_system_is_64bit();
         LsiConfig lconfig = { 0 };
 
@@ -64,61 +69,49 @@ int main(int argc, char **argv)
 
         /* Pack the grid */
         grid = gtk_grid_new();
-        gtk_grid_set_column_spacing(GTK_GRID(grid), 12);
-        gtk_grid_set_row_spacing(GTK_GRID(grid), 12);
 
         container = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
         gtk_container_add(GTK_CONTAINER(container), grid);
         gtk_container_set_border_width(GTK_CONTAINER(container), 6);
-
-        /* Add a splash of colour. */
-        image = gtk_image_new_from_icon_name("steam", GTK_ICON_SIZE_DIALOG);
-        gtk_image_set_pixel_size(GTK_IMAGE(image), 64);
-        gtk_grid_attach(GTK_GRID(grid), image, 0, 0, 1, 1);
 
         label = gtk_label_new(
             "<big>Linux Steam® Integration</big>\n"
             "Note that settings are not applied until the next time Steam® starts.\n"
             "Use the \'Exit Steam\' option on the Steam® tray icon to exit the application.");
         _align_label(label);
-        gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
+        gtk_grid_attach(GTK_GRID(grid), label, 0, row, 1, 1);
         gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
-        gtk_widget_set_margin_bottom(label, 8);
+        gtk_widget_set_margin_bottom(label, 12);
 
-        label = gtk_label_new("Use the native runtime provided by the Operating System");
-        _align_label(label);
-        gtk_widget_set_tooltip_text(label,
-                                    "Alternatively, the default Steam® runtime "
-                                    "will be used, which may cause issues.");
-        gtk_grid_attach(GTK_GRID(grid), label, 1, 1, 1, 1);
-        check_native = gtk_switch_new();
-        gtk_grid_attach(GTK_GRID(grid), check_native, 2, 1, 1, 1);
+        /* Add a splash of colour. */
+        image = gtk_image_new_from_icon_name("steam", GTK_ICON_SIZE_DIALOG);
+        gtk_image_set_pixel_size(GTK_IMAGE(image), 64);
+        gtk_grid_attach(GTK_GRID(grid), image, 1, row, 1, 1);
+        gtk_widget_set_margin_bottom(image, 12);
 
-        /* Handle the 32-bit cruft */
-        label = gtk_label_new("Force 32-bit mode for Steam®");
-        _align_label(label);
-        if (is_x86_64) {
-                gtk_widget_set_tooltip_text(label,
-                                            "Some games may run better using 32-bit than 64-bit");
-        } else {
-                gtk_widget_set_tooltip_text(label, "You are using a 32-bit operating system");
-        }
+        /* Add visual separation. */
+        ++row;
+        sep = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+        gtk_grid_attach(GTK_GRID(grid), sep, 0, row, 2, 1);
+        ++row;
 
-        gtk_grid_attach(GTK_GRID(grid), label, 1, 2, 1, 1);
-        check_emul32 = gtk_switch_new();
-        gtk_grid_attach(GTK_GRID(grid), check_emul32, 2, 2, 1, 1);
-
-        gtk_widget_set_sensitive(label, is_x86_64);
-        gtk_widget_set_sensitive(check_emul32, is_x86_64);
+        check_native = insert_grid_toggle(
+            grid,
+            &row,
+            "Use native runtime",
+            "Alternatively, the default Steam® runtime will be used, which may cause issues");
+        check_emul32 = insert_grid_toggle(
+            grid,
+            &row,
+            "Force 32-bit mode for Steam®",
+            "This may workaround some broken games, but will in turn stop the Steam store working");
 
 #ifdef HAVE_LIBINTERCEPT
-        label = gtk_label_new("Use liblsi-intercept to override Steam's library loading mechanism");
-        _align_label(label);
-        gtk_widget_set_tooltip_text(label,
-                                    "This can help with many library issues with the core client");
-        gtk_grid_attach(GTK_GRID(grid), label, 1, 3, 1, 1);
-        check_intercept = gtk_switch_new();
-        gtk_grid_attach(GTK_GRID(grid), check_intercept, 2, 3, 1, 1);
+        check_intercept = insert_grid_toggle(grid,
+                                             &row,
+                                             "Use the intercept library",
+                                             "Override how library files are loaded to maximise "
+                                             "compatibility, this option is recommended");
 #endif
 
         gtk_container_set_border_width(GTK_CONTAINER(grid), 6);
@@ -162,6 +155,55 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
         }
         return EXIT_SUCCESS;
+}
+
+static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *title,
+                                     const char *description)
+{
+        GtkWidget *label = NULL;
+        GtkWidget *desc = NULL;
+        GtkWidget *toggle = NULL;
+        GtkStyleContext *style = NULL;
+
+        /* Sort out title label */
+        label = gtk_label_new(title);
+        _align_label(label);
+        g_object_set(label, "margin-top", 12, "hexpand", TRUE, NULL);
+        gtk_grid_attach(GTK_GRID(grid), label, 0, *row, 1, 1);
+
+        /* Sort out widget */
+        toggle = gtk_switch_new();
+        g_object_set(toggle,
+                     "halign",
+                     GTK_ALIGN_END,
+                     "valign",
+                     GTK_ALIGN_END,
+                     "vexpand",
+                     FALSE,
+                     NULL);
+        gtk_grid_attach(GTK_GRID(grid), toggle, 1, *row, 1, 1);
+
+        *row += 1;
+
+        /* Sort out description label */
+        desc = gtk_label_new(description);
+        _align_label(desc);
+        style = gtk_widget_get_style_context(desc);
+        gtk_style_context_add_class(style, GTK_STYLE_CLASS_DIM_LABEL);
+#if GTK_MINOR_VERSION <= 12
+        gtk_widget_set_margin_right(desc, 12);
+#else
+        gtk_widget_set_margin_end(desc, 12);
+#endif
+        /* Deprecated but line wrap is busted without it.. */
+        g_object_set(desc, "xalign", 0.0, NULL);
+        gtk_label_set_line_wrap(GTK_LABEL(desc), TRUE);
+        gtk_label_set_line_wrap_mode(GTK_LABEL(desc), PANGO_WRAP_WORD);
+
+        gtk_grid_attach(GTK_GRID(grid), desc, 0, *row, 1, 1);
+        *row += 1;
+
+        return toggle;
 }
 
 /*
