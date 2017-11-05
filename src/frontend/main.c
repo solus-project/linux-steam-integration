@@ -45,7 +45,6 @@ int main(int argc, char **argv)
         GtkWidget *check_intercept = NULL;
 #endif
         GtkWidget *label = NULL;
-        GtkSettings *settings = NULL;
         int response = 0;
         bool is_x86_64 = lsi_system_is_64bit();
         LsiConfig lconfig = { 0 };
@@ -57,9 +56,6 @@ int main(int argc, char **argv)
                      "icon-name",
                      "steam",
                      NULL);
-
-        settings = gtk_settings_get_default();
-        g_object_set(settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
 
         /* Sort out the buttons */
         (void)gtk_dialog_add_button(GTK_DIALOG(dialog), "Cancel", GTK_RESPONSE_REJECT);
