@@ -99,6 +99,8 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         GtkWidget *widget = NULL;
         GtkStyleContext *style = NULL;
         const gchar *xdg_desktop = NULL;
+        const gchar *emul32_desc = NULL;
+        bool is_64bit = false;
         gchar *label = NULL;
         int row = 0;
 
@@ -187,14 +189,25 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
             &row,
             "Use native runtime",
             "Alternatively, the default Steam runtime will be used, which may cause issues");
-        self->check_emul32 = insert_grid_toggle(
-            grid,
-            &row,
-            "Force 32-bit mode for Steam",
-            "This may workaround some broken games, but will in turn stop the Steam store working");
 
         /* Load in the existing configuration */
         gtk_switch_set_active(GTK_SWITCH(self->check_native), self->config.use_native_runtime);
+
+        is_64bit = lsi_system_is_64bit();
+        /* Can only force on a 64-bit system. */
+        if (!is_64bit) {
+                /* Label is shown to indicate we can't enable 32-bit option */
+                emul32_desc = "This option has been disabled as the system is already 32-bit";
+        } else {
+                /* Label is shown on 64-bit systems only */
+                emul32_desc =
+                    "This may workaround some broken games, but will in turn stop the Steam store "
+                    "working";
+        }
+
+        self->check_emul32 =
+            insert_grid_toggle(grid, &row, "Force 32-bit mode for Steam", emul32_desc);
+        set_row_sensitive(self->check_emul32, is_64bit);
         gtk_switch_set_active(GTK_SWITCH(self->check_emul32), self->config.force_32);
 
 #ifdef HAVE_LIBINTERCEPT
