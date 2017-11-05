@@ -150,12 +150,14 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         /* small label */
         widget = gtk_label_new(
             "Control the behaviour of the Steam client and games. Settings will not take effect "
-            "until Steam is restarted.");
+            "until the Steam Client is restarted. Use the 'Exit Steam' option to ensure it "
+            "closes.");
         g_object_set(widget, "xalign", 0.0, NULL);
+        gtk_label_set_max_width_chars(GTK_LABEL(widget), 80);
         gtk_label_set_line_wrap(GTK_LABEL(widget), TRUE);
         gtk_label_set_line_wrap_mode(GTK_LABEL(widget), PANGO_WRAP_WORD);
         _align_label(widget);
-        gtk_box_pack_start(GTK_BOX(layout), widget, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(layout), widget, TRUE, TRUE, 0);
         style = gtk_widget_get_style_context(widget);
         gtk_style_context_add_class(style, GTK_STYLE_CLASS_DIM_LABEL);
 #if GTK_MINOR_VERSION <= 12
@@ -207,7 +209,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_container_set_border_width(GTK_CONTAINER(self), 12);
         gtk_widget_set_valign(GTK_WIDGET(layout), GTK_ALIGN_START);
         gtk_widget_show_all(GTK_WIDGET(self));
-        gtk_widget_set_size_request(GTK_WIDGET(self), 420, 500);
+        gtk_widget_set_size_request(GTK_WIDGET(self), 320, 500);
         gtk_window_set_resizable(GTK_WINDOW(self), FALSE);
 }
 
