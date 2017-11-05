@@ -184,11 +184,11 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_box_pack_start(GTK_BOX(layout), grid, FALSE, FALSE, 0);
 
         /* Start populating options into the UI */
-        self->check_native = insert_grid_toggle(
-            grid,
-            &row,
-            "Use native runtime",
-            "Alternatively, the default Steam runtime will be used, which may cause issues");
+        self->check_native =
+            insert_grid_toggle(grid,
+                               &row,
+                               "Use native runtime",
+                               "Switch between the native runtime and the bundled Steam runtime.");
 
         /* Load in the existing configuration */
         gtk_switch_set_active(GTK_SWITCH(self->check_native), self->config.use_native_runtime);
@@ -201,8 +201,8 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         } else {
                 /* Label is shown on 64-bit systems only */
                 emul32_desc =
-                    "This may workaround some broken games, but will in turn stop the Steam store "
-                    "working";
+                    "This may workaround some broken games, but will disable the Steam store "
+                    "browser.";
         }
 
         self->check_emul32 =
@@ -211,12 +211,11 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
         gtk_switch_set_active(GTK_SWITCH(self->check_emul32), self->config.force_32);
 
 #ifdef HAVE_LIBINTERCEPT
-        self->check_intercept =
-            insert_grid_toggle(grid,
-                               &row,
-                               "Use the intercept library",
-                               "Override how library files are loaded to maximise "
-                               "compatibility, this option is recommended");
+        self->check_intercept = insert_grid_toggle(
+            grid,
+            &row,
+            "Use the intercept library",
+            "Force Steam applications to use more native libraries to maximise compatibility.");
         set_row_sensitive(self->check_intercept, FALSE);
         gtk_switch_set_active(GTK_SWITCH(self->check_intercept), self->config.use_libintercept);
 #endif
@@ -226,7 +225,7 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
                                                   &row,
                                                   "Use the redirect library",
                                                   "Override system calls to fix known bugs in some "
-                                                  "Linux ports. This option is recommended.");
+                                                  "Linux ports.");
         set_row_sensitive(self->check_redirect, FALSE);
         gtk_switch_set_active(GTK_SWITCH(self->check_redirect), self->config.use_libredirect);
 #endif
@@ -299,6 +298,7 @@ static void insert_grid(GtkWidget *grid, int *row, const char *title, const char
         g_object_set(desc, "xalign", 0.0, NULL);
         gtk_label_set_line_wrap(GTK_LABEL(desc), TRUE);
         gtk_label_set_line_wrap_mode(GTK_LABEL(desc), PANGO_WRAP_WORD);
+        gtk_label_set_max_width_chars(GTK_LABEL(desc), 90);
 
         gtk_grid_attach(GTK_GRID(grid), desc, 0, *row, 1, 1);
         *row += 1;
