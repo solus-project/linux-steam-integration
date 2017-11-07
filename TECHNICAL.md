@@ -259,20 +259,4 @@ any pressures on distributions. Additionally this will allow even distributions 
 curated and well integrated gaming runtime.
 
 
-## License
-
-`src/shim src/frontend src/lsi src/intercept`:
-
-        Copyright © 2016-2017 Ikey Doherty
-
-        linux-steam-integration is available under the terms of the `LGPL-2.1`
-
-`data/lsi-steam.desktop`:
-
-        This file borrows translations from the official `steam.desktop` launcher.
-        These are copyright of Valve*.
-
-See `LICENSE.LGPL2.1 <LICENSE.LGPL2.1>`_ for more details
-
-
 * Some names may be claimed as the property of others.
