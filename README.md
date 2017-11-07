@@ -3,7 +3,7 @@ linux-steam-integration
 
 Linux Steam* Integration is a helper system to make the Steam Client and Steam
 games run better on Linux. In a nutshell, LSI automatically applies various workarounds
-to get games working, and fixes long standing bugs in both the game and the client.
+to get games working, and fixes long standing bugs in both games and the client.
 
 ![screenshot](https://raw.githubusercontent.com/solus-project/linux-steam-integration/master/.github/LSI_Settings.png)
 
@@ -14,6 +14,9 @@ reasons:
  - Security
  - Compatibility
  - Performance
+
+Additionally we apply dynamic workarounds to fix some filesystem path related bugs in Linux
+ports (or even shader workarounds for Ark) through our redirect module.
 
 With LSI, you don't need to worry any more about manually mangling your Steam installation
 just to make the open source drivers work, or manually creating links and installing
