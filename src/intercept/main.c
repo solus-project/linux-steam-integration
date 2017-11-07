@@ -464,7 +464,7 @@ static bool lsi_override_soname(unsigned int flag, const char *orig_name, const 
                 }
                 *soname = vendor_transmute_target[i];
                 lsi_log_debug(
-                    "transforming vendor  soname: \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
+                    "transforming vendor soname: \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
                     orig_name,
                     *soname);
 
