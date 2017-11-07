@@ -21,6 +21,7 @@
 #include "../common/common.h"
 #include "../common/files.h"
 #include "../common/log.h"
+#include "config.h"
 #include "nica/util.h"
 
 /**
@@ -123,8 +124,15 @@ static const char *vendor_blacklist[] = {
 
         /* Security sensitive libraries should not be replaced */
         "libcurl.so.",
+
+#ifdef LSI_OVERRIDE_LIBRESSL
+        /* Sometimes libressl but this is handled separately. */
+        "libcrypto.so.",
+        "libssl.so.",
+#else
         "libcrypto.so.1.0.0",
         "libssl.so.1.0.0",
+#endif
 };
 
 /**
@@ -220,6 +228,12 @@ static const char *vendor_transmute_source[] = {
         "libSDL2_mixer.so",
         "libSDL2_net.so",
         "libSDL2_gfx.so",
+
+/* libressl (security updates) */
+#ifdef LSI_OVERRIDE_LIBRESSL
+        "libcrypto.so.36",
+        "libssl.so.37",
+#endif
 };
 
 /**
@@ -238,6 +252,15 @@ static const char *vendor_transmute_target[] = {
         "libSDL2_mixer-2.0.so.0",
         "libSDL2_net-2.0.so.0",
         "libSDL2_gfx-1.0.so.0",
+
+/* libressl (security updates) */
+#if defined(LSI_LIBRESSL_MODE_SHIM)
+        "libcrypto" LSI_LIBRESSL_SUFFIX ".so",
+        "libssl" LSI_LIBRESSL_SUFFIX ".so",
+#elif defined(LSI_LIBRESSL_MODE_NATIVE)
+        "libcrypto.so.1.0.0",
+        "libssl.so.1.0.0",
+#endif
 };
 
 /**

@@ -72,6 +72,18 @@ if get_option('with-new-libcxx-abi') == true
     cdata.set('LSI_USE_NEW_ABI', '1')
 endif
 
+with_libressl_mode = get_option('with-libressl-mode')
+if with_libressl_mode == 'native'
+    cdata.set('LSI_LIBRESSL_MODE_NATIVE', '1')
+    cdata.set('LSI_OVERRIDE_LIBRESSL', '1')
+elif with_libressl_mode == 'shim'
+    cdata.set('LSI_LIBRESSL_MODE_SHIM', '1')
+    cdata.set('LSI_OVERRIDE_LIBRESSL', '1')
+    cdata.set_quoted('LSI_LIBRESSL_SUFFIX', get_option('with-libressl-suffix'))
+else
+    message('LibreSSL mode isn\'t configured which may impact security')
+endif
+
 config_h = configure_file(
      configuration: cdata,
      output: 'config.h',

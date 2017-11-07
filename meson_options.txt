@@ -7,3 +7,8 @@ option('with-preload-libs', type: 'string', description: 'Colon separated list o
 option('with-libintercept', type: 'boolean', description: 'Enable libintercept library for controlling Steam linking', value: true)
 option('with-libredirect', type: 'boolean', description: 'Enable libredirect library for fine-tuning Steam games', value: true)
 option('with-new-libcxx-abi', type: 'boolean', description: 'Enable when using the new libstdc++ ABI', value: false)
+
+option('with-libressl-mode', type: 'combo', choices: ['native', 'shim', 'none'], value: 'none',
+        description: 'Control how LibreSSL replacements are performed')
+option('with-libressl-suffix', type: 'string', value: '-libressl',
+        description: 'Suffix for shim LibreSSL library when using --with-libressl-mode=shim')
