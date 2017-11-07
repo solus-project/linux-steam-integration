@@ -1,7 +1,7 @@
 project(
     'linux-steam-integration',
     ['c'],
-    version: '0.5',
+    version: '0.6',
     license: [
         'LGPL-2.1',
     ],
