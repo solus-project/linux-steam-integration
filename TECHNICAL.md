@@ -168,8 +168,8 @@ provide more fixes.
 
 Currently the `redirect` module supports:
 
- - ARK: Survival Evolved (Use fixed shader asset from `TheCenter` DLC to fix invalid water appearance)
- - Project Highrise (Fix crash where the game attempts to use a directory as a config file `prefs.txt`)
+ - ARK: Survival Evolved* (Use fixed shader asset from `TheCenter` DLC to fix invalid water appearance)
+ - Project Highrise* (Fix crash where the game attempts to use a directory as a config file `prefs.txt`)
 
 If you are packaging LSI for a distribution, please ensure you provide both a 32-bit and 64-bit build of the intercept library so that the entirety of Steam's  library (`.so`) mechanism is tightly
 controlled by LSI. See the scripts in the root directory of this repository for examples of how to do this.

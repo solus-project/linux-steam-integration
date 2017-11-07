@@ -16,7 +16,7 @@ reasons:
  - Performance
 
 Additionally we apply dynamic workarounds to fix some filesystem path related bugs in Linux
-ports (or even shader workarounds for Ark) through our redirect module.
+ports (or even shader workarounds for ARK*) through our redirect module.
 
 With LSI, you don't need to worry any more about manually mangling your Steam installation
 just to make the open source drivers work, or manually creating links and installing
