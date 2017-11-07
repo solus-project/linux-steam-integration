@@ -217,13 +217,6 @@ host-first libraries, so make sure all the correct libraries are available for b
 Steam has both 32-bit and 64-bit processes/libraries, having the full dependency set for both
 the client and common games/engines is a must. 
 
-
-### Missing tray icon for Steam client using native OS runtime
-
-Ensure you have the 32-bit version of libappindicator installed. This is required for the tray icon. libappindicator falls back to a standard X11 tray icon in the absence of desktop appindicator support.
-
-Related issue: [Steam tray icon missing #2](https://github.com/solus-project/linux-steam-integration/issues/2)
-
 ### Steam fails to launch with libintercept/native-runtime
 
 Make sure you enable full debugging when first assigning dependencies to your runtime package:
