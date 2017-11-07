@@ -60,4 +60,4 @@ See the accompanying `LICENSE.LGPL2.1` file for more details
         This file borrows translations from the official `steam.desktop` launcher.
         These are copyright of Valve*.
 
-* Some names may be claimed as the property of others.
+`* Some names may be claimed as the property of others.`

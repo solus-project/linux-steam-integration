@@ -271,4 +271,4 @@ any pressures on distributions. Additionally this will allow even distributions 
 curated and well integrated gaming runtime.
 
 
-* Some names may be claimed as the property of others.
+`* Some names may be claimed as the property of others.`
