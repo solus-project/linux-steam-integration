@@ -409,6 +409,12 @@ static bool lsi_override_dlopen(const char *orig_name, const char **soname)
                 if (!lsi_file_exists(path_lookup)) {
                         continue;
                 }
+
+                /* We hit a match but it was identical to our expectation */
+                if (strcmp(path_lookup, orig_name) == 0) {
+                        return false;
+                }
+
                 *soname = path_lookup;
                 lsi_log_debug(
                     "intercepting vendor dlopen() \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
