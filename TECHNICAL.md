@@ -69,9 +69,9 @@ There are a number of meson configure options you should be aware of when integr
         shim responsible for bootstrapping Steam via LSI. This will require you
         to mask the original steam binary to a new location.
 
-        The default value for this option is::
+        The default value for this option is:
 
-                replacement
+                `replacement`
 
 
 `-Dwith-steam-binary=$PATH`
@@ -83,7 +83,7 @@ There are a number of meson configure options you should be aware of when integr
 
         The default value for this option is:
 
-                /usr/lib/steam/steam
+                `/usr/lib/steam/steam`
 
         This option is only applicable for distribution integrators, when
         Steam replacement is enabled.
@@ -98,7 +98,7 @@ There are a number of meson configure options you should be aware of when integr
 
         The default value for this option is:
 
-                /usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6
+                `/usr/\$LIB/libX11.so.6:/usr/\$LIB/libstdc++.so.6`
 
 `-Dwith-new-libcxx-abi=$boolean`
 
@@ -117,8 +117,40 @@ There are a number of meson configure options you should be aware of when integr
 
         The default value for this option is:
 
-                false
+                `false`
 
+`-Dwith-libressl-mode= none | native | shim`
+
+        Control how LSI's `liblsi-intercept.so` handles LibreSSL.
+
+        The intercept module can be configured to enhance security of Linux ports
+        by ensuring they use up to date LibreSSL builds.
+
+        When set to `native`, it is assumed the distro is employing LibreSSL as the
+        default libSSL ABI (i.e. `libssl.so.1.0.0`)
+
+        When set to `shim`, LSI will redirect name requests for the `libssl` and
+        `libcrypto` libraries to a uniquely named LibreSSL build of libraries,
+        allowing libressl + openssl to co-exist on disk.
+
+        The default value for this option is:
+
+                `none`
+
+`-Dwith-libressl-suffix=$suffix`
+
+        This option is only used when `-Dwith-libressl-mode=shim`, and sets the
+        suffix for the libraries that LSI will attempt to use when transforming
+        requests for LibreSSL libraries.
+
+        This will transform `libssl.so.$VERSION` to `libssl-$suffix.so`, i.e.
+        `libssl.so.37` would become `libssl-libressl.so`. This allows distros
+        to provide up to date `libressl` and `openssl` builds in parallel to
+        improve the security of games relying on LibreSSL.
+
+        The default value for this option is:
+
+                `-libressl`
 
 ## How LSI Works
 
