@@ -10,19 +10,19 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-05 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Thomas Staudinger <staudi.kaos@gmail.com>, 2017\n"
-"Language-Team: German (https://www.transifex.com/solus-project/teams/68407/de/)\n"
+"Last-Translator: Christophe Silva <christophesilva80@gmail.com>, 2017\n"
+"Language-Team: Portuguese (Portugal) (https://www.transifex.com/solus-project/teams/68407/pt_PT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
+"Language: pt_PT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Sort out window bits
 #. header label
 #: src/frontend/main-window.c:131 src/frontend/main-window.c:148
 msgid "Linux Steam® Integration"
-msgstr "Linux Steam® Integration"
+msgstr "Integração Linux Steam®"
 
 #: src/frontend/main-window.c:162
 msgid ""
@@ -30,59 +30,57 @@ msgid ""
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 msgstr ""
-"Beeinflusse das Verhalten des Steam-Clients und von Spielen. Die "
-"Einstellungen werden erst aktiv, nachdem der Steam-Client neu gestartet "
-"wurde. Nutze 'Steam beenden', um sicherzugehen, dass es beendet wird."
+"Controla o comportamento do cliente e jogos em Steam.  As configurações não "
+"terão efeito antes de o Cliente de Steam ser reinicializado. Use a opção "
+"\"Sair do Steam\" para ter a certeza que o cliente fecha."
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
-msgstr "Nutze native Laufzeitumgebung"
+msgstr "Usar \"runtime\" nativo"
 
 #: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
-msgstr ""
-"Wechsle zwischen der nativen Laufzeitumgebung und der Steam-"
-"Laufzeitumgebung."
+msgstr "Alternar entre o \"runtime\" nativo e o \"runtime\" Steam incluído."
 
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
 msgid "This option has been disabled as the system is already 32-bit"
-msgstr "Diese Option ist deaktiviert, da dies bereits ein 32-bit System ist."
+msgstr "Esta opção foi desativada, já que o sistema já possui 32 bits"
 
 #: src/frontend/main-window.c:205
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 msgstr ""
-"Dies behebt möglicherweise Fehler bei kaputten Steam-Spielen, wird aber den "
-"Steam Store Browser deaktivieren."
+"Isto pode resolver alguns jogos danificados, mas irá desativar o navegador "
+"da loja Steam."
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
-msgstr "Erzwinge 32-bit-Modus für Steam"
+msgstr "Forçar o modo de 32 bits para Steam"
 
 #: src/frontend/main-window.c:218
 msgid "Use the intercept library"
-msgstr "Nutze die Intercept-Bibliothek"
+msgstr "Use a biblioteca de intercetação"
 
 #: src/frontend/main-window.c:219
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
-"Zwinge Steam Anwendungen dazu, mehr native Bibliotheken zu nutzen, um die "
-"Kompatibilität zu maximieren."
+"Força aplicativos do Steam para usar mais bibliotecas nativas para maximizar"
+" a compatibilidade."
 
 #: src/frontend/main-window.c:228
 msgid "Use the redirect library"
-msgstr "Nutze die Redirect-Bibliothek"
+msgstr "Use a biblioteca de redirecionamento"
 
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
-"Überschreibe Systemcalls, um bekannte Bugs in manchen Linux-Ports zu "
-"beheben."
+"Substitua as chamadas do sistema para corrigir erros conhecidos em algumas "
+"portas Linux."
 
 #: src/frontend/main-window.c:383
 msgid "Failed to save configuration"
-msgstr "Konfiguration konnte nicht gespeichert werden"
+msgstr "Falha ao salvar a configuração"

@@ -30,9 +30,9 @@ msgid ""
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 msgstr ""
-"Controlla il comportamento del client Steam e dei giochi. Le impostazioni "
-"non saranno applicate finché non verrà riavviato il client Steam. Usa "
-"l'opzione \"Esci da Steam\" per assicurarti che venga davvero chiuso."
+"Controlla il comportamento dei giochi e del client Steam. Le impostazioni "
+"non avranno effetto finché il client Steam non sarà riavviato. Usa l'opzione"
+" \"Esci da Steam\" per assicurarti che venga davvero chiuso."
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
@@ -53,7 +53,7 @@ msgid ""
 "browser."
 msgstr ""
 "Può correggere alcuni giochi non funzionanti, ma disabiliterà la navigazione"
-" del negozio Steam."
+" nel negozio Steam."
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
@@ -78,8 +78,8 @@ msgstr "Usa la libreria di redirezione"
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
-"Rimpiazza le chiamate di sistema per correggere i bug noti di alcuni porting"
-" su Linux."
+"Sostituisce le chiamate di sistema per correggere i bug noti di alcuni "
+"porting su Linux."
 
 #: src/frontend/main-window.c:383
 msgid "Failed to save configuration"

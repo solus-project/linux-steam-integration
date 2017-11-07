@@ -10,79 +10,68 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-05 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Thomas Staudinger <staudi.kaos@gmail.com>, 2017\n"
-"Language-Team: German (https://www.transifex.com/solus-project/teams/68407/de/)\n"
+"Last-Translator: plantman <weihanlin@live.com>, 2017\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/solus-project/teams/68407/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. Sort out window bits
 #. header label
 #: src/frontend/main-window.c:131 src/frontend/main-window.c:148
 msgid "Linux Steam® Integration"
-msgstr "Linux Steam® Integration"
+msgstr "Steam® 的 Linux 系统整合"
 
 #: src/frontend/main-window.c:162
 msgid ""
 "Control the behaviour of the Steam client and games. Settings will not take "
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
-msgstr ""
-"Beeinflusse das Verhalten des Steam-Clients und von Spielen. Die "
-"Einstellungen werden erst aktiv, nachdem der Steam-Client neu gestartet "
-"wurde. Nutze 'Steam beenden', um sicherzugehen, dass es beendet wird."
+msgstr "控制 Steam 客户端和游戏的运行方式。配置在重启后生效。使用“退出 Steam”选项来确保完全退出。"
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
-msgstr "Nutze native Laufzeitumgebung"
+msgstr "使用系统运行时"
 
 #: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
-msgstr ""
-"Wechsle zwischen der nativen Laufzeitumgebung und der Steam-"
-"Laufzeitumgebung."
+msgstr "在系统运行时跟 Steam 自带运行时之间切换"
 
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
 msgid "This option has been disabled as the system is already 32-bit"
-msgstr "Diese Option ist deaktiviert, da dies bereits ein 32-bit System ist."
+msgstr "此选项已禁用，因为系统已经是 32 位了"
 
 #: src/frontend/main-window.c:205
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
-msgstr ""
-"Dies behebt möglicherweise Fehler bei kaputten Steam-Spielen, wird aber den "
-"Steam Store Browser deaktivieren."
+msgstr "这个解决方法可能会修复某些运行不正常的游戏，但是会禁用 Steam 商店浏览器"
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
-msgstr "Erzwinge 32-bit-Modus für Steam"
+msgstr "强制以 32 位模式运行 Steam"
 
 #: src/frontend/main-window.c:218
 msgid "Use the intercept library"
-msgstr "Nutze die Intercept-Bibliothek"
+msgstr "使用 “Intercept” 库"
 
 #: src/frontend/main-window.c:219
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
-msgstr ""
-"Zwinge Steam Anwendungen dazu, mehr native Bibliotheken zu nutzen, um die "
-"Kompatibilität zu maximieren."
+msgstr "强制让 Steam 尽可能使用系统自带库，以确保最好的兼容性"
 
 #: src/frontend/main-window.c:228
 msgid "Use the redirect library"
-msgstr "Nutze die Redirect-Bibliothek"
+msgstr "使用 \"Redirect\" 库"
 
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
-msgstr ""
-"Überschreibe Systemcalls, um bekannte Bugs in manchen Linux-Ports zu "
-"beheben."
+msgstr "覆盖系统调用以修复某些已知的游戏运行问题"
 
 #: src/frontend/main-window.c:383
 msgid "Failed to save configuration"
-msgstr "Konfiguration konnte nicht gespeichert werden"
+msgstr "无法保存配置"

@@ -36,11 +36,12 @@ msgstr ""
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
-msgstr "Usar tiempo de ejecución nativo"
+msgstr "Usar tiempo de ejecución del sistema"
 
 #: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
-msgstr "Cambie entre el tiempo de ejecución nativo y el incluído por Steam"
+msgstr ""
+"Cambie entre el tiempo de ejecución del sistema y el incluido por Steam"
 
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
@@ -52,8 +53,8 @@ msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 msgstr ""
-"Esto puede mejorar algunos juegos rotos, pero desactivará el navegadorde la "
-"tienda de Steam."
+"Esto puede mejorar algunos juegos rotos, pero desactivará el navegador de la"
+" tienda de Steam."
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
@@ -68,8 +69,8 @@ msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
-"Forzar a las aplicaciones de Steam a usar más librerías nativas "
-"paramaximizar la compatibilidad."
+"Forzar a las aplicaciones de Steam a usar más librerías nativas para "
+"maximizar la compatibilidad."
 
 #: src/frontend/main-window.c:228
 msgid "Use the redirect library"
