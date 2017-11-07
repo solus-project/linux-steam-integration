@@ -158,9 +158,18 @@ LSI provides a /usr/bin/steam binary to be used in place of the existing Steam s
 When using a full build of LSI, the bootstrap shim will force a correct environment, removing any issues that can cause various older SDL versions to kill Steam. Additionally it will then
 force `STEAM_RUNTIME=0` if this is set in the config (default behaviour).
 
-When using the native runtime, and the `intercept` library is enabled, the LSI shim will also set up `LD_AUDIT` to use `liblsi-intercept`. This library will intercept all dynamic linking operations
+When using the native runtime, and the `intercept` library is enabled, the LSI shim will also set up `LD_AUDIT` to use `liblsi-intercept.so`. This library will intercept all dynamic linking operations
 for the main Steam binaries and override their behaviour, allowing Steam to only load a handful of vendored libraries (`libav` fork) as well as its own private libraries. It is then forced to use
 system libraries for everything else. This means the Steam client, web helper, etc, will use the native SDL, X11, fixing many bugs with video playback, font rendering and such.
+
+As of the `0.6` release of LSI, we now also support a `redirect` module. When enabled, the LSI shim will set `LD_PRELOAD` to use `liblsi-redirect.so`, which will conditionally enable it's own
+internal logic based on the game being played. This module currently overrides the `open()` and `fopen64()` system calls to apply dynamic bug fixes to games, and may be expanded in future to
+provide more fixes.
+
+Currently the `redirect` module supports:
+
+ - ARK: Survival Evolved (Use fixed shader asset from `TheCenter` DLC to fix invalid water appearance)
+ - Project Highrise (Fix crash where the game attempts to use a directory as a config file `prefs.txt`)
 
 If you are packaging LSI for a distribution, please ensure you provide both a 32-bit and 64-bit build of the intercept library so that the entirety of Steam's  library (`.so`) mechanism is tightly
 controlled by LSI. See the scripts in the root directory of this repository for examples of how to do this.
@@ -182,7 +191,7 @@ Currently this INI file supports three options. The root section in this INI fil
         a false boolean value (no/false/off), then the startup will be modified
         to export the relevant `LD_PRELOAD` and `STEAM_RUNTIME` settings.
 
-        The default value of this variable is true.
+        The default value of this variable is `true`.
 
 `force-32bit = $boolean`
 
@@ -195,7 +204,7 @@ Currently this INI file supports three options. The root section in this INI fil
         shadowed Steam binary will be directly executed. Note that on 32-bit
         OSs this setting is ignored.
 
-        The default value of this variable is false.
+        The default value of this variable is `false`.
 
 `use-libintercept = $boolean`
 
@@ -205,7 +214,17 @@ Currently this INI file supports three options. The root section in this INI fil
 
         Note this requires `use-native-runtime` to be set.
 
-        The default value of this variable is true.
+        The default value of this variable is `true`.
+
+`use-libredirect = $boolean`
+
+        If set to a true boolean value (yes/true/on), the `liblsi-redirect.so`
+        library will be utilised to apply "hot" workarounds to certain games to
+        fix various runtime issues.
+
+        Note this requires `use-native-runtime` to be set.
+
+        The default value of this variable is `true`.
 
 
 ## Common issues
