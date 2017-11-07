@@ -46,23 +46,6 @@ optimised Steam runtime, usable on all Linux distributions.
 If you want to be part of that effort - and help bring a modern, optimised gaming experience to your Linux
 users, please get in contact. Let's do this once, and do it right.
 
-### We're not them.
-
-This project, and by extension Solus, is not officially endorsed by, or affiliated with, Steam*, or its parent company, Valve*.
-
-
-Linux Steam Integration is a [Solus project](https://solus-project.com/)
-
-![logo](https://build.solus-project.com/logo.png)
-
-## Getting LSI
-
-LSI may not yet be available for your distribution, however some community maintained repositories do exist.
-
- - [Arch Linux](https://aur.archlinux.org/packages/linux-steam-integration/)
- - [Fedora](https://copr.fedorainfracloud.org/coprs/alunux/linux-steam-integration/)
- - Solus uses LSI by default, just install the steam package.
-
 
 ## Integrating LSI
 
