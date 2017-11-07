@@ -174,7 +174,7 @@ Currently the `redirect` module supports:
 If you are packaging LSI for a distribution, please ensure you provide both a 32-bit and 64-bit build of the intercept library so that the entirety of Steam's  library (`.so`) mechanism is tightly
 controlled by LSI. See the scripts in the root directory of this repository for examples of how to do this.
 
-Configuration options can be placed in an INI-style configuration file in a series of locations, which are ordered by priority in a cascade::
+Configuration options can be placed in an INI-style configuration file in a series of locations, which are ordered by priority in a cascade:
 
         ~/.config/linux-steam-integration.conf
         /etc/linux-steam-integration.conf
