@@ -108,6 +108,11 @@ static const char *vendor_blacklist[] = {
         "libstdc++",
         "libSDL",
 
+        /* vendor-owned */
+        "libz.so.1",
+        "libfreetype.so.6",
+        "libmpg123.so.0",
+
         /* general problem causer. */
         "libopenal.so.",
 
@@ -133,6 +138,8 @@ static const char *vendor_blacklist[] = {
         "libcrypto.so.1.0.0",
         "libssl.so.1.0.0",
 #endif
+        /* TODO/FUTURE:
+        "libaudiofile.so.1", */
 };
 
 /**
@@ -357,15 +364,10 @@ static bool lsi_override_x86_derp(__lsi_unused__ const char *orig_name,
 }
 
 /**
- * lsi_override_dlopen is used to override simple dlopen() requests typically
- * used by Mono games, i.e.:
- *
- * <dllmap dll="SDL2.dll" os="linux" cpu="x86-64" target="./lib64/libSDL2-2.0.so.0"/>
- *
- * We'll attempt to do a trivial lookup for "/usr/./lib64/libSDL2-2.0.so.0 in this
- * case.
+ * Internal helper for path replacement to host lib
  */
-static bool lsi_override_dlopen(const char *orig_name, const char **soname)
+static bool lsi_override_replace_with_host(const char *orig_name, const char **soname,
+                                           const char *msg)
 {
         static char path_lookup[PATH_MAX];
         static char path_copy[PATH_MAX];
@@ -381,18 +383,6 @@ static bool lsi_override_dlopen(const char *orig_name, const char **soname)
                 "/usr/lib",
 #endif
         };
-
-        if (lsi_override_dll_fail(orig_name, soname)) {
-                return true;
-        }
-
-        if (!lsi_file_exists(orig_name)) {
-                return false;
-        }
-
-        if (lsi_override_x86_derp(orig_name, soname)) {
-                return true;
-        }
 
         if (!strcpy(path_copy, orig_name)) {
                 return false;
@@ -422,14 +412,40 @@ static bool lsi_override_dlopen(const char *orig_name, const char **soname)
                 }
 
                 *soname = path_lookup;
-                lsi_log_debug(
-                    "intercepting vendor dlopen() \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
-                    orig_name,
-                    path_lookup);
+                lsi_log_debug("%s \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
+                              msg,
+                              orig_name,
+                              path_lookup);
                 return true;
         }
 
         return false;
+}
+
+/**
+ * lsi_override_dlopen is used to override simple dlopen() requests typically
+ * used by Mono games, i.e.:
+ *
+ * <dllmap dll="SDL2.dll" os="linux" cpu="x86-64" target="./lib64/libSDL2-2.0.so.0"/>
+ *
+ * We'll attempt to do a trivial lookup for "/usr/./lib64/libSDL2-2.0.so.0 in this
+ * case.
+ */
+static bool lsi_override_dlopen(const char *orig_name, const char **soname)
+{
+        if (lsi_override_dll_fail(orig_name, soname)) {
+                return true;
+        }
+
+        if (!lsi_file_exists(orig_name)) {
+                return false;
+        }
+
+        if (lsi_override_x86_derp(orig_name, soname)) {
+                return true;
+        }
+
+        return lsi_override_replace_with_host(orig_name, soname, "intercepting vendor dlopen()");
 }
 
 /**
@@ -480,6 +496,46 @@ static bool lsi_override_soname(unsigned int flag, const char *orig_name, const 
         return false;
 }
 
+/**
+ * If the library exists locally, and we're attempting to load this from a
+ * relative location, strongly attempt to actually use the system-version instead.
+ *
+ * Thus, if our CWD is our LD_LIBRARY_PATH and contains "libfreetype.so.6", we'll
+ * try to use the host version of the library if that exists, instead of relying
+ * on the locally vendored, potentially insecure/buggy version.
+ */
+static bool lsi_override_local(unsigned int flag, const char *orig_name, const char **soname)
+{
+        *soname = NULL;
+
+        /* We only need to deal with LA_SER_ORIG */
+        if ((flag & LA_SER_ORIG) != LA_SER_ORIG) {
+                return false;
+        }
+
+        /* We only care about relative paths */
+        if (strstr(orig_name, "/")) {
+                return false;
+        }
+
+        /* We also only care about relative paths */
+        if (!lsi_file_exists(orig_name)) {
+                return false;
+        }
+
+        /* Resolve all paths back to the real library path version if they exist */
+        for (size_t i = 0; i < ARRAY_SIZE(vendor_blacklist); i++) {
+                if (!strstr(orig_name, vendor_blacklist[i])) {
+                        continue;
+                }
+                return lsi_override_replace_with_host(orig_name,
+                                                      soname,
+                                                      "forcing use of host library");
+        }
+
+        return false;
+}
+
 char *lsi_blacklist_vendor(unsigned int flag, const char *name)
 {
         /* Find out if it exists */
@@ -488,6 +544,11 @@ char *lsi_blacklist_vendor(unsigned int flag, const char *name)
 
         /* Find out if we have to rename some libraries on the fly */
         if (lsi_override_soname(flag, name, &override_soname)) {
+                return (char *)override_soname;
+        }
+
+        /* Locally exists due to directory foobar */
+        if (lsi_override_local(flag, name, &override_soname)) {
                 return (char *)override_soname;
         }
 
