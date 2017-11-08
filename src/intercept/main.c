@@ -234,6 +234,9 @@ static const char *vendor_transmute_source[] = {
         "libcrypto.so.36",
         "libssl.so.37",
 #endif
+
+        /* old name for openal */
+        "libopenal-soft.so.1",
 };
 
 /**
@@ -261,6 +264,9 @@ static const char *vendor_transmute_target[] = {
         "libcrypto.so.1.0.0",
         "libssl.so.1.0.0",
 #endif
+
+        /* new name for openal */
+        "libopenal.so.1",
 };
 
 /**
