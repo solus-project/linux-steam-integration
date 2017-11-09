@@ -38,6 +38,16 @@ Linux Steam Integration is a [Solus project](https://solus-project.com/)
 
 ![logo](https://build.solus-project.com/logo.png)
 
+## Snap Support
+
+LSI is currently undergoing work to become a universal package for all Linux distributions!
+
+Items left to implement:
+
+ - [x] Add basic library support for snapd environment
+ - [ ] Make `shim` support `$SNAP` style environmental variables for local Steam
+ - [ ] Add support to LSI + `snapd` for NVIDIA+Vulkan
+
 ## Getting LSI
 
 LSI may not yet be available for your distribution, however some community maintained repositories do exist.
