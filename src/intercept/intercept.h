@@ -20,12 +20,22 @@
  * @note This must run for all processes, as we handle libGL interception.
  *
  * @param name Original search name
- * @param flag rtld-audit flags
  * @param soname Pointer to store the final soname in
  *
  * @returns True if we performed any redirection, to stop further processing.
  */
-bool lsi_override_snapd(const char *name, unsigned int flag, const char **soname);
+bool lsi_override_snapd_gl(const char *name, const char **soname);
+
+/**
+ * Handle redirection of snapd NVIDIA libraries when they can't be found
+ * sanely due to compounded LD_LIBRARY_PATH abuse.
+ *
+ * @param name Original search name
+ * @param soname Pointer to store the final soname in
+ *
+ * @returns True if we performed any redirection, to stop further processing.
+ */
+bool lsi_override_snapd_nvidia(const char *name, const char **soname);
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html

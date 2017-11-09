@@ -586,7 +586,10 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
         const char *out_name = NULL;
 
         /* Only attempt snapd overrides if snapd support is enabled */
-        if (lsi_override_snapd(name, flag, &out_name)) {
+        if (lsi_override_snapd_gl(name, &out_name)) {
+                return (char *)out_name;
+        }
+        if (lsi_override_snapd_nvidia(name, &out_name)) {
                 return (char *)out_name;
         }
 #endif
