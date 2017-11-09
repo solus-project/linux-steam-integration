@@ -581,6 +581,16 @@ char *lsi_blacklist_vendor(unsigned int flag, const char *name)
 _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *cookie,
                                  unsigned int flag)
 {
+#ifdef HAVE_SNAPD_SUPPORT
+        /*
+         * Super special case. If we're a snap, and the file being requested is
+         * actually within the private snapd trees, we must unconditionally permit
+         * that file, as it is most likely a driver
+         */
+        if (strstr(name, "/var/lib/snapd/gl") || strstr(name, "/var/lib/snapd/hostfs")) {
+                return name;
+        }
+#endif
         switch (work_mode) {
         case INTERCEPT_MODE_STEAM:
                 return lsi_search_steam(name);

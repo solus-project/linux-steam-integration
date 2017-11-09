@@ -84,6 +84,12 @@ else
     message('LibreSSL mode isn\'t configured which may impact security')
 endif
 
+with_snap_support = get_option('with-snap-support')
+if with_snap_support == true
+    cdata.set('HAVE_SNAPD_SUPPORT', '1')
+    message('Enabling snapd support. Do NOT do this for distribution builds!')
+endif
+
 config_h = configure_file(
      configuration: cdata,
      output: 'config.h',
