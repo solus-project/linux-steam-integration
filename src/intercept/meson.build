@@ -6,6 +6,10 @@ if with_libintercept == true
         'main.c',
     ]
 
+    if with_snap_support == true
+        intercept_sources += 'snapd.c'
+    endif
+
     sym_map = join_paths(meson.current_source_dir(), 'sym.map')
 
     main_intercept = shared_library(

@@ -22,6 +22,7 @@
 #include "../common/files.h"
 #include "../common/log.h"
 #include "config.h"
+#include "intercept.h"
 #include "nica/util.h"
 
 /**
@@ -582,16 +583,12 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
                                  unsigned int flag)
 {
 #ifdef HAVE_SNAPD_SUPPORT
-        /*
-         * Super special case. If we're a snap, and the file being requested is
-         * actually within the private snapd trees, we must unconditionally permit
-         * that file, as it is most likely a driver
-         */
-        if (strstr(name, "/var/lib/snapd/gl") || strstr(name, "/var/lib/snapd/hostfs")) {
-                lsi_log_debug("skipping snapd file: %s", name);
-                return name;
+        const char *out_name = NULL;
+
+        /* Only attempt snapd overrides if snapd support is enabled */
+        if (lsi_override_snapd(name, flag, &out_name)) {
+                return (char *)out_name;
         }
-        lsi_log_debug("snapd debug: %s", name);
 #endif
         switch (work_mode) {
         case INTERCEPT_MODE_STEAM:
