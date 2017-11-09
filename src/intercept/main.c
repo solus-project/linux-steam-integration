@@ -588,8 +588,10 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
          * that file, as it is most likely a driver
          */
         if (strstr(name, "/var/lib/snapd/gl") || strstr(name, "/var/lib/snapd/hostfs")) {
+                lsi_log_debug("skipping snapd file: %s", name);
                 return name;
         }
+        lsi_log_debug("snapd debug: %s", name);
 #endif
         switch (work_mode) {
         case INTERCEPT_MODE_STEAM:
