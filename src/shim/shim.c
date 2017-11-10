@@ -163,6 +163,7 @@ static void shim_init_user(const char *userdir)
 static void shim_export_extra(const char *prefix)
 {
         static const char *snap_user = NULL;
+        static const char *xdg_home = NULL;
 
         setenv("LIBGL_DRIVERS_PATH", SNAPD_LIBRARY_PATH, 1);
         setenv("LD_LIBRARY_PATH", SNAPD_LIBRARY_PATH ":" SNAPD_DRIVERS_PATH, 1);
@@ -187,7 +188,19 @@ static void shim_export_extra(const char *prefix)
                 shim_init_user(snap_user);
         }
 
-        /* TODO: ensure XDG_RUNTIME_DIR is around */
+        /* Ensure XDG_RUNTIME_DIR really exists */
+        xdg_home = getenv("XDG_RUNTIME_DIR");
+        if (!xdg_home) {
+                return;
+        }
+        if (lsi_file_exists(xdg_home)) {
+                return;
+        }
+        if (!nc_mkdir_p(xdg_home, 00755)) {
+                lsi_log_error("Failed to setup XDG_RUNTIME_DIR %s: %s", xdg_home, strerror(errno));
+                return;
+        }
+        lsi_log_debug("Constructed XDG_RUNTIME_DIR: %s", xdg_home);
 }
 #else
 static void shim_export_extra(__lsi_unused__ const char *prefix)
