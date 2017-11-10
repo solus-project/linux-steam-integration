@@ -123,7 +123,7 @@ static const char *shim_get_steam_binary(void)
                 return STEAM_BINARY;
         }
 
-        return extra;
+        return tgt;
 }
 
 /**
