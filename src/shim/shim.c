@@ -95,6 +95,26 @@ static void shim_set_ld_preload(void)
         setenv("LD_PRELOAD", tgt, 1);
 }
 
+/**
+ * Helper to get the Steam binary, respecting "$SNAP" if needed
+ */
+static const char *shim_get_steam_binary(void)
+{
+        const char *extra = NULL;
+        static char tgt[PATH_MAX] = { 0 };
+
+#ifdef HAVE_SNAPD_SUPPORT
+        /* For snapd, we need to prepend "$SNAP" into the path */
+        extra = getenv("SNAP");
+#endif
+
+        if (snprintf(tgt, sizeof(tgt), "%s%s", extra ? extra : "", STEAM_BINARY) < 0) {
+                return STEAM_BINARY;
+        }
+
+        return extra;
+}
+
 int main(int argc, char **argv)
 {
         LsiConfig config = { 0 };
@@ -107,7 +127,7 @@ int main(int argc, char **argv)
         int8_t off = 0;
         int (*vfunc)(const char *, char *const argv[]) = NULL;
 
-        lsi_exec_bin = STEAM_BINARY;
+        lsi_exec_bin = shim_get_steam_binary();
 
         /* Initialise config */
         if (!lsi_config_load(&config)) {
@@ -184,7 +204,7 @@ int main(int argc, char **argv)
         if (vfunc(exec_command, (char **)n_argv) < 0) {
                 lsi_report_failure("Failed to launch Steam: %s [%s]",
                                    strerror(errno),
-                                   STEAM_BINARY);
+                                   lsi_exec_bin);
                 return EXIT_FAILURE;
         }
 }
