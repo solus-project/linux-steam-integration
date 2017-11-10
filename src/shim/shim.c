@@ -136,7 +136,7 @@ static void shim_init_user(const char *userdir)
         static char tgt[PATH_MAX] = { 0 };
 
         for (size_t i = 0; i < ARRAY_SIZE(paths); i++) {
-                if (snprintf(tgt, sizeof(tgt), "%s/%s", userdir, vars[i]) < 0) {
+                if (snprintf(tgt, sizeof(tgt), "%s/%s", userdir, paths[i]) < 0) {
                         lsi_log_error("memory failure");
                         return;
                 }
