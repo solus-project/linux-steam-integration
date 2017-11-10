@@ -68,7 +68,7 @@ msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
-"Přinutit programy ze služby Steam používat více nativních knihoven pro "
+"Přinutí programy ze služby Steam používat více nativních knihoven pro "
 "zajištění maximální kompatibility."
 
 #: src/frontend/main-window.c:228
@@ -78,7 +78,7 @@ msgstr "Používat knihovnu pro přesměrování"
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
-"Přepsáním systémových volání opravit známé chyby v linuxových portech her."
+"Přepsáním systémových volání opraví známé chyby v linuxových portech her."
 
 #: src/frontend/main-window.c:383
 msgid "Failed to save configuration"

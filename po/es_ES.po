@@ -10,12 +10,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-05 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Thimo dZ <tsdezwart@protonmail.com>, 2017\n"
-"Language-Team: Dutch (Netherlands) (https://www.transifex.com/solus-project/teams/68407/nl_NL/)\n"
+"Last-Translator: mrkucho <vhugo642@gmail.com>, 2017\n"
+"Language-Team: Spanish (Spain) (https://www.transifex.com/solus-project/teams/68407/es_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl_NL\n"
+"Language: es_ES\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Sort out window bits
@@ -30,57 +30,57 @@ msgid ""
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 msgstr ""
-"Beheer het gedrag van de Steam-client en spellen. De wijzigingen zijn pas "
-"effectief na het herstarten van de Steam-client. Gebruik de \"Steam "
-"afsluiten\"-optie om Steam definitief af te sluiten."
+"Controla el comportamiento del cliente y los juegos de Steam. La "
+"configuración no tendrá efecto hasta que el cliente de Steam se reinicie. "
+"Use la opción 'Salir de Steam' para asegurarse de que se cierre."
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
-msgstr "Gebruik de systeemeigen runtime"
+msgstr "Usar librerías nativas"
 
 #: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
-msgstr "Wissel tussen de systeemeigen runtime en de gebundelde Steam runtime"
+msgstr "Cambie entre las librerías nativas y las incluidas por Steam"
 
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
 msgid "This option has been disabled as the system is already 32-bit"
-msgstr "Deze optie is uitgeschakeld omdat het systeem reeds 32-bit is"
+msgstr "Esta opción ha sido desactivada ya que el sistema ya es de 32-bit"
 
 #: src/frontend/main-window.c:205
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 msgstr ""
-"Dit kan niet werkende spellen doen werken, maar zal de Steam store browser "
-"uitschakelen."
+"Esto puede mejorar algunos juegos rotos, pero desactivará el navegador de la"
+" tienda de Steam."
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
-msgstr "Forceer 32-bitsmodus voor Steam"
+msgstr "Forzar modo de 32-bit para Steam"
 
 #: src/frontend/main-window.c:218
 msgid "Use the intercept library"
-msgstr "Gebruik de opvangende bibliotheek"
+msgstr "Usar librería de intercepción"
 
 #: src/frontend/main-window.c:219
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
-"Forceer Steam-toepassingen meer systeemeigen bibliotheken te gebruiken om de"
-" compatibiliteit te maximaliseren."
+"Forzar a las aplicaciones de Steam a usar más librerías del sistema para "
+"maximizar la compatibilidad."
 
 #: src/frontend/main-window.c:228
 msgid "Use the redirect library"
-msgstr "Gebruik de omleidende bibliotheek"
+msgstr "Usar librería de redirección"
 
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
-"Negeer systeemoproepen om bekende fouten te herstellen in bepaalde Linux-"
-"ports"
+"Anular las llamadas del sistema para solucionar algunos problemas conocidos "
+"en adaptaciones de Linux."
 
 #: src/frontend/main-window.c:383
 msgid "Failed to save configuration"
-msgstr "Het opslaan van de configuratie is mislukt"
+msgstr "Error al guardar la configuración"

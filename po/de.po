@@ -30,9 +30,9 @@ msgid ""
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 msgstr ""
-"Beeinflusse das Verhalten des Steam-Clients und von Spielen. Die "
+"Kontrolliere das Verhalten des Steam-Clients und von Spielen. Die "
 "Einstellungen werden erst aktiv, nachdem der Steam-Client neu gestartet "
-"wurde. Nutze 'Steam beenden', um sicherzugehen, dass es beendet wird."
+"wurde. Nutze \"Steam beenden\", um sicherzugehen, dass es beendet wird."
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
@@ -47,19 +47,21 @@ msgstr ""
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
 msgid "This option has been disabled as the system is already 32-bit"
-msgstr "Diese Option ist deaktiviert, da dies bereits ein 32-bit System ist."
+msgstr ""
+"Diese Option ist deaktiviert, da es sich bereits um ein 32-Bit-System "
+"handelt."
 
 #: src/frontend/main-window.c:205
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 msgstr ""
-"Dies behebt möglicherweise Fehler bei kaputten Steam-Spielen, wird aber den "
-"Steam Store Browser deaktivieren."
+"Diese Option behebt möglicherweise Probleme mit Steam-Spielen, wird aber den"
+" Steam Store Browser deaktivieren."
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
-msgstr "Erzwinge 32-bit-Modus für Steam"
+msgstr "Erzwinge 32-Bit-Modus für Steam"
 
 #: src/frontend/main-window.c:218
 msgid "Use the intercept library"
@@ -70,7 +72,7 @@ msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
-"Zwinge Steam Anwendungen dazu, mehr native Bibliotheken zu nutzen, um die "
+"Zwinge Steam-Anwendungen dazu, mehr native Bibliotheken zu nutzen, um die "
 "Kompatibilität zu maximieren."
 
 #: src/frontend/main-window.c:228
@@ -80,7 +82,7 @@ msgstr "Nutze die Redirect-Bibliothek"
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
-"Überschreibe Systemcalls, um bekannte Bugs in manchen Linux-Ports zu "
+"Überschreibe Systemaufrufe, um bekannte Bugs in manchen Linux-Ports zu "
 "beheben."
 
 #: src/frontend/main-window.c:383

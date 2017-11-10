@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-05 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Víctor Rodríguez <vhugo642@gmail.com>, 2017\n"
+"Last-Translator: mrkucho <vhugo642@gmail.com>, 2017\n"
 "Language-Team: Spanish (Peru) (https://www.transifex.com/solus-project/teams/68407/es_PE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,12 +36,12 @@ msgstr ""
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
-msgstr "Usar tiempo de ejecución del sistema"
+msgstr "Usar librerías nativas"
 
 #: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
 msgstr ""
-"Cambie entre el tiempo de ejecución del sistema y el incluido por Steam"
+"Cambie entre las librerías nativas del sistema y las incluidas por Steam"
 
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
@@ -62,7 +62,7 @@ msgstr "Forzar modo de 32-bit para Steam"
 
 #: src/frontend/main-window.c:218
 msgid "Use the intercept library"
-msgstr "Usar la librería de intercepción"
+msgstr "Usar librería de intercepción"
 
 #: src/frontend/main-window.c:219
 msgid ""
@@ -74,7 +74,7 @@ msgstr ""
 
 #: src/frontend/main-window.c:228
 msgid "Use the redirect library"
-msgstr "Usar la librería de intercepción"
+msgstr "Usar librería de redirección"
 
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
