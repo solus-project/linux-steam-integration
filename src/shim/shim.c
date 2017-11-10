@@ -42,6 +42,17 @@
 #define REDIRECT_PATH "/usr/\$LIB/liblsi-redirect.so"
 
 /**
+ * This is the default LD_LIBRARY_PATH we'll want set up under snapd
+ * to keep things ticking over nicely.
+ *
+ * The intercept module will actually take care of a lot of stuff but we'll
+ * do this for safety.
+ */
+#define SNAPD_LIBRARY_PATH                                                                         \
+        "/var/lib/snapd/lib/gl/32:/var/lib/snapd/lib/gl:/usr/lib/glx-provider/default:/usr/lib32/" \
+        "glx-provider/default"
+#define SNAPD_DRIVERS_PATH "/usr/lib/dri:/usr/lib32/dri"
+/**
  * Set up the LD_AUDIT environment - respecting $SNAP if set
  */
 static void shim_set_audit_path(void)
@@ -115,6 +126,20 @@ static const char *shim_get_steam_binary(void)
         return extra;
 }
 
+/**
+ * Set up any extra environment pieces that might need fixing
+ *
+ * Currently this only sets up the snapd environmental variables, so that
+ * we don't rely on separate bootstrap scripts out of tree.
+ */
+static void shim_export_extra(void)
+{
+#ifdef HAVE_SNAPD_SUPPORT
+        setenv("LIBGL_DRIVERS_PATH", SNAPD_LIBRARY_PATH, 1);
+        setenv("LD_LIBRARY_PATH", SNAPD_LIBRARY_PATH ":" SNAPD_DRIVERS_PATH, 1);
+#endif
+}
+
 int main(int argc, char **argv)
 {
         LsiConfig config = { 0 };
@@ -140,6 +165,9 @@ int main(int argc, char **argv)
                 lsi_report_failure("Steam isn't currently installed at %s", lsi_exec_bin);
                 return EXIT_FAILURE;
         }
+
+        /* We might have additional variables we need to export */
+        shim_export_extra();
 
         /* Force STEAM_RUNTIME into the environment */
         if (config.use_native_runtime) {
