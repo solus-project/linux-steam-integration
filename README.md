@@ -45,7 +45,7 @@ LSI is currently undergoing work to become a universal package for all Linux dis
 Items left to implement:
 
  - [x] Add basic library support for snapd environment
- - [ ] Make `shim` support `$SNAP` style environmental variables for local Steam
+ - [x] Make `shim` support `$SNAP` style environmental variables for local Steam
  - [ ] Add support to LSI + `snapd` for NVIDIA+Vulkan
 
 ## Getting LSI
