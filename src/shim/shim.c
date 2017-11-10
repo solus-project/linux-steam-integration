@@ -20,6 +20,7 @@
 
 #include "../common/files.h"
 #include "../common/log.h"
+#include "../nica/files.h"
 #include "config.h"
 #include "lsi.h"
 
@@ -114,6 +115,44 @@ static const char *shim_get_steam_binary(const char *prefix)
         return tgt;
 }
 
+#ifdef HAVE_SNAPD_SUPPORT
+/**
+ * This function is only used during our initial bootstrap phase to ensure
+ * we're able to set up the environment and directories correctly under the
+ * snapd system.
+ */
+static void shim_init_user(const char *userdir)
+{
+        static const char *paths[] = {
+                ".local/share",
+                ".config",
+                ".cache",
+        };
+        static const char *vars[] = {
+                "XDG_DATA_HOME",
+                "XDG_CONFIG_HOME",
+                "XDG_CACHE_HOME",
+        };
+        static char tgt[PATH_MAX] = { 0 };
+
+        for (size_t i = 0; i < ARRAY_SIZE(paths); i++) {
+                if (snprintf(tgt, sizeof(tgt), "%s/%s", userdir, vars[i]) < 0) {
+                        lsi_log_error("memory failure");
+                        return;
+                }
+                if (!lsi_file_exists(tgt)) {
+                        if (!nc_mkdir_p(tgt, 00755)) {
+                                lsi_log_error("failed to construct %s: %s", tgt, strerror(errno));
+                                goto write_var;
+                        }
+                        lsi_log_debug("Constructing %s: %s", vars[i], tgt);
+                }
+        write_var:
+                setenv(vars[i], tgt, 1);
+        }
+}
+#endif
+
 /**
  * Set up any extra environment pieces that might need fixing
  *
@@ -145,9 +184,10 @@ static void shim_export_extra(const char *prefix)
         shim_export_merge_vars("XDG_DATA_DIRS", prefix, "/usr/share");
         if (snap_user) {
                 shim_export_merge_vars("XDG_DATA_DIRS", NULL, snap_user);
+                shim_init_user(snap_user);
         }
 
-        /* TODO: Add XDG_CACHE_HOME/XDG_DATA_HOME, and ensure XDG_RUNTIME_DIR is around */
+        /* TODO: ensure XDG_RUNTIME_DIR is around */
 }
 #else
 static void shim_export_extra(__lsi_unused__ const char *prefix)
