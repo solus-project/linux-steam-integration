@@ -378,55 +378,6 @@ static bool lsi_override_x86_derp(__lsi_unused__ const char *orig_name,
 }
 
 /**
- * This helps with a recently seen issue where the game ships "bin/libpdf.so"
- * as a directory, and not an actual file, which is then seen before the libpdf.so
- * within the accompanying lib directory.
- */
-static bool lsi_override_pdf_derp(const char *orig_name, const char **soname)
-{
-        static char path_copy[PATH_MAX];
-        static char path_lookup[PATH_MAX];
-        char *dir = NULL;
-        static const char *pdf_locations[] = {
-                "../lib/libpdf.so",
-                "../lib/x86_44/libpdf.so",
-        };
-
-        if (!strstr(orig_name, "bin/libpdf.so")) {
-                return false;
-        }
-
-        if (!lsi_file_exists(orig_name)) {
-                return false;
-        }
-
-        if (!strcpy(path_copy, orig_name)) {
-                return false;
-        }
-
-        dir = dirname(path_copy);
-
-        for (size_t i = 0; i < sizeof(pdf_locations); i++) {
-                if (snprintf(path_lookup, sizeof(path_lookup), "%s/%s", dir, pdf_locations[i]) <
-                    0) {
-                        return false;
-                }
-                if (!lsi_file_exists(path_lookup)) {
-                        continue;
-                }
-
-                *soname = path_lookup;
-
-                lsi_log_debug(
-                    "Redirected invalid libpdf.so read: \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
-                    orig_name,
-                    path_lookup);
-                return true;
-        }
-        return false;
-}
-
-/**
  * Internal helper for path replacement to host lib
  */
 static bool lsi_override_replace_with_host(const char *orig_name, const char **soname,
@@ -612,11 +563,6 @@ char *lsi_blacklist_vendor(unsigned int flag, const char *name)
 
         /* Locally exists due to directory foobar */
         if (lsi_override_local(flag, name, &override_soname)) {
-                return (char *)override_soname;
-        }
-
-        /* Make sure there isn't an issue with libpdf.so */
-        if (lsi_override_pdf_derp(name, &override_soname)) {
                 return (char *)override_soname;
         }
 
