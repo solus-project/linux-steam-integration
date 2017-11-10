@@ -42,6 +42,27 @@
 #define REDIRECT_PATH "/usr/\$LIB/liblsi-redirect.so"
 
 /**
+ * Set up the LD_AUDIT environment - respecting $SNAP if set
+ */
+static void shim_set_audit_path(void)
+{
+        const char *extra = NULL;
+        static char tgt[PATH_MAX] = { 0 };
+
+#ifdef HAVE_SNAPD_SUPPORT
+        /* For snapd, we need to prepend "$SNAP" into the path */
+        extra = getenv("SNAP");
+#endif
+
+        if (snprintf(tgt, sizeof(tgt), "%s%s", extra ? extra : "", AUDIT_PATH) < 0) {
+                setenv("LD_AUDIT", AUDIT_PATH, 1);
+                return;
+        }
+
+        setenv("LD_AUDIT", tgt, 1);
+}
+
+/**
  * Set up LD_PRELOAD, respecting an existing LD_PRELOAD and forcing ourselves
  * to be first in the list.
  */
@@ -49,14 +70,24 @@ static void shim_set_ld_preload(void)
 {
         const char *preload = NULL;
         static char tgt[PATH_MAX] = { 0 };
+        const char *extra = NULL;
 
+#ifdef HAVE_SNAPD_SUPPORT
+        /* For snapd, we need to prepend "$SNAP" into the path */
+        extra = getenv("SNAP");
+#endif
+
+        /* Always need to know about existing LD_PRELOAD */
         preload = getenv("LD_PRELOAD");
-        if (!preload) {
-                setenv("LD_PRELOAD", REDIRECT_PATH, 1);
-                return;
-        }
 
-        if (snprintf(tgt, sizeof(tgt), "%s:%s", REDIRECT_PATH, preload) < 0) {
+        /* Set up string to include any SNAP prefix and existing LD_PRELOAD */
+        if (snprintf(tgt,
+                     sizeof(tgt),
+                     "%s%s%s%s",
+                     extra ? extra : "",
+                     REDIRECT_PATH,
+                     preload ? ":" : "",
+                     preload ? preload : "") < 0) {
                 setenv("LD_PRELOAD", REDIRECT_PATH, 1);
                 return;
         }
@@ -97,7 +128,7 @@ int main(int argc, char **argv)
 #ifdef HAVE_LIBINTERCEPT
                 /* Only use libintercept in combination with native runtime! */
                 if (config.use_libintercept) {
-                        setenv("LD_AUDIT", AUDIT_PATH, 1);
+                        shim_set_audit_path();
                 }
 #endif
 #ifdef HAVE_LIBREDIRECT
