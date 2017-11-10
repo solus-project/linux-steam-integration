@@ -123,11 +123,31 @@ static const char *shim_get_steam_binary(const char *prefix)
 #ifdef HAVE_SNAPD_SUPPORT
 static void shim_export_extra(const char *prefix)
 {
+        static const char *snap_user = NULL;
+
         setenv("LIBGL_DRIVERS_PATH", SNAPD_LIBRARY_PATH, 1);
         setenv("LD_LIBRARY_PATH", SNAPD_LIBRARY_PATH ":" SNAPD_DRIVERS_PATH, 1);
 
+        /* Path */
         shim_export_merge_vars("PATH", prefix, "/usr/bin");
         shim_export_merge_vars("PATH", prefix, "/bin");
+
+        /* XDG */
+        shim_export_merge_vars("XDG_CONFIG_DIRS", NULL, "/etc/xdg");
+        shim_export_merge_vars("XDG_CONFIG_DIRS", NULL, "/usr/share/xdg");
+        shim_export_merge_vars("XDG_CONFIG_DIRS", prefix, "/etc/xdg");
+        shim_export_merge_vars("XDG_CONFIG_DIRS", prefix, "/usr/xdg");
+
+        shim_export_merge_vars("XDG_DATA_DIRS", prefix, "/usr/share");
+
+        snap_user = getenv("SNAP_USER_DATA");
+        shim_export_merge_vars("XDG_DATA_DIRS", NULL, "/usr/share");
+        shim_export_merge_vars("XDG_DATA_DIRS", prefix, "/usr/share");
+        if (snap_user) {
+                shim_export_merge_vars("XDG_DATA_DIRS", NULL, snap_user);
+        }
+
+        /* TODO: Add XDG_CACHE_HOME/XDG_DATA_HOME, and ensure XDG_RUNTIME_DIR is around */
 }
 #else
 static void shim_export_extra(__lsi_unused__ const char *prefix)
