@@ -605,6 +605,9 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
         if (lsi_override_snapd_nvidia(name, &out_name)) {
                 return (char *)out_name;
         }
+        if (lsi_override_snapd_dri(name, &out_name)) {
+                return (char *)out_name;
+        }
 #endif
         switch (work_mode) {
         case INTERCEPT_MODE_STEAM:

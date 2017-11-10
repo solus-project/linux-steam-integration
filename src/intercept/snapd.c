@@ -153,6 +153,60 @@ bool lsi_override_snapd_nvidia(const char *name, const char **soname)
         return true;
 }
 
+bool lsi_override_snapd_dri(const char *name, const char **soname)
+{
+        const char *lib_dir = NULL;
+        static char path_lookup[PATH_MAX];
+        static char path_copy[PATH_MAX];
+        char *small_name = NULL;
+
+        /* Only mangle when we start looking for paths */
+        if (!strstr(name, "/")) {
+                return false;
+        }
+
+        /* Must be a proper dri lookup */
+        if (!strstr(name, "_dri.so") && !strstr(name, "_drv_video.so")) {
+                return false;
+        }
+
+        /* If this guy exists we don't actually care.. */
+        if (lsi_file_exists(name)) {
+                return false;
+        }
+
+#if UINTPTR_MAX == 0xffffffffffffffff
+        /* 64-bit libdir */
+        lib_dir = "/usr/lib/dri";
+#else
+        /* 32-bit libdir */
+        lib_dir = "/usr/lib32/dri";
+#endif
+
+        /* Grab the link name */
+        if (!strcpy(path_copy, name)) {
+                return false;
+        }
+        small_name = basename(path_copy);
+
+        if (snprintf(path_lookup, sizeof(path_lookup), "%s/%s", lib_dir, small_name) < 0) {
+                return false;
+        }
+
+        /* Sod all we can do here */
+        if (!lsi_file_exists(path_lookup)) {
+                lsi_log_error("Missing DRI file: %s (%s)", name, path_lookup);
+                return false;
+        }
+
+        *soname = path_lookup;
+        lsi_log_debug("Enforcing snapd DRI links: \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
+                      name,
+                      path_lookup);
+
+        return true;
+}
+
 bool lsi_override_snapd_gl(const char *name, const char **soname)
 {
         for (size_t i = 0; i < ARRAY_SIZE(libgl_source_table); i++) {
