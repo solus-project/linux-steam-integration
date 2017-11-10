@@ -107,7 +107,20 @@ static const char *vendor_blacklist[] = {
          * loading the mesalib drivers. */
         "libgcc_",
         "libstdc++",
-        "libSDL",
+
+        /* Ensure we don't match weird made up cruft like "libSDL2_locale" */
+        "libSDL-1.2",
+        "libSDL2-2",
+        "libSDL2_ttf",
+        "libSDL_ttf",
+        "libSDL2_image",
+        "libSDL_image",
+        "libSDL2_mixer",
+        "libSDL_mixer",
+        "libSDL2_net",
+        "libSDL_net",
+        "libSDL2_gfx",
+        "libSDL_gfx",
 
         /* vendor-owned */
         "libz.so.1",
