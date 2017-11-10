@@ -147,9 +147,21 @@ bool lsi_config_store(LsiConfig *config)
 {
         autofree(FILE) *fp = NULL;
         autofree(char) *conf = NULL;
+        autofree(char) *dir = NULL;
 
         if (!config) {
                 return false;
+        }
+
+        /* Ensure we have config directory, i.e. when as a snap.. */
+        dir = lsi_get_user_config_dir();
+        if (!dir) {
+                return false;
+        }
+        if (!lsi_file_exists(dir)) {
+                if (mkdir(dir, 00755) < 0) {
+                        return false;
+                }
         }
 
         conf = lsi_get_user_config_file();
