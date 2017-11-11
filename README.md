@@ -46,7 +46,9 @@ Items left to implement:
 
  - [x] Add basic library support for snapd environment
  - [x] Make `shim` support `$SNAP` style environmental variables for local Steam
- - [ ] Add support to LSI + `snapd` for NVIDIA+Vulkan
+ - [x] Add support to LSI + `snapd` for NVIDIA+Vulkan
+ - [ ] Verify "normal" games work again
+ - [ ] Publish snaps
 
 ## Getting LSI
 
