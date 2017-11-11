@@ -89,6 +89,7 @@ static const char *steam_allowed[] = {
 
         /* Swift shader */
         "libGLESv2.so",
+        "libEGL.so",
 };
 
 static const char *wanted_steam_processes[] = {
@@ -129,10 +130,6 @@ static const char *vendor_blacklist[] = {
 
         /* general problem causer. */
         "libopenal.so.",
-
-        /* thou shalt not replace drivers (swiftshader) ! */
-        "libGLESv2.so",
-        "libGL.so",
 
         /* glews (provide glew + glew110 in your distro for full compat) */
         "libGLEW.so.1.10",
