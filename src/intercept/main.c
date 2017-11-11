@@ -258,6 +258,10 @@ static const char *vendor_transmute_source[] = {
 
         /* old name for openal */
         "libopenal-soft.so.1",
+
+        /* invalid curls */
+        "libcurl-gnutls.so.3",
+        "libcurl.so.3",
 };
 
 /**
@@ -288,6 +292,10 @@ static const char *vendor_transmute_target[] = {
 
         /* new name for openal */
         "libopenal.so.1",
+
+        /* invalid curls */
+        "libcurl-gnutls.so.4",
+        "libcurl.so.4",
 };
 
 /**
