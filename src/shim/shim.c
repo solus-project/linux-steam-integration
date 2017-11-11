@@ -12,6 +12,7 @@
 #define _GNU_SOURCE
 
 #include <errno.h>
+#include <glob.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +55,11 @@
         "/var/lib/snapd/lib/gl/32:/var/lib/snapd/lib/gl:/usr/lib/glx-provider/default:/usr/lib32/" \
         "glx-provider/default"
 #define SNAPD_DRIVERS_PATH "/usr/lib/dri:/usr/lib32/dri"
+
+/**
+ * Bi-arch location for the host Vulkan ICD files
+ */
+#define VK_GLOB_BIARCH "/var/lib/snapd/lib/gl/10_*.json"
 
 /**
  * Used to update a value in the environment, and perform a prepend if the variable
@@ -151,6 +157,31 @@ static void shim_init_user(const char *userdir)
                 setenv(vars[i], tgt, 1);
         }
 }
+
+/**
+ * Attempt to set up Vulkan in the environment by looking for the ICD files
+ * passed from the hostfs
+ */
+static bool shim_init_vulkan(const char *glob_path)
+{
+        glob_t glo = { 0 };
+
+        glob(glob_path, GLOB_DOOFFS, NULL, &glo);
+
+        if (glo.gl_pathc < 1) {
+                globfree(&glo);
+                return false;
+        }
+
+        /* Preserve glob order and insert environment in reverse */
+        for (int i = glo.gl_pathc - 1; i >= 0; i--) {
+                shim_export_merge_vars("VK_ICD_FILENAMES", NULL, glo.gl_pathv[i]);
+        }
+
+        globfree(&glo);
+
+        return true;
+}
 #endif
 
 /**
@@ -171,6 +202,9 @@ static void shim_export_extra(const char *prefix)
         /* Path */
         shim_export_merge_vars("PATH", prefix, "/usr/bin");
         shim_export_merge_vars("PATH", prefix, "/bin");
+
+        /* TODO: If this fails, try setting from multiarch */
+        shim_init_vulkan(VK_GLOB_BIARCH);
 
         /* XDG */
         shim_export_merge_vars("XDG_CONFIG_DIRS", NULL, "/etc/xdg");
