@@ -170,6 +170,11 @@ bool lsi_override_snapd_dri(const char *name, const char **soname)
                 return false;
         }
 
+        /* Never deal with source names! */
+        if (strstr(name, "/var/lib/snapd/")) {
+                return false;
+        }
+
         /* If this guy exists we don't actually care.. */
         if (lsi_file_exists(name)) {
                 return false;
