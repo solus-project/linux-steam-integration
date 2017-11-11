@@ -270,6 +270,9 @@ int main(int argc, char **argv)
          * usage of dbus by Steam. Help them out */
         setenv("DBUS_FATAL_WARNINGS", "0", 1);
 
+        /* Requires Solus patch to actually work */
+        setenv("DBUS_SILENCE_WARNINGS", "1", 1);
+
         /* A recent regression is to interpret XMODIFIERS and then fail to
          * make it beyond `SDL_InitSubSystem` due to `InitIME` failing to
          * properly use D-BUS ...
