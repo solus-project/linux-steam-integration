@@ -80,7 +80,7 @@ static const char *libgl_mesa_table[] = {
  * These are the NVIDIA libraries will attempt to redirect on demand.
  */
 static const char *libgl_nvidia_matches[] = {
-        "libGLdispatch", "libnv", "NVIDIA", "nvidia.so", "cuda", "GLX",
+        "libGLdispatch", "libnv", "NVIDIA", "nvidia.so", "cuda.", "GLX",
 };
 
 bool lsi_override_snapd_nvidia(const char *name, const char **soname)
