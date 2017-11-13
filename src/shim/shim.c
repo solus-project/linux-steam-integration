@@ -177,7 +177,7 @@ static bool shim_init_vulkan(const char *glob_path)
 /**
  * Attempt to push a path into the variable name if it actually exists
  */
-static void shim_export_ld_dir(const char *dir, const char *var_name)
+static void shim_export_ld_dir(const char *var_name, const char *dir)
 {
         if (!lsi_file_exists(dir)) {
                 return;
@@ -228,6 +228,8 @@ static void shim_export_extra(const char *prefix)
         for (size_t i = 0; i < ARRAY_SIZE(ld_library_dirs); i++) {
                 shim_export_ld_dir("LD_LIBRARY_PATH", ld_library_dirs[i]);
         }
+
+        shim_export_ld_dir("VDPAU_DRIVER_PATH", "/var/lib/snapd/lib/gl/vdpau");
 
         /* Path */
         shim_export_merge_vars("PATH", prefix, "/usr/bin");
