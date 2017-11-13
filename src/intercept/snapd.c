@@ -53,8 +53,8 @@ static const char *libgl_target_table[] = {
         "/var/lib/snapd/lib/gl/libEGL.so.1",
 #else
         /* 32bit support */
-        "/var/lib/snapd/lib/gl/32/libGL.so.1",
-        "/var/lib/snapd/lib/gl/32/libEGL.so.1",
+        "/var/lib/snapd/lib/gl32/libGL.so.1",
+        "/var/lib/snapd/lib/gl32/libEGL.so.1",
 #endif
 };
 
@@ -124,7 +124,7 @@ bool lsi_override_snapd_nvidia(const char *name, const char **soname)
         nvidia_target_dir = "/var/lib/snapd/lib/gl";
 #else
         /* 32-bit libdir */
-        nvidia_target_dir = "/var/lib/snapd/lib/gl/32";
+        nvidia_target_dir = "/var/lib/snapd/lib/gl32";
 #endif
 
         /* Grab the link name */
