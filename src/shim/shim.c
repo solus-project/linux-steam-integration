@@ -45,18 +45,6 @@
 #define REDIRECT_PATH "/usr/\$LIB/liblsi-redirect.so"
 
 /**
- * This is the default LD_LIBRARY_PATH we'll want set up under snapd
- * to keep things ticking over nicely.
- *
- * The intercept module will actually take care of a lot of stuff but we'll
- * do this for safety.
- */
-#define SNAPD_LIBRARY_PATH                                                                         \
-        "/var/lib/snapd/lib/gl/32:/var/lib/snapd/lib/gl:/usr/lib/glx-provider/default:/usr/lib32/" \
-        "glx-provider/default"
-#define SNAPD_DRIVERS_PATH "/usr/lib/dri:/usr/lib32/dri"
-
-/**
  * Bi-arch location for the host Vulkan ICD files
  */
 #define VK_GLOB_BIARCH "/var/lib/snapd/lib/gl/10_*.json"
@@ -184,20 +172,62 @@ static bool shim_init_vulkan(const char *glob_path)
 }
 #endif
 
+#ifdef HAVE_SNAPD_SUPPORT
+
+/**
+ * Attempt to push a path into the variable name if it actually exists
+ */
+static void shim_export_ld_dir(const char *dir, const char *var_name)
+{
+        if (!lsi_file_exists(dir)) {
+                return;
+        }
+        shim_export_merge_vars(var_name, NULL, dir);
+}
+
 /**
  * Set up any extra environment pieces that might need fixing
  *
  * Currently this only sets up the snapd environmental variables, so that
  * we don't rely on separate bootstrap scripts out of tree.
  */
-#ifdef HAVE_SNAPD_SUPPORT
 static void shim_export_extra(const char *prefix)
 {
         static const char *snap_user = NULL;
         static const char *xdg_home = NULL;
 
-        setenv("LIBGL_DRIVERS_PATH", SNAPD_LIBRARY_PATH, 1);
-        setenv("LD_LIBRARY_PATH", SNAPD_LIBRARY_PATH ":" SNAPD_DRIVERS_PATH, 1);
+        /* Add all of these guys to LD_LIBRARY_PATH if they exist.
+         * This allows us to handle the special-case multiarch mounts.
+         */
+        static const char *ld_library_dirs[] = {
+                "/var/lib/snapd/lib/gl/vdpau",     /**<Multiarch specific */
+                "/usr/lib/glx-provider/default",   /**<Solus mesa, 64-bit */
+                "/usr/lib32/glx-provider/default", /**<Solus mesa, 32bit */
+                "/var/lib/snapd/lib/gl",           /**<Potential host NVIDIA libraries */
+                "/var/lib/snapd/lib/gl/32",        /**<Potential host NVIDIA 32-bit libraries */
+        };
+
+        /* Add any necessary DRI drivers to the path, though in reality this
+         * shouldn't REALLY be needed, but let's just play it safe.
+         */
+        static const char *dri_drivers_extra[] = {
+                "/usr/lib32/dri",
+                "/usr/lib/dri",
+        };
+
+        unsetenv("LIBGL_DRIVERS_PATH");
+        unsetenv("LD_LIBRARY_PATH");
+
+        /* Include all GLI driver paths */
+        for (size_t i = 0; i < ARRAY_SIZE(dri_drivers_extra); i++) {
+                shim_export_ld_dir("LIBGL_DRIVERS_PATH", dri_drivers_extra[i]);
+                shim_export_ld_dir("LD_LIBRARY_PATH", dri_drivers_extra[i]);
+        }
+
+        /* Now set the library path accordingly */
+        for (size_t i = 0; i < ARRAY_SIZE(ld_library_dirs); i++) {
+                shim_export_ld_dir("LD_LIBRARY_PATH", ld_library_dirs[i]);
+        }
 
         /* Path */
         shim_export_merge_vars("PATH", prefix, "/usr/bin");
