@@ -259,6 +259,8 @@ static const char *vendor_transmute_source[] = {
         /* invalid curls */
         "libcurl-gnutls.so.3",
         "libcurl.so.3",
+
+        "libbz2.so.1",
 };
 
 /**
@@ -293,6 +295,8 @@ static const char *vendor_transmute_target[] = {
         /* invalid curls */
         "libcurl-gnutls.so.4",
         "libcurl.so.4",
+
+        "libbz2.so.1.0.6",
 };
 
 /**
