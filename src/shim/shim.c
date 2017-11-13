@@ -45,9 +45,10 @@
 #define REDIRECT_PATH "/usr/\$LIB/liblsi-redirect.so"
 
 /**
- * Bi-arch location for the host Vulkan ICD files
+ * Potential for the host Vulkan ICD files (old vs new)
  */
-#define VK_GLOB_BIARCH "/var/lib/snapd/lib/gl/10_*.json"
+#define VK_GLOB "/var/lib/snapd/lib/gl/10_*.json"
+#define VK_GLOB_2 "/var/lib/snapd/lib/vulkan/10_*.json"
 
 /**
  * Used to update a value in the environment, and perform a prepend if the variable
@@ -238,8 +239,10 @@ static void shim_export_extra(const char *prefix)
         shim_export_merge_vars("PATH", prefix, "/usr/bin");
         shim_export_merge_vars("PATH", prefix, "/bin");
 
-        /* TODO: If this fails, try setting from multiarch */
-        shim_init_vulkan(VK_GLOB_BIARCH);
+        /* Try both known Vulkan ICD paths */
+        if (!shim_init_vulkan(VK_GLOB_2)) {
+                shim_init_vulkan(VK_GLOB);
+        }
 
         /* XDG */
         shim_export_merge_vars("XDG_CONFIG_DIRS", NULL, "/etc/xdg");
