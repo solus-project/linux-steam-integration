@@ -260,7 +260,7 @@ static const char *vendor_transmute_source[] = {
         "libcurl-gnutls.so.3",
         "libcurl.so.3",
 
-        "libbz2.so.1",
+        "libbz2.so.1.0",
 };
 
 /**
