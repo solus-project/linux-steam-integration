@@ -200,11 +200,14 @@ static void shim_export_extra(const char *prefix)
          * This allows us to handle the special-case multiarch mounts.
          */
         static const char *ld_library_dirs[] = {
-                "/var/lib/snapd/lib/gl/vdpau",     /**<Multiarch specific */
+                "/var/lib/snapd/lib/gl/vdpau",     /**<64-bit vdpau */
+                "/var/lib/snapd/lib/gl/32/vdpau",  /**<32bit vdpau */
+                "/var/lib/snapd/lib/gl32/vdpau",   /**<32bit vdpau */
                 "/usr/lib/glx-provider/default",   /**<Solus mesa, 64-bit */
                 "/usr/lib32/glx-provider/default", /**<Solus mesa, 32bit */
                 "/var/lib/snapd/lib/gl",           /**<Potential host NVIDIA libraries */
-                "/var/lib/snapd/lib/gl/32",        /**<Potential host NVIDIA 32-bit libraries */
+                "/var/lib/snapd/lib/gl/32", /**<Potential host NVIDIA 32-bit libraries (old location) */
+                "/var/lib/snapd/lib/gl32", /**<Potential host NVIDIA 32-bit libraries (new location) */
         };
 
         /* Add any necessary DRI drivers to the path, though in reality this
