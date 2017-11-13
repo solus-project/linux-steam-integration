@@ -85,11 +85,19 @@ static const char *libgl_nvidia_matches[] = {
 
 bool lsi_override_snapd_nvidia(const char *name, const char **soname)
 {
-        const char *nvidia_target_dir = NULL;
         static char path_lookup[PATH_MAX];
         static char path_copy[PATH_MAX];
         char *small_name = NULL;
         bool match = false;
+        static const char *search_dirs[] = {
+#if UINTPTR_MAX == 0xffffffffffffffff
+                "/var/lib/snapd/lib/gl/tls",
+                "/var/lib/snapd/lib/gl",
+#else
+                "/var/lib/snapd/lib/gl32/tls",
+                "/var/lib/snapd/lib/gl32",
+#endif
+        };
 
         /* Must be proper versioned libs */
         if (!strstr(name, ".so.")) {
@@ -114,38 +122,33 @@ bool lsi_override_snapd_nvidia(const char *name, const char **soname)
                 return false;
         }
 
-#if UINTPTR_MAX == 0xffffffffffffffff
-        /* 64-bit libdir */
-        nvidia_target_dir = "/var/lib/snapd/lib/gl";
-#else
-        /* 32-bit libdir */
-        nvidia_target_dir = "/var/lib/snapd/lib/gl32";
-#endif
-
         /* Grab the link name */
         if (!strcpy(path_copy, name)) {
                 return false;
         }
         small_name = basename(path_copy);
 
-        if (snprintf(path_lookup, sizeof(path_lookup), "%s/%s", nvidia_target_dir, small_name) <
-            0) {
-                return false;
+        for (size_t i = 0; i < ARRAY_SIZE(search_dirs); i++) {
+                int r = snprintf(path_lookup, sizeof(path_lookup), search_dirs[i], small_name);
+                if (r < 0) {
+                        return false;
+                }
+                if (!lsi_file_exists(path_lookup)) {
+                        continue;
+                }
+                *soname = path_lookup;
+                lsi_log_debug(
+                    "Enforcing NVIDIA snapd driver links: \033[31;1m%s\033[0m -> "
+                    "\033[34;1m%s\033[0m",
+                    name,
+                    path_lookup);
+
+                return true;
         }
 
         /* Sod all we can do here */
-        if (!lsi_file_exists(path_lookup)) {
-                lsi_log_error("Missing NVIDIA file: %s (%s)", name, path_lookup);
-                return false;
-        }
-
-        *soname = path_lookup;
-        lsi_log_debug(
-            "Enforcing NVIDIA snapd driver links: \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
-            name,
-            path_lookup);
-
-        return true;
+        lsi_log_error("Missing NVIDIA file: %s (%s)", name, path_lookup);
+        return false;
 }
 
 bool lsi_override_snapd_dri(const char *name, const char **soname)
