@@ -129,7 +129,8 @@ bool lsi_override_snapd_nvidia(const char *name, const char **soname)
         small_name = basename(path_copy);
 
         for (size_t i = 0; i < ARRAY_SIZE(search_dirs); i++) {
-                int r = snprintf(path_lookup, sizeof(path_lookup), search_dirs[i], small_name);
+                int r =
+                    snprintf(path_lookup, sizeof(path_lookup), "%s/%s", search_dirs[i], small_name);
                 if (r < 0) {
                         return false;
                 }
