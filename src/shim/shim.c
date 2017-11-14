@@ -281,13 +281,15 @@ bool shim_bootstrap()
         operation_prefix = getenv("SNAP");
 #endif
 
+        /* We might have additional variables we need to export and we
+         * might also end up changing XDG_CONFIG_HOME - ensure we actually
+         * read our settings from the right place. */
+        shim_export_extra(operation_prefix);
+
         /* Ensure we now have some kind of config */
         if (!lsi_config_load(&lsi_config)) {
                 lsi_config_load_defaults(&lsi_config);
         }
-
-        /* We might have additional variables we need to export */
-        shim_export_extra(operation_prefix);
 
         /* Force STEAM_RUNTIME into the environment */
         if (lsi_config.use_native_runtime) {
