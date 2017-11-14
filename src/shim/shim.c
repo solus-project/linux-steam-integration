@@ -253,7 +253,7 @@ static void shim_export_extra(const char *prefix)
 
         shim_export_merge_vars("XDG_DATA_DIRS", prefix, "/usr/share");
 
-        snap_user = getenv("SNAP_USER_DATA");
+        snap_user = getenv("SNAP_USER_COMMON");
         shim_export_merge_vars("XDG_DATA_DIRS", NULL, "/usr/share");
         shim_export_merge_vars("XDG_DATA_DIRS", prefix, "/usr/share");
         if (snap_user) {
