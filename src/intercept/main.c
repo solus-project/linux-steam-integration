@@ -22,7 +22,6 @@
 #include "../common/files.h"
 #include "../common/log.h"
 #include "config.h"
-#include "intercept.h"
 #include "nica/util.h"
 
 /**
