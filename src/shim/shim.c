@@ -47,8 +47,8 @@
 /**
  * Potential for the host Vulkan ICD files (old vs new)
  */
-#define VK_GLOB "/var/lib/snapd/lib/gl/10_*.json"
-#define VK_GLOB_2 "/var/lib/snapd/lib/vulkan/10_*.json"
+#define VK_GLOB "/var/lib/snapd/lib/gl/*nvidia*.json"
+#define VK_GLOB_2 "/var/lib/snapd/lib/vulkan/*nvidia*.json"
 
 /**
  * Used to update a value in the environment, and perform a prepend if the variable
