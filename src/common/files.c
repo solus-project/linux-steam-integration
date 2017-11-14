@@ -52,8 +52,16 @@ const char *lsi_get_home_dir()
 
 char *lsi_get_user_config_dir()
 {
-        const char *home = lsi_get_home_dir();
+        const char *home = NULL;
         char *c = NULL;
+        char *xdg_config = getenv("XDG_CONFIG_HOME");
+
+        /* Respect the XDG_CONFIG_HOME variable if it is set */
+        if (xdg_config) {
+                return strdup(xdg_config);
+        }
+
+        home = lsi_get_home_dir();
         if (asprintf(&c, "%s/.config", home) < 0) {
                 return NULL;
         }
@@ -66,6 +74,13 @@ char *lsi_get_user_config_dir()
 static inline char *lsi_get_fallback_steam_dir(const char *home)
 {
         char *p = NULL;
+        char *xdg_data = getenv("XDG_DATA_HOME");
+
+        /* Respect the XDG_CONFIG_HOME variable if it is set */
+        if (xdg_data) {
+                return strdup(xdg_data);
+        }
+
         if (asprintf(&p, "%s/.local/share/Steam", home) < 0) {
                 return NULL;
         }
