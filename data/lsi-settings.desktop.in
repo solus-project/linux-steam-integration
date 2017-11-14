@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Linux Steam Integration
 Comment=Application for managing Steam integration settings
-Exec=lsi-settings
+Exec=@LSI_SETTINGS@
 Icon=steam
 Terminal=false
 Type=Application
