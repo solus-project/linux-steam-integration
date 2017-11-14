@@ -374,7 +374,7 @@ static int shim_execute_internal(const char *command, int argc, char **argv, boo
 
         /* Go execute steam. */
         if (vfunc(exec_command, (char **)n_argv) < 0) {
-                lsi_report_failure("Failed to launch command: %s [%s]", strerror(errno), command);
+                lsi_report_failure("Failed to launch command: %s\n\n%s", command, strerror(errno));
                 return EXIT_FAILURE;
         }
         /* Can't happen */
