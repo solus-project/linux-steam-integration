@@ -375,7 +375,7 @@ static gboolean lsi_window_closed(LsiSettingsWindow *self, __lsi_unused__ GdkEve
 #endif
 
 #ifdef HAVE_LIBINTERCEPT
-        self->config.use_libredirect = gtk_switch_get_active(GTK_SWITCH(self->check_redirect));
+        self->config.use_libintercept = gtk_switch_get_active(GTK_SWITCH(self->check_intercept));
 #endif
 
         /* Try to write new config */
