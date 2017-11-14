@@ -41,7 +41,7 @@ int main(int argc, char **argv)
         ++argv;
 
         /* Now execute. */
-        return shim_execute(command, argc, argv);
+        return shim_execute_path(command, argc, argv);
 }
 
 /*

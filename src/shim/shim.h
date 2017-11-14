@@ -26,6 +26,13 @@ bool shim_bootstrap(void);
  */
 int shim_execute(const char *command, int argc, char **argv);
 
+/**
+ * Execute the given command, respecting the $PATH variable
+ *
+ * @note If this succeeds, we will not return
+ */
+int shim_execute_path(const char *command, int argc, char **argv);
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *

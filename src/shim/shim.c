@@ -338,7 +338,7 @@ bool shim_bootstrap()
         return true;
 }
 
-int shim_execute(const char *command, int argc, char **argv)
+static int shim_execute_internal(const char *command, int argc, char **argv, bool use_path)
 {
         bool is_x86_64;
         const char *n_argv[argc + 3];
@@ -362,8 +362,8 @@ int shim_execute(const char *command, int argc, char **argv)
                 /* Directly call lsi_exec_bin */
                 exec_command = command;
                 n_argv[0] = command;
-                /* Full path here due to shadow nature */
-                vfunc = execv;
+                /* Full path here due to shadow nature unless asked not to */
+                vfunc = use_path ? execvp : execv;
         }
 
         /* Point arguments to arguments passed to us */
@@ -379,6 +379,16 @@ int shim_execute(const char *command, int argc, char **argv)
         }
         /* Can't happen */
         return EXIT_FAILURE;
+}
+
+int shim_execute(const char *command, int argc, char **argv)
+{
+        return shim_execute_internal(command, argc, argv, false);
+}
+
+int shim_execute_path(const char *command, int argc, char **argv)
+{
+        return shim_execute_internal(command, argc, argv, true);
 }
 
 /*
