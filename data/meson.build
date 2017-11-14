@@ -2,16 +2,8 @@ appsdir = join_paths(datadir, 'applications')
 
 # If frontend is enabled, install lsi-settings.desktop
 if with_frontend == true
-    data_conf = configuration_data()
-    if with_snap_support == true
-        data_conf.set('LSI_SETTINGS', '$SNAP/bin/lsi-exec $SNAP/bin/lsi-settings')
-    else
-        data_conf.set('LSI_SETTINGS', 'lsi-settings')
-    endif
-    configure_file(
-        input: 'lsi-settings.desktop.in',
-        output: 'lsi-settings.desktop',
-        configuration: data_conf,
+    install_data(
+        'lsi-settings.desktop',
         install_dir: appsdir,
     )
 endif
