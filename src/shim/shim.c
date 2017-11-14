@@ -24,6 +24,7 @@
 #include "../nica/files.h"
 #include "config.h"
 #include "lsi.h"
+#include "shim.h"
 
 /**
  * Required to force Steam into 32-bit detection mode, which is useful for
@@ -94,20 +95,6 @@ static void shim_set_audit_path(const char *prefix)
 static void shim_set_ld_preload(const char *prefix)
 {
         shim_export_merge_vars("LD_PRELOAD", prefix, REDIRECT_PATH);
-}
-
-/**
- * Helper to get the Steam binary, respecting "$SNAP" if needed
- */
-static const char *shim_get_steam_binary(const char *prefix)
-{
-        static char tgt[PATH_MAX] = { 0 };
-
-        if (snprintf(tgt, sizeof(tgt), "%s%s", prefix ? prefix : "", STEAM_BINARY) < 0) {
-                return STEAM_BINARY;
-        }
-
-        return tgt;
 }
 
 #ifdef HAVE_SNAPD_SUPPORT
@@ -281,53 +268,42 @@ static void shim_export_extra(__lsi_unused__ const char *prefix)
 }
 #endif
 
-int main(int argc, char **argv)
+static LsiConfig lsi_config = { 0 };
+
+/* Public API */
+
+bool shim_bootstrap()
 {
-        LsiConfig config = { 0 };
-        bool is_x86_64;
-        const char *n_argv[argc + 2];
-        const char *exec_command = NULL;
-        /* Use the appropriate Steam depending on configuration */
-        const char *lsi_exec_bin = NULL;
-        int i = 1;
-        int8_t off = 0;
-        int (*vfunc)(const char *, char *const argv[]) = NULL;
         const char *operation_prefix = NULL;
 
 #ifdef HAVE_SNAPD_SUPPORT
+        /* Snapd specific prefix */
         operation_prefix = getenv("SNAP");
 #endif
 
-        lsi_exec_bin = shim_get_steam_binary(operation_prefix);
-
-        /* Initialise config */
-        if (!lsi_config_load(&config)) {
-                lsi_config_load_defaults(&config);
+        /* Ensure we now have some kind of config */
+        if (!lsi_config_load(&lsi_config)) {
+                lsi_config_load_defaults(&lsi_config);
         }
 
-        is_x86_64 = lsi_system_is_64bit();
-
-        if (!lsi_file_exists(lsi_exec_bin)) {
-                lsi_report_failure("Steam isn't currently installed at %s", lsi_exec_bin);
-                return EXIT_FAILURE;
-        }
+        errno = 0;
 
         /* We might have additional variables we need to export */
         shim_export_extra(operation_prefix);
 
         /* Force STEAM_RUNTIME into the environment */
-        if (config.use_native_runtime) {
+        if (lsi_config.use_native_runtime) {
                 /* Explicitly disable the runtime */
                 setenv("STEAM_RUNTIME", "0", 1);
 #ifdef HAVE_LIBINTERCEPT
                 /* Only use libintercept in combination with native runtime! */
-                if (config.use_libintercept) {
+                if (lsi_config.use_libintercept) {
                         shim_set_audit_path(operation_prefix);
                 }
 #endif
 #ifdef HAVE_LIBREDIRECT
                 /* Only use libredirect in combination with native runtime! */
-                if (config.use_libredirect) {
+                if (lsi_config.use_libredirect) {
                         shim_set_ld_preload(operation_prefix);
                 }
 #endif
@@ -353,37 +329,56 @@ int main(int argc, char **argv)
         unsetenv("XMODIFIERS");
         unsetenv("GTK_MODULES");
 
-        memset(&n_argv, 0, sizeof(char *) * (argc + 2));
+        if (errno != 0) {
+                lsi_report_failure("Failed to bootstrap LSI: %s", strerror(errno));
+                return false;
+        }
+
+        /* All done now. */
+        return true;
+}
+
+int shim_execute(const char *command, int argc, char **argv)
+{
+        bool is_x86_64;
+        const char *n_argv[argc + 3];
+        const char *exec_command = NULL;
+        int i = 1;
+        int8_t off = 1;
+        int (*vfunc)(const char *, char *const argv[]) = NULL;
+
+        is_x86_64 = lsi_system_is_64bit();
+        memset(&n_argv, 0, sizeof(char *) * (argc + 3));
 
         /* If we're 64-bit and 32-bit is forced, proxy via linux32 */
-        if (config.force_32 && is_x86_64) {
+        if (lsi_config.force_32 && is_x86_64) {
                 exec_command = EMUL32BIN;
                 n_argv[0] = EMUL32BIN;
-                n_argv[1] = lsi_exec_bin;
-                off = 1;
+                n_argv[1] = command;
+                off = 2;
                 /* Use linux32 in the path */
                 vfunc = execvp;
         } else {
                 /* Directly call lsi_exec_bin */
-                exec_command = lsi_exec_bin;
-                n_argv[0] = lsi_exec_bin;
+                exec_command = command;
+                n_argv[0] = command;
                 /* Full path here due to shadow nature */
                 vfunc = execv;
         }
 
         /* Point arguments to arguments passed to us */
-        for (i = 1; i < argc; i++) {
+        for (i = 0; i < argc; i++) {
                 n_argv[i + off] = argv[i];
         }
         n_argv[i + 1 + off] = NULL;
 
         /* Go execute steam. */
         if (vfunc(exec_command, (char **)n_argv) < 0) {
-                lsi_report_failure("Failed to launch Steam: %s [%s]",
-                                   strerror(errno),
-                                   lsi_exec_bin);
+                lsi_report_failure("Failed to launch command: %s [%s]", strerror(errno), command);
                 return EXIT_FAILURE;
         }
+        /* Can't happen */
+        return EXIT_FAILURE;
 }
 
 /*

@@ -7,6 +7,7 @@ endif
 if shim_behaviour != 'none'
     shim_sources = [
         'shim.c',
+        'main.c',
     ]
 
     shim = executable(
