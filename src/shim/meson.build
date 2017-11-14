@@ -10,9 +10,24 @@ if shim_behaviour != 'none'
         'main.c',
     ]
 
+    exec_sources = [
+        'shim.c',
+        'lsi-exec.c',
+    ]
+
     shim = executable(
         shim_target_name,
         sources: shim_sources + nica_sources,
+        include_directories: nica_includes,
+        dependencies: [
+            link_lsi,
+        ],
+        install: true,
+    )
+
+    lsi_exec = executable(
+        'lsi-exec',
+        sources: exec_sources + nica_sources,
         include_directories: nica_includes,
         dependencies: [
             link_lsi,
