@@ -211,9 +211,9 @@ _nica_public_ unsigned int la_version(unsigned int supported_version)
  */
 char *lsi_search_steam(const char *name)
 {
-        /* Find out if it exists */
-        bool file_exists = lsi_file_exists(name);
-        const char *replace = NULL;
+        if (!lsi_file_exists(name)) {
+                return (char *)name;
+        }
 
         /* Find out if its a Steam private lib.. These are relative "./" files too! */
         if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
@@ -222,15 +222,8 @@ char *lsi_search_steam(const char *name)
                                 return (char *)name;
                         }
                 }
-                if (file_exists) {
-                        lsi_log_debug("blacklisted loading of vendor library: \033[34;1m%s\033[0m",
-                                      name);
-                }
+                lsi_log_debug("blacklisted loading of vendor library: \033[34;1m%s\033[0m", name);
                 return NULL;
-        }
-
-        if (lsi_override_replace_with_host(name, &replace, NULL)) {
-                return (char *)replace;
         }
 
         return (char *)name;
