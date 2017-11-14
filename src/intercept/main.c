@@ -30,6 +30,9 @@
  */
 static const char *matched_process = NULL;
 
+static bool lsi_override_replace_with_host(const char *orig_name, const char **soname,
+                                           const char *msg);
+
 /**
  * We support a number of modes, but we mostly exist to make Steam behave
  */
@@ -211,6 +214,7 @@ char *lsi_search_steam(const char *name)
 {
         /* Find out if it exists */
         bool file_exists = lsi_file_exists(name);
+        const char *replace = NULL;
 
         /* Find out if its a Steam private lib.. These are relative "./" files too! */
         if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
@@ -223,8 +227,11 @@ char *lsi_search_steam(const char *name)
                         lsi_log_debug("blacklisted loading of vendor library: \033[34;1m%s\033[0m",
                                       name);
                 }
-
                 return NULL;
+        }
+
+        if (lsi_override_replace_with_host(name, &replace, NULL)) {
+                return replace;
         }
 
         return (char *)name;
@@ -441,6 +448,9 @@ static bool lsi_override_replace_with_host(const char *orig_name, const char **s
                 }
 
                 *soname = path_lookup;
+                if (!msg) {
+                        return true;
+                }
                 lsi_log_debug("%s \033[31;1m%s\033[0m -> \033[34;1m%s\033[0m",
                               msg,
                               orig_name,
