@@ -286,8 +286,6 @@ bool shim_bootstrap()
                 lsi_config_load_defaults(&lsi_config);
         }
 
-        errno = 0;
-
         /* We might have additional variables we need to export */
         shim_export_extra(operation_prefix);
 
@@ -328,11 +326,6 @@ bool shim_bootstrap()
          */
         unsetenv("XMODIFIERS");
         unsetenv("GTK_MODULES");
-
-        if (errno != 0) {
-                lsi_report_failure("Failed to bootstrap LSI: %s", strerror(errno));
-                return false;
-        }
 
         /* All done now. */
         return true;
