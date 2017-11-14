@@ -75,13 +75,16 @@ static inline char *lsi_get_fallback_steam_dir(const char *home)
 {
         char *p = NULL;
         char *xdg_data = getenv("XDG_DATA_HOME");
+        int r = 0;
 
         /* Respect the XDG_CONFIG_HOME variable if it is set */
         if (xdg_data) {
-                return strdup(xdg_data);
+                r = asprintf(&p, "%s/Steam", xdg_data);
+        } else {
+                r = asprintf(&p, "%s/.local/share/Steam", home);
         }
 
-        if (asprintf(&p, "%s/.local/share/Steam", home) < 0) {
+        if (r < 0) {
                 return NULL;
         }
         return p;
