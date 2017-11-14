@@ -230,7 +230,7 @@ char *lsi_search_steam(const char *name)
         }
 
         if (lsi_override_replace_with_host(name, &replace, NULL)) {
-                return replace;
+                return (char *)replace;
         }
 
         return (char *)name;
