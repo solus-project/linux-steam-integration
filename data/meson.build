@@ -4,7 +4,7 @@ appsdir = join_paths(datadir, 'applications')
 if with_frontend == true
     data_conf = configuration_data()
     if with_snap_support == true
-        data_conf.set('LSI_SETTINGS', 'linux-steam-integration.exec $SNAP/bin/linux-steam-integration.settings')
+        data_conf.set('LSI_SETTINGS', 'linux-steam-integration.exec linux-steam-integration.settings')
     else
         data_conf.set('LSI_SETTINGS', 'lsi-settings')
     endif
