@@ -31,6 +31,7 @@ static const char *matched_process = NULL;
 
 static bool lsi_override_replace_with_host(const char *orig_name, const char **soname,
                                            const char *msg);
+static bool lsi_override_soname(unsigned int flag, const char *orig_name, const char **soname);
 
 /**
  * We support a number of modes, but we mostly exist to make Steam behave
@@ -209,8 +210,15 @@ _nica_public_ unsigned int la_version(unsigned int supported_version)
 /**
  * lsi_search_steam handles whitelisting for the main Steam processes
  */
-char *lsi_search_steam(const char *name)
+char *lsi_search_steam(unsigned int flag, const char *name)
 {
+        const char *soname = NULL;
+
+        /* Preemptively catch transmutations */
+        if (lsi_override_soname(flag, name, &soname)) {
+                return (char *)soname;
+        }
+
         if (!lsi_file_exists(name)) {
                 return (char *)name;
         }
@@ -260,6 +268,8 @@ static const char *vendor_transmute_source[] = {
         "libcurl.so.3",
 
         "libbz2.so.1.0",
+
+        "libudev.so.0",
 };
 
 /**
@@ -296,6 +306,8 @@ static const char *vendor_transmute_target[] = {
         "libcurl.so.4",
 
         "libbz2.so.1.0.6",
+
+        "libudev.so.1",
 };
 
 /**
@@ -614,7 +626,7 @@ _nica_public_ char *la_objsearch(const char *name, __lsi_unused__ uintptr_t *coo
 {
         switch (work_mode) {
         case INTERCEPT_MODE_STEAM:
-                return lsi_search_steam(name);
+                return lsi_search_steam(flag, name);
         case INTERCEPT_MODE_VENDOR_OFFENDER:
                 return lsi_blacklist_vendor(flag, name);
         case INTERCEPT_MODE_NONE:
