@@ -15,6 +15,12 @@ if shim_behaviour != 'none'
         'lsi-exec.c',
     ]
 
+    exec_name = 'lsi-exec'
+    frontend_name = 'lsi-settings'
+    if with_snap_support == true
+        exec_name = 'linux-steam-integration.exec'
+    endif
+
     shim = executable(
         shim_target_name,
         sources: shim_sources + nica_sources,
@@ -26,7 +32,7 @@ if shim_behaviour != 'none'
     )
 
     lsi_exec = executable(
-        'lsi-exec',
+        exec_name,
         sources: exec_sources + nica_sources,
         include_directories: nica_includes,
         dependencies: [

@@ -6,8 +6,13 @@ if with_frontend == true
         'main-window.c',
     ]
 
+    frontend_name = 'lsi-settings'
+    if with_snap_support == true
+        frontend_name = 'linux-steam-integration.settings'
+    endif
+
     frontend = executable(
-        'lsi-settings',
+        frontend_name,
         sources: frontend_sources + nica_sources,
         include_directories: nica_includes,
         dependencies: [
