@@ -596,7 +596,8 @@ char *lsi_blacklist_vendor(unsigned int flag, const char *name)
         }
 
         /* Find out if its a Steam private lib.. These are relative "./" files too! */
-        if (name && (strstr(name, "/Steam/") || strncmp(name, "./", 2) == 0)) {
+        if (name && (strstr(name, "/Steam/") || strstr(name, "/steamapps/") ||
+                     strncmp(name, "./", 2) == 0)) {
                 for (size_t i = 0; i < ARRAY_SIZE(vendor_blacklist); i++) {
                         if (!strstr(name, vendor_blacklist[i])) {
                                 continue;
