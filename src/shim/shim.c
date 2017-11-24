@@ -219,9 +219,11 @@ static void shim_export_extra(const char *prefix)
         }
 
         /* the vdpau directory only exists on multiarch */
-        shim_export_ld_dir("VDPAU_DRIVER_PATH", "/var/lib/snapd/lib/gl/vdpau");
-        shim_export_ld_dir("VDPAU_DRIVER_PATH", "/var/lib/snapd/lib/gl");
-        shim_export_ld_dir("VDPAU_DRIVER_PATH", "/usr/lib/vdpau");
+        if (lsi_file_exists("/var/lib/snapd/lib/gl/vdpau")) {
+                shim_export_ld_dir("VDPAU_DRIVER_PATH", "/var/lib/snapd/lib/gl/vdpau");
+        } else {
+                shim_export_ld_dir("VDPAU_DRIVER_PATH", "/var/lib/snapd/lib/gl");
+        }
 
         /* Path */
         shim_export_merge_vars("PATH", prefix, "/usr/bin");
