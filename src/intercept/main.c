@@ -93,6 +93,10 @@ static const char *steam_allowed[] = {
         /* Swift shader */
         "libGLESv2.so",
         "libEGL.so",
+
+        /* widevine */
+        "libwidevinecdmadapter.so",
+        "libwidevinecdm.so",
 };
 
 static const char *wanted_steam_processes[] = {
