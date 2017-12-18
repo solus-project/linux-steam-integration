@@ -388,7 +388,7 @@ static void lsi_maybe_init_unity3d(const char *p)
         /* We're in action */
         lsi_table.unity3d.enabled = true;
         lsi_log_set_id("unity3d");
-        lsi_log_error("Activating \"black screen of nope\" workaround");
+        lsi_log_info("Activating \"black screen of nope\" workaround");
 }
 
 static inline bool str_has_prefix(const char *a, const char *b)
