@@ -380,6 +380,11 @@ static void lsi_maybe_init_unity3d(const char *p)
                 return;
         }
 
+        /* Set by the main shim */
+        if (!getenv("LSI_USE_UNITY_HACK")) {
+                return;
+        }
+
         /* We're in action */
         lsi_table.unity3d.enabled = true;
         lsi_log_set_id("unity3d");

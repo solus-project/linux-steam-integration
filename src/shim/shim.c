@@ -308,6 +308,10 @@ bool shim_bootstrap()
                 if (lsi_config.use_libredirect) {
                         shim_set_ld_preload(operation_prefix);
                 }
+                /* And unity hack is dependent on libredirect.. */
+                if (lsi_config.use_unity_hack) {
+                        setenv("LSI_USE_UNITY_HACK", "1", 1);
+                }
 #endif
         } else {
                 /* Only preload when needed. */

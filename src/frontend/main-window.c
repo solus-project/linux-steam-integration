@@ -32,6 +32,7 @@ struct _LsiSettingsWindow {
         /* Only when libredirect is enabled will we have this option */
 #ifdef HAVE_LIBREDIRECT
         GtkWidget *check_redirect;
+        GtkWidget *check_unity_hack;
 #endif
 
         /* Always have these guys */
@@ -230,12 +231,26 @@ static void lsi_settings_window_init(LsiSettingsWindow *self)
                                  "Linux ports."));
         set_row_sensitive(self->check_redirect, FALSE);
         gtk_switch_set_active(GTK_SWITCH(self->check_redirect), self->config.use_libredirect);
+
+        self->check_unity_hack = insert_grid_toggle(grid,
+                                                    &row,
+                                                    _("Use the Unity fullscreen workaround"),
+                                                    _("Prevent some Unity games from launching in "
+                                                      "full screen mode to fix numerous issues"));
+        set_row_sensitive(self->check_unity_hack, FALSE);
+        gtk_switch_set_active(GTK_SWITCH(self->check_unity_hack), self->config.use_unity_hack);
 #endif
 
         /* Hook up our signals. Basically the "native runtime" option controls the two library
          * options, they must be used in conjunction.
          */
         g_signal_connect_swapped(self->check_native,
+                                 "notify::active",
+                                 G_CALLBACK(lsi_native_swapped),
+                                 self);
+
+        /* Changes to redirect will disable/enable unity hack */
+        g_signal_connect_swapped(self->check_redirect,
                                  "notify::active",
                                  G_CALLBACK(lsi_native_swapped),
                                  self);
@@ -348,11 +363,15 @@ static GtkWidget *insert_grid_toggle(GtkWidget *grid, int *row, const char *titl
 static void lsi_native_swapped(LsiSettingsWindow *self, __lsi_unused__ gpointer v)
 {
         gboolean native_runtime;
+        gboolean redirect;
 
         native_runtime = gtk_switch_get_active(GTK_SWITCH(self->check_native));
 
 #ifdef HAVE_LIBREDIRECT
+        redirect = gtk_switch_get_active(GTK_SWITCH(self->check_redirect));
+
         set_row_sensitive(self->check_redirect, native_runtime);
+        set_row_sensitive(self->check_unity_hack, native_runtime && redirect);
 #endif
 
 #ifdef HAVE_LIBINTERCEPT
@@ -372,6 +391,7 @@ static gboolean lsi_window_closed(LsiSettingsWindow *self, __lsi_unused__ GdkEve
 
 #ifdef HAVE_LIBREDIRECT
         self->config.use_libredirect = gtk_switch_get_active(GTK_SWITCH(self->check_redirect));
+        self->config.use_unity_hack = gtk_switch_get_active(GTK_SWITCH(self->check_unity_hack));
 #endif
 
 #ifdef HAVE_LIBINTERCEPT
