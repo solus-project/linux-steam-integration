@@ -4,6 +4,7 @@ if with_libredirect == true
 
     # Might not need libdl for alt libcs
     libdl = meson.get_compiler('c').find_library('dl', required : false)
+    librt = meson.get_compiler('c').find_library('rt', required : false)
 
     redirect_sources = [
         'main.c',
@@ -22,6 +23,7 @@ if with_libredirect == true
         include_directories: nica_includes,
         dependencies: [
             libdl,
+            librt,
             link_lsi_common,
         ],
         install: true,
