@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linux-steam-integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-05 19:28+0000\n"
+"POT-Creation-Date: 2017-12-19 12:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #. Sort out window bits
 #. header label
-#: src/frontend/main-window.c:131 src/frontend/main-window.c:148
+#: src/frontend/main-window.c:132 src/frontend/main-window.c:149
 msgid "Linux Steam® Integration"
 msgstr "Linux Steam® Integration"
 
-#: src/frontend/main-window.c:162
+#: src/frontend/main-window.c:163
 msgid ""
 "Control the behaviour of the Steam client and games. Settings will not take "
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
@@ -33,20 +33,20 @@ msgstr ""
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 
-#: src/frontend/main-window.c:191
+#: src/frontend/main-window.c:192
 msgid "Use native runtime"
 msgstr "Use native runtime"
 
-#: src/frontend/main-window.c:192
+#: src/frontend/main-window.c:193
 msgid "Switch between the native runtime and the bundled Steam runtime."
 msgstr "Switch between the native runtime and the bundled Steam runtime."
 
 #. Label is shown to indicate we can't enable 32-bit option
-#: src/frontend/main-window.c:201
+#: src/frontend/main-window.c:202
 msgid "This option has been disabled as the system is already 32-bit"
 msgstr "This option has been disabled as the system is already 32-bit"
 
-#: src/frontend/main-window.c:205
+#: src/frontend/main-window.c:206
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
@@ -54,15 +54,15 @@ msgstr ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 
-#: src/frontend/main-window.c:210
+#: src/frontend/main-window.c:211
 msgid "Force 32-bit mode for Steam"
 msgstr "Force 32-bit mode for Steam"
 
-#: src/frontend/main-window.c:218
+#: src/frontend/main-window.c:219
 msgid "Use the intercept library"
 msgstr "Use the intercept library"
 
-#: src/frontend/main-window.c:219
+#: src/frontend/main-window.c:220
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
@@ -70,14 +70,26 @@ msgstr ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 
-#: src/frontend/main-window.c:228
+#: src/frontend/main-window.c:229
 msgid "Use the redirect library"
 msgstr "Use the redirect library"
 
-#: src/frontend/main-window.c:229
+#: src/frontend/main-window.c:230
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr "Override system calls to fix known bugs in some Linux ports."
 
-#: src/frontend/main-window.c:383
+#: src/frontend/main-window.c:237
+msgid "Use the Unity fullscreen workaround"
+msgstr "Use the Unity fullscreen workaround"
+
+#: src/frontend/main-window.c:238
+msgid ""
+"Prevent some Unity games from launching in full screen mode to fix numerous "
+"issues"
+msgstr ""
+"Prevent some Unity games from launching in full screen mode to fix numerous "
+"issues"
+
+#: src/frontend/main-window.c:403
 msgid "Failed to save configuration"
 msgstr "Failed to save configuration"
