@@ -10,19 +10,19 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-05 19:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Kim Kröger <kroger.kim@gmail.com>, 2017\n"
-"Language-Team: Finnish (https://www.transifex.com/solus-project/teams/68407/fi/)\n"
+"Last-Translator: Alex Vorobyev <avorobyev@protonmail.com>, 2017\n"
+"Language-Team: Russian (https://www.transifex.com/solus-project/teams/68407/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fi\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #. Sort out window bits
 #. header label
 #: src/frontend/main-window.c:131 src/frontend/main-window.c:148
 msgid "Linux Steam® Integration"
-msgstr "Linux Steam® Integraatio"
+msgstr "Интеграция Steam в Linux"
 
 #: src/frontend/main-window.c:162
 msgid ""
@@ -30,59 +30,59 @@ msgid ""
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
 "ensure it closes."
 msgstr ""
-"Ohjaa Steam-sovelluksen ja -pelien toimintaa. Asetukset tulevat voimaan "
-"vasta Steam-sovelluksen uudelleenkäynnistyksen myötä. Käytä \"Sulje Steam\" "
-"-toimintoa varmistaaksesi sen sulkeutumisen."
+"Настройте поведение клиента Steam и игр. Настройки не возымеют эффекта, пока"
+" клиент Steam не будет перезапущен. Выберите пункт \"Выход из Steam\", чтобы"
+" закрыть клиент."
 
 #: src/frontend/main-window.c:191
 msgid "Use native runtime"
-msgstr "Käytä paikallista ohjelmakirjastoa"
+msgstr "Использовать системные библиотеки"
 
 #: src/frontend/main-window.c:192
 msgid "Switch between the native runtime and the bundled Steam runtime."
 msgstr ""
-"Vaihda paikallisen ohjelmakirjaston ja Steamin mukana tulevan "
-"ohjelmakirjaston välillä."
+"Переключение между системными библиотеками и библиотеками, поставляемыми с "
+"клиентом Steam."
 
 #. Label is shown to indicate we can't enable 32-bit option
 #: src/frontend/main-window.c:201
 msgid "This option has been disabled as the system is already 32-bit"
-msgstr "Tämä asetus ei ole käytössä, koska järjestelmä on jo 32-bittinen"
+msgstr "Эта настройка отключена, поскольку система является 32-битной"
 
 #: src/frontend/main-window.c:205
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
 msgstr ""
-"Tämä voi väliaikaisesti korjata joidenkin pelien yhteensopivuusongelmat, "
-"mutta ottaa myös Steamin Kaupan pois käytöstä."
+"Эта настройка может помочь с запуском некоторых \"сломанных\" игр, но при "
+"этом магазин Steam будет недоступен."
 
 #: src/frontend/main-window.c:210
 msgid "Force 32-bit mode for Steam"
-msgstr "Pakota 32-bittinen tila Steamille"
+msgstr "Включить 32-битный режим в Steam"
 
 #: src/frontend/main-window.c:218
 msgid "Use the intercept library"
-msgstr "Käytä intercept-kirjastoa"
+msgstr "Использовать библиотеку intercept"
 
 #: src/frontend/main-window.c:219
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
 msgstr ""
-"Pakottaa Steamin sovellusten käyttämään enemmän paikallisia "
-"ohjelmakirjastoja yhteensopivuuden maksimoimiseksi."
+"Приложения в Steam будут использовать системные библиотеки для лучшей "
+"совместимости."
 
 #: src/frontend/main-window.c:228
 msgid "Use the redirect library"
-msgstr "Käytä redirect-kirjastoa"
+msgstr "Использовать библиотеку redirect"
 
 #: src/frontend/main-window.c:229
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
-"Ohittaa järjestelmän kutsut tunnettujen ongelmien korjaamiseksi joissakin "
-"peleissä."
+"Перехват системных вызовов в некоторых Linux-портах для исправления "
+"известных ошибок."
 
 #: src/frontend/main-window.c:383
 msgid "Failed to save configuration"
-msgstr "Asetusten tallentaminen epäonnistui"
+msgstr "Не удалось сохранить конфигурацию"

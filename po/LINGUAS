@@ -3,8 +3,11 @@ ca_ES
 ca
 cs
 da_DK
+da
+de_CH
 de
 en_GB
+eo
 es_419
 es_AR
 es_ES
@@ -14,8 +17,13 @@ es
 fi
 fr_FR
 he
+hu
 id_ID
 it_IT
+ko_KR
+ko
+lt
+nb_NO
 ne_NP
 nl_BE
 nl_NL
@@ -24,5 +32,7 @@ pl
 pt_BR
 pt_PT
 ro_RO
+ru
 sv_SE
+tr
 zh_CN
