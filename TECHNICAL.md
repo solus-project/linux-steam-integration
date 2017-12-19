@@ -226,6 +226,14 @@ Currently this INI file supports three options. The root section in this INI fil
 
         The default value of this variable is `true`.
 
+`use-unity-hack = $boolean`
+
+        If set to a true boolean value (yes/true/on), the `liblsi-redirect.so`
+        library will apply a preference workaround to Unity3D based games and
+        abstract access to their configuration files. This is used to force
+        Unity3D games to always start in windowed mode, and to ensure that
+        they're unable to make use of the stored fullscreen setting.
+
 
 ## Common issues
 
