@@ -12,23 +12,19 @@
 #define _GNU_SOURCE
 
 #include <dlfcn.h>
-#include <errno.h>
-#include <fcntl.h>
 #include <libgen.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #include "../common/common.h"
 #include "../common/files.h"
 #include "../common/log.h"
 #include "nica/util.h"
 
+#include "private.h"
 #include "profile.h"
 #include "redirect.h"
 
@@ -39,33 +35,6 @@
                 .handle = &lsi_table.handles.l, .name = _STRINGIFY(x),                             \
                 .func = (void **)(&lsi_table.x), .func_size = sizeof(lsi_table.x)                  \
         }
-
-/**
- * Cheap and cheerful, this is our default fake unity3d config which we write
- * out to trick unity3d games into reading a non broken config on Linux.
- * This forces the equivalent of "-screen-fullscreen 0" because the older
- * Unity builds will set fullscreen to 1, but they'll also set the resolution
- * width and height to 0 (which is then clamped)
- */
-static const char *unity3d_config =
-    "\
-<unity_prefs version_major=\"1\" version_minor=\"1\">\n\
-	<pref name=\"Screenmanager Is Fullscreen mode\" type=\"int\">0</pref>\n\
-</unity_prefs>\n\
-";
-
-/**
- * When we rewrite the config file in place we'll repllace the "Is Fullscreen mode"
- * line with this one so that we forcibly disable it.
- */
-static const char *unity3d_snippet =
-    "	<pref name=\"Screenmanager Is Fullscreen mode\" type=\"int\">0</pref>\n";
-
-static void lsi_maybe_init_unity3d(const char *p);
-static void lsi_unity_backup_config(void);
-static FILE *lsi_unity_redirect(const char *p, const char *modes);
-static FILE *lsi_unity_get_config_file(const char *modes);
-static void lsi_unity_trim_copy_config(FILE *from, FILE *to);
 
 /**
  * Whether we've initialised yet or not.
@@ -79,42 +48,12 @@ static volatile bool lsi_init = false;
 static volatile bool lsi_override = false;
 
 /**
- * Handle definitions
- */
-typedef int (*lsi_open_file)(const char *p, int flags, mode_t mode);
-
-typedef FILE *(*lsi_fopen64_file)(const char *p, const char *modes);
-
-/**
  * Known profiles
  */
 static lsi_profile_generator_func generators[] = {
         &lsi_redirect_profile_new_ark,
         &lsi_redirect_profile_new_project_highrise,
 };
-
-/**
- * Global storage of handles for nicer organisation.
- */
-typedef struct LsiRedirectTable {
-        lsi_open_file open;
-        lsi_fopen64_file fopen64;
-
-        /* Allow future handle opens.. */
-        struct {
-                void *libc;
-        } handles;
-
-        /* Our shm_open() unity3d redirect.. */
-        struct {
-                char *original_config_path;
-                char *config_path;
-                char *shm_path;
-                bool enabled;
-                bool failed;
-                bool had_init;
-        } unity3d;
-} LsiRedirectTable;
 
 /**
  * Easy mapping to make it quick and easy to add new function overrides
@@ -160,21 +99,7 @@ __attribute__((destructor)) static void lsi_redirect_shutdown(void)
         }
         lsi_init = false;
 
-        if (lsi_table.unity3d.original_config_path) {
-                lsi_unity_backup_config();
-                free(lsi_table.unity3d.original_config_path);
-                lsi_table.unity3d.original_config_path = NULL;
-        }
-        if (lsi_table.unity3d.config_path) {
-                free(lsi_table.unity3d.config_path);
-                lsi_table.unity3d.config_path = NULL;
-        }
-
-        if (lsi_table.unity3d.shm_path) {
-                (void)shm_unlink(lsi_table.unity3d.shm_path);
-                free(lsi_table.unity3d.shm_path);
-                lsi_table.unity3d.shm_path = NULL;
-        }
+        lsi_unity_cleanup(&lsi_table);
 
         if (lsi_table.handles.libc) {
                 dlclose(lsi_table.handles.libc);
@@ -261,7 +186,6 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
         autofree(char) *process_name = NULL;
         char **paths = NULL;
         char **orig = NULL;
-        autofree(char) *xdg_config_dir = NULL;
 
         /* Absolute path to the process for fine-grained matching */
         process_name = lsi_get_process_name();
@@ -271,25 +195,7 @@ __attribute__((constructor)) static void lsi_redirect_init(void)
                 return;
         }
 
-        /* Ensure we know the path to unity3d config */
-        xdg_config_dir = lsi_get_user_config_dir();
-        if (asprintf(&lsi_table.unity3d.config_path, "%s/unity3d", xdg_config_dir) < 0) {
-                fputs("OOM\n", stderr);
-                abort();
-        }
-
-        /* shm path for our fake unity3d config path */
-        if (asprintf(&lsi_table.unity3d.shm_path,
-                     "/u%d-LinuxSteamIntegration.unity3d.%d",
-                     getuid(),
-                     getpgrp()) < 0) {
-                fputs("OOM\n", stderr);
-                abort();
-        }
-
-        /* Symbolic, we don't just use this for anyone, yknow. :P */
-        lsi_table.unity3d.enabled = false;
-        lsi_table.unity3d.failed = false;
+        lsi_unity_startup(&lsi_table);
 
         /* Grab the steam installation directories */
         orig = paths = lsi_get_steam_paths();
@@ -366,162 +272,6 @@ static char *lsi_get_redirect_path(const char *syscall_id, LsiRedirectOperation 
         return NULL;
 }
 
-/**
- * The unity3d config path has been accessed, so we need to turn on our
- * workaround for unity3d prefs
- */
-static void lsi_maybe_init_unity3d(const char *p)
-{
-        if (lsi_table.unity3d.enabled) {
-                return;
-        }
-
-        if (lsi_table.unity3d.config_path && !strstr(p, lsi_table.unity3d.config_path)) {
-                return;
-        }
-
-        /* Set by the main shim */
-        if (!getenv("LSI_USE_UNITY_HACK")) {
-                return;
-        }
-
-        /* We're in action */
-        lsi_table.unity3d.enabled = true;
-        lsi_log_set_id("unity3d");
-        lsi_log_info("Activating \"black screen of nope\" workaround");
-}
-
-static inline bool str_has_prefix(const char *a, const char *b)
-{
-        size_t lena, lenb;
-        lena = strlen(a);
-        lenb = strlen(b);
-        if (lenb > lena) {
-                return false;
-        }
-        return strncmp(a, b, lenb) == 0;
-}
-
-/**
- * Determine if the input path is a unity3d "prefs" file
- */
-static bool is_unity3d_prefs_file(const char *p)
-{
-        autofree(char) *clone = NULL;
-        char *basenom = NULL;
-
-        /* Must only happen when enabled */
-        if (!lsi_table.unity3d.enabled) {
-                return false;
-        }
-
-        /* We found it already */
-        if (lsi_table.unity3d.original_config_path) {
-                return false;
-        }
-
-        /* Must be in config path */
-        if (!str_has_prefix(p, lsi_table.unity3d.config_path)) {
-                return false;
-        }
-
-        clone = strdup(p);
-        if (!clone) {
-                return false;
-        }
-        basenom = basename(clone);
-        if (!basenom) {
-                return false;
-        }
-
-        /* Must be called "prefs" */
-        return strcmp(basenom, "prefs") == 0 ? true : false;
-}
-
-/**
- * Copy the config from the @from file to the @to file, which
- * will also strip out any "evil" lines, i.e. the fullscreen
- * stanza.
- *
- * If the input file does not exist, the default configuration
- * will be used.
- */
-static void lsi_unity_trim_copy_config(FILE *from, FILE *to)
-{
-        char *buf = NULL;
-        size_t sn = 0;
-        ssize_t r = 0;
-
-        /* No input? Write the default configuration then */
-        if (!from) {
-                if (fwrite(unity3d_config, strlen(unity3d_config), 1, to) != 1) {
-                        lsi_log_error("Failed to create initial Unity3D config: %s",
-                                      strerror(errno));
-                }
-                return;
-        }
-
-        /* Have an input file, write to the output but omit all the bad lines */
-        while ((r = getline(&buf, &sn, from)) != -1) {
-                const char *to_write = NULL;
-
-                /* Rewrite this line, it breaks games. */
-                if (strstr(buf, "Screenmanager Is Fullscreen mode")) {
-                        to_write = unity3d_snippet;
-                        r = strlen(to_write);
-                } else {
-                        to_write = buf;
-                }
-
-                if (fwrite(to_write, r, 1, to) != 1) {
-                        lsi_log_error("Failed to write Unity3D config: %s", strerror(errno));
-                        goto failed;
-                }
-
-                if (buf) {
-                        free(buf);
-                        buf = NULL;
-                }
-        }
-
-        fflush(to);
-
-failed:
-        if (buf) {
-                free(buf);
-        }
-}
-
-/**
- * Clone the existing shm configuration into the real config path, and copy
- * all lines that we "like"
- *
- * Basically this ensures we force the dumped config to omit the fullscreen
- * options as they break so many games.
- */
-static void lsi_unity_backup_config()
-{
-        autofree(FILE) *shm_file = NULL;
-        autofree(FILE) *dest_file = NULL;
-
-        if (!lsi_table.unity3d.enabled || !lsi_table.unity3d.original_config_path) {
-                return;
-        }
-
-        shm_file = lsi_unity_get_config_file("r");
-        if (!shm_file) {
-                return;
-        }
-
-        dest_file = lsi_table.fopen64(lsi_table.unity3d.original_config_path, "w");
-        if (!dest_file) {
-                return;
-        }
-
-        lsi_log_debug("Saved Unity3D config to %s", lsi_table.unity3d.original_config_path);
-        lsi_unity_trim_copy_config(shm_file, dest_file);
-}
-
 _nica_public_ int open(const char *p, int flags, ...)
 {
         va_list va;
@@ -539,7 +289,7 @@ _nica_public_ int open(const char *p, int flags, ...)
         mode = va_arg(va, mode_t);
         va_end(va);
 
-        lsi_maybe_init_unity3d(p);
+        lsi_maybe_init_unity3d(&lsi_table, p);
 
         /* Not interested in this guy apparently */
         if (!lsi_override) {
@@ -555,70 +305,6 @@ fallback_open:
         return lsi_table.open(p, flags, mode);
 }
 
-/**
- * Get the shm file as a FILE stream
- */
-static FILE *lsi_unity_get_config_file(const char *modes)
-{
-        int perm = O_RDONLY;
-
-        if (strstr(modes, "w")) {
-                perm = O_RDWR | O_CREAT | O_TRUNC;
-        }
-
-        /* Attempt to shm_open our fake path */
-        int fd = shm_open(lsi_table.unity3d.shm_path, perm, 0666);
-        if (!fd) {
-                return NULL;
-        }
-        return fdopen(fd, modes);
-}
-
-/**
- * We now need to initialise the unity3d config if we haven't done so
- */
-static void lsi_unity_init_config(void)
-{
-        autofree(FILE) *source = NULL;
-        autofree(FILE) *dest = NULL;
-
-        if (lsi_table.unity3d.had_init || lsi_table.unity3d.failed) {
-                return;
-        }
-
-        lsi_table.unity3d.had_init = true;
-
-        dest = lsi_unity_get_config_file("w");
-        source = lsi_table.fopen64(lsi_table.unity3d.original_config_path, "r");
-
-        lsi_unity_trim_copy_config(source, dest);
-}
-
-/**
- * Redirect requests for non-existant config files in Unity3D to a temporary
- * shm file which we'll write our initial "sane" configuration to.
- */
-static FILE *lsi_unity_redirect(const char *p, const char *modes)
-{
-        FILE *ret = NULL;
-
-        /* Preserve this path for later cloning.. */
-        lsi_table.unity3d.original_config_path = strdup(p);
-
-        lsi_unity_init_config();
-
-        ret = lsi_unity_get_config_file(modes);
-        if (!ret) {
-                return NULL;
-        }
-
-        lsi_log_debug("fopen64(%s): Redirecting unity config '%s' to shm(%s)",
-                      modes,
-                      p,
-                      lsi_table.unity3d.shm_path);
-        return ret;
-}
-
 _nica_public_ FILE *fopen64(const char *p, const char *modes)
 {
         LsiRedirectOperation op = LSI_OPERATION_OPEN;
@@ -629,7 +315,7 @@ _nica_public_ FILE *fopen64(const char *p, const char *modes)
          */
         lsi_redirect_init_tables();
 
-        lsi_maybe_init_unity3d(p);
+        lsi_maybe_init_unity3d(&lsi_table, p);
 
         /* Not interested in this guy apparently */
         if (!lsi_override) {
@@ -643,8 +329,8 @@ _nica_public_ FILE *fopen64(const char *p, const char *modes)
 
 fallback_open:
 
-        if (is_unity3d_prefs_file(p)) {
-                return lsi_unity_redirect(p, modes);
+        if (is_unity3d_prefs_file(&lsi_table, p)) {
+                return lsi_unity_redirect(&lsi_table, p, modes);
         }
         return lsi_table.fopen64(p, modes);
 }

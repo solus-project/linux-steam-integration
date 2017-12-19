@@ -11,6 +11,7 @@ if with_libredirect == true
         'profile.c',
         'profiles/ark.c',
         'profiles/project_highrise.c',
+        'unity.c',
     ]
 
     sym_map = join_paths(meson.current_source_dir(), 'sym.map')
