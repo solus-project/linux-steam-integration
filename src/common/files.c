@@ -55,15 +55,25 @@ char *lsi_get_user_config_dir()
         const char *home = NULL;
         char *c = NULL;
         char *xdg_config = getenv("XDG_CONFIG_HOME");
+        char *p = NULL;
 
         /* Respect the XDG_CONFIG_HOME variable if it is set */
         if (xdg_config) {
+                p = realpath(xdg_config, NULL);
+                if (p) {
+                        return p;
+                }
                 return strdup(xdg_config);
         }
 
         home = lsi_get_home_dir();
         if (asprintf(&c, "%s/.config", home) < 0) {
                 return NULL;
+        }
+        p = realpath(c, NULL);
+        if (p) {
+                free(c);
+                return p;
         }
         return c;
 }
