@@ -612,10 +612,10 @@ static FILE *lsi_unity_redirect(const char *p, const char *modes)
                 return NULL;
         }
 
-        lsi_log_info("fopen64(%s): Redirecting unity config '%s' to shm(%s)",
-                     modes,
-                     p,
-                     lsi_table.unity3d.shm_path);
+        lsi_log_debug("fopen64(%s): Redirecting unity config '%s' to shm(%s)",
+                      modes,
+                      p,
+                      lsi_table.unity3d.shm_path);
         return ret;
 }
 
