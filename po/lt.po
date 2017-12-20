@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linux-steam-integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-05 19:28+0000\n"
+"POT-Creation-Date: 2017-12-19 12:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Moo <moose@mail.ru>, 2017\n"
 "Language-Team: Lithuanian (https://www.transifex.com/solus-project/teams/68407/lt/)\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #. Sort out window bits
 #. header label
-#: src/frontend/main-window.c:131 src/frontend/main-window.c:148
+#: src/frontend/main-window.c:132 src/frontend/main-window.c:149
 msgid "Linux Steam® Integration"
 msgstr "Linux Steam® integracija"
 
-#: src/frontend/main-window.c:162
+#: src/frontend/main-window.c:163
 msgid ""
 "Control the behaviour of the Steam client and games. Settings will not take "
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
@@ -34,21 +34,21 @@ msgstr ""
 "Steam klientas nebus paleistas iš naujo. Norėdami užtikrinti, kad programa "
 "Steam baigtų darbą, naudokite parametrą \"Išeiti iš Steam\"."
 
-#: src/frontend/main-window.c:191
+#: src/frontend/main-window.c:192
 msgid "Use native runtime"
 msgstr "Naudoti savą vykdymo aplinką"
 
-#: src/frontend/main-window.c:192
+#: src/frontend/main-window.c:193
 msgid "Switch between the native runtime and the bundled Steam runtime."
 msgstr ""
 "Perjungti tarp savos vykdymo aplinkos ir pridėtinės Steam vykdymo aplinkos."
 
 #. Label is shown to indicate we can't enable 32-bit option
-#: src/frontend/main-window.c:201
+#: src/frontend/main-window.c:202
 msgid "This option has been disabled as the system is already 32-bit"
 msgstr "Šis parametras buvo išjungtas, nes sistema jau ir yra 32-bitų"
 
-#: src/frontend/main-window.c:205
+#: src/frontend/main-window.c:206
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
@@ -56,15 +56,15 @@ msgstr ""
 "Tai galėti padėti apeiti kai kurių neveikiančių žaidimų problemas, tačiau "
 "išjungs Steam parduotuvės naršyklę."
 
-#: src/frontend/main-window.c:210
+#: src/frontend/main-window.c:211
 msgid "Force 32-bit mode for Steam"
 msgstr "Programai Steam priverstinai naudoti 32-bitų veikseną"
 
-#: src/frontend/main-window.c:218
+#: src/frontend/main-window.c:219
 msgid "Use the intercept library"
 msgstr "Naudoti perėmimo biblioteką"
 
-#: src/frontend/main-window.c:219
+#: src/frontend/main-window.c:220
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
@@ -72,16 +72,28 @@ msgstr ""
 "Priversti Steam programas naudoti labiau savas bibliotekas, siekiant "
 "padidinti suderinamumą."
 
-#: src/frontend/main-window.c:228
+#: src/frontend/main-window.c:229
 msgid "Use the redirect library"
 msgstr "Naudoti peradresavimo biblioteką"
 
-#: src/frontend/main-window.c:229
+#: src/frontend/main-window.c:230
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
 "Nustelbti sistemines iškvietas, siekiant pataisyti žinomas klaidas kai "
 "kuriuose Linux perkėlimuose."
 
-#: src/frontend/main-window.c:383
+#: src/frontend/main-window.c:237
+msgid "Use the Unity fullscreen workaround"
+msgstr "Naudoti Unity viso ekrano problemos apėjimą"
+
+#: src/frontend/main-window.c:238
+msgid ""
+"Prevent some Unity games from launching in full screen mode to fix numerous "
+"issues"
+msgstr ""
+"Neleisti kai kuriems Unity žaidimams pasileisti viso ekrano veiksenoje, "
+"siekiant pataisyti daugelį klaidų"
+
+#: src/frontend/main-window.c:403
 msgid "Failed to save configuration"
 msgstr "Nepavyko įrašyti konfigūracijos"

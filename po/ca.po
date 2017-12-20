@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linux-steam-integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-05 19:28+0000\n"
+"POT-Creation-Date: 2017-12-19 12:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Davidmp <medipas@gmail.com>, 2017\n"
 "Language-Team: Catalan (https://www.transifex.com/solus-project/teams/68407/ca/)\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #. Sort out window bits
 #. header label
-#: src/frontend/main-window.c:131 src/frontend/main-window.c:148
+#: src/frontend/main-window.c:132 src/frontend/main-window.c:149
 msgid "Linux Steam® Integration"
 msgstr "Integració de Linux Steam®"
 
-#: src/frontend/main-window.c:162
+#: src/frontend/main-window.c:163
 msgid ""
 "Control the behaviour of the Steam client and games. Settings will not take "
 "effect until the Steam Client is restarted. Use the 'Exit Steam' option to "
@@ -34,20 +34,20 @@ msgstr ""
 " tindrà efecte fins que no es reiniciï el client d'Steam. Useu l'opció "
 "\"Surt de l'Steam\" per assegurar-vos que es tanqui."
 
-#: src/frontend/main-window.c:191
+#: src/frontend/main-window.c:192
 msgid "Use native runtime"
 msgstr "Usa l'entorn d'execució natiu"
 
-#: src/frontend/main-window.c:192
+#: src/frontend/main-window.c:193
 msgid "Switch between the native runtime and the bundled Steam runtime."
 msgstr "Canvieu entre l'entorn natiu i l'entorn d'Steam agrupat."
 
 #. Label is shown to indicate we can't enable 32-bit option
-#: src/frontend/main-window.c:201
+#: src/frontend/main-window.c:202
 msgid "This option has been disabled as the system is already 32-bit"
 msgstr "Aquesta opció s'ha inhabilitat ja que el sistema ja és de 32 bits."
 
-#: src/frontend/main-window.c:205
+#: src/frontend/main-window.c:206
 msgid ""
 "This may workaround some broken games, but will disable the Steam store "
 "browser."
@@ -55,15 +55,15 @@ msgstr ""
 "Això pot solucionar alguns jocs trencats, però inhabilitarà el navegador de "
 "la botiga d'Steam."
 
-#: src/frontend/main-window.c:210
+#: src/frontend/main-window.c:211
 msgid "Force 32-bit mode for Steam"
 msgstr "Força el mode de 32 bits per a l'Steam"
 
-#: src/frontend/main-window.c:218
+#: src/frontend/main-window.c:219
 msgid "Use the intercept library"
 msgstr "Usa la biblioteca d'intercepció"
 
-#: src/frontend/main-window.c:219
+#: src/frontend/main-window.c:220
 msgid ""
 "Force Steam applications to use more native libraries to maximise "
 "compatibility."
@@ -71,16 +71,28 @@ msgstr ""
 "Força que les aplicacions de l'Steam usin més biblioteques natives per "
 "maximitzar la compatibilitat."
 
-#: src/frontend/main-window.c:228
+#: src/frontend/main-window.c:229
 msgid "Use the redirect library"
 msgstr "Usa la biblioteca de redirecció"
 
-#: src/frontend/main-window.c:229
+#: src/frontend/main-window.c:230
 msgid "Override system calls to fix known bugs in some Linux ports."
 msgstr ""
 "Anul·la les crides de sistema per corregir errors coneguts en algunes "
 "versions de Linux."
 
-#: src/frontend/main-window.c:383
+#: src/frontend/main-window.c:237
+msgid "Use the Unity fullscreen workaround"
+msgstr "Usa la solució provisional de pantalla completa de l'Unity."
+
+#: src/frontend/main-window.c:238
+msgid ""
+"Prevent some Unity games from launching in full screen mode to fix numerous "
+"issues"
+msgstr ""
+"Evita que alguns jocs d'Unity s'obrin en pantalla completa per tal de "
+"corregir uns quants problemes."
+
+#: src/frontend/main-window.c:403
 msgid "Failed to save configuration"
 msgstr "Ha fallat desar la configuració"
