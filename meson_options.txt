@@ -14,3 +14,5 @@ option('with-libressl-suffix', type: 'string', value: '-libressl',
         description: 'Suffix for shim LibreSSL library when using --with-libressl-mode=shim')
 
 option('with-snap-support', type: 'boolean', description: 'Build LSI with explicit support for snapd', value: false)
+
+option('with-udev-redirect', type: 'boolean', description: 'Enable libudev soname redirection. DO NOT USE WITH UDEV SHIM.')

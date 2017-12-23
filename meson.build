@@ -90,6 +90,13 @@ if with_snap_support == true
     message('Enabling snapd support. Do NOT do this for distribution builds!')
 endif
 
+with_udev_redirect = get_option('with-udev-redirect')
+if with_udev_redirect == true
+    cdata.set('HAVE_UDEV_REDIRECT', '1')
+    message('Enabling udev soname redirection. DO NOT DO THIS FOR ARCH LINUX!')
+    message('The udev redirect should only be used when not using udev shim')
+endif
+
 config_h = configure_file(
      configuration: cdata,
      output: 'config.h',
