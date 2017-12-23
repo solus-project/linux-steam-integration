@@ -273,9 +273,7 @@ static const char *vendor_transmute_source[] = {
 
         "libbz2.so.1.0",
 
-#ifdef HAVE_UDEV_REDIRECT
         "libudev.so.0",
-#endif
 };
 
 /**
@@ -313,9 +311,7 @@ static const char *vendor_transmute_target[] = {
 
         "libbz2.so.1.0.6",
 
-#ifdef HAVE_UDEV_REDIRECT
         "libudev.so.1",
-#endif
 };
 
 /**
