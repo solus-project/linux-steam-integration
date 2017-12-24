@@ -363,6 +363,10 @@ _nica_public_ struct passwd *getpwuid(uid_t uid)
          * let us override the home directory to be correct.
          */
         ret = lsi_table.getpwuid(uid);
+        if (!ret) {
+                return NULL;
+        }
+
         if (uid == getuid() && snap_root && *snap_root) {
                 ret->pw_dir = (char *)snap_root;
         }
