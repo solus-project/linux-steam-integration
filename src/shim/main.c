@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "../common/files.h"
+#include "config.h"
 #include "lsi.h"
 #include "shim.h"
 
@@ -38,6 +39,8 @@ int main(int argc, char **argv)
 {
         const char *operation_prefix = NULL;
         const char *steam_binary = NULL;
+        __attribute__((unused)) const char *tdir = NULL;
+        __attribute__((unused)) int dir_ret = 0;
 
         if (!shim_bootstrap()) {
                 return EXIT_FAILURE;
@@ -45,6 +48,7 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_SNAPD_SUPPORT
         operation_prefix = getenv("SNAP");
+        tdir = getenv("SNAP_USER_COMMON");
 #endif
 
         steam_binary = shim_get_steam_binary(operation_prefix);
@@ -52,6 +56,10 @@ int main(int argc, char **argv)
         if (!lsi_file_exists(steam_binary)) {
                 lsi_report_failure("Steam isn't currently installed at %s", steam_binary);
                 return EXIT_FAILURE;
+        }
+
+        if (tdir) {
+                dir_ret = chdir(tdir);
         }
 
         return shim_execute(steam_binary, --argc, ++argv);
