@@ -1,6 +1,7 @@
 {
   global:
     fopen64;
+    getpwuid;
     open;
   local:
     *;

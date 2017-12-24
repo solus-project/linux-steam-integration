@@ -19,6 +19,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
+
+/* Expose getpwuid override in snapd */
+#ifdef HAVE_SNAPD_SUPPORT
+#include <pwd.h>
+#endif
+
 #include "../common/common.h"
 #include "../common/files.h"
 #include "../common/log.h"
@@ -82,6 +89,9 @@ static LsiRedirectProfile *lsi_profile = NULL;
 static LsiSymbolBinding lsi_libc_bindings[] = {
         SYMBOL_BINDING(libc, open),
         SYMBOL_BINDING(libc, fopen64),
+#ifdef HAVE_SNAPD_SUPPORT
+        SYMBOL_BINDING(libc, getpwuid),
+#endif
 };
 
 /**
@@ -334,6 +344,32 @@ fallback_open:
         }
         return lsi_table.fopen64(p, modes);
 }
+
+#ifdef HAVE_SNAPD_SUPPORT
+
+#include <unistd.h>
+
+_nica_public_ struct passwd *getpwuid(uid_t uid)
+{
+        /* Must ensure we're **really** initialised, as we might see open happen
+         * before the constructor..
+         */
+        lsi_redirect_init_tables();
+
+        struct passwd *ret = NULL;
+        const char *snap_root = getenv("SNAP_USER_COMMON");
+
+        /* If they're requesting our uid and SNAP_USER_COMMON is set, then
+         * let us override the home directory to be correct.
+         */
+        ret = lsi_table.getpwuid(uid);
+        if (uid == getuid() && snap_root && *snap_root) {
+                ret->pw_dir = (char *)snap_root;
+        }
+        return ret;
+}
+
+#endif
 
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html

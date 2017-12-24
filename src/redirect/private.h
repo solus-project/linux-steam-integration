@@ -14,6 +14,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "config.h"
+
+#ifdef HAVE_SNAPD_SUPPORT
+#include <pwd.h>
+#endif
+
 /**
  * Handle definitions
  */
@@ -21,12 +27,20 @@ typedef int (*lsi_open_file)(const char *p, int flags, mode_t mode);
 
 typedef FILE *(*lsi_fopen64_file)(const char *p, const char *modes);
 
+#ifdef HAVE_SNAPD_SUPPORT
+typedef struct passwd *(*lsi_getpwuid)(uid_t uid);
+#endif
+
 /**
  * Global storage of handles for nicer organisation.
  */
 typedef struct LsiRedirectTable {
         lsi_open_file open;
         lsi_fopen64_file fopen64;
+
+#ifdef HAVE_SNAPD_SUPPORT
+        lsi_getpwuid getpwuid;
+#endif
 
         /* Allow future handle opens.. */
         struct {
