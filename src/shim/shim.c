@@ -229,6 +229,9 @@ static void shim_export_extra(const char *prefix)
         shim_export_merge_vars("PATH", prefix, "/usr/bin");
         shim_export_merge_vars("PATH", prefix, "/bin");
 
+        /* We require our PulseAudio fake script to be seen first. */
+        shim_export_merge_vars("PATH", prefix, FAKE_SCRIPTS_DIR "/pulseaudio");
+
         /* Try both known Vulkan ICD paths */
         if (!shim_init_vulkan(VK_GLOB_2)) {
                 shim_init_vulkan(VK_GLOB);

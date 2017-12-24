@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Work around games using libfmod which is determined to execute:
+# pulseaudio --check > /dev/null 2>&1
+
+if [[ ! -z "$1" ]]; then
+    if [[ "$1" == "--check" ]] ; then
+        exit 0
+    fi
+fi
+
+exec /usr/bin/pulseaudio $*

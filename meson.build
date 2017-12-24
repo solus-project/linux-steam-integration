@@ -87,6 +87,9 @@ endif
 with_snap_support = get_option('with-snap-support')
 if with_snap_support == true
     cdata.set('HAVE_SNAPD_SUPPORT', '1')
+    with_fake_scripts_dir = join_paths(datadir, meson.project_name(), 'scripts')
+    cdata.set_quoted('FAKE_SCRIPTS_DIR', with_fake_scripts_dir)
+    subdir('snapd')
     message('Enabling snapd support. Do NOT do this for distribution builds!')
 endif
 
