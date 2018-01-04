@@ -85,7 +85,7 @@ LSI may not yet be available for your distribution, however some community maint
 To install the experimental snaps (`snapd` >= 2.29.4):
 
     sudo snap install --edge solus-runtime-gaming
-    sudo snap install --devmode --edge solus-runtime-gaming
+    sudo snap install --devmode --edge linux-steam-integration
 
 ## Snap Support
 
