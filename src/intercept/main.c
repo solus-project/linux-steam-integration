@@ -262,6 +262,8 @@ static const char *vendor_transmute_source[] = {
 #ifdef LSI_OVERRIDE_LIBRESSL
         "libcrypto.so.36",
         "libssl.so.37",
+        "libcrypto.so.42",
+        "libssl.so.44",
 #endif
 
         /* old name for openal */
@@ -297,7 +299,11 @@ static const char *vendor_transmute_target[] = {
 #if defined(LSI_LIBRESSL_MODE_SHIM)
         "libcrypto" LSI_LIBRESSL_SUFFIX ".so",
         "libssl" LSI_LIBRESSL_SUFFIX ".so",
+        "libcrypto" LSI_LIBRESSL_SUFFIX ".so",
+        "libssl" LSI_LIBRESSL_SUFFIX ".so",
 #elif defined(LSI_LIBRESSL_MODE_NATIVE)
+        "libcrypto.so.1.0.0",
+        "libssl.so.1.0.0",
         "libcrypto.so.1.0.0",
         "libssl.so.1.0.0",
 #endif
