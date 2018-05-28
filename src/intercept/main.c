@@ -276,6 +276,9 @@ static const char *vendor_transmute_source[] = {
         "libbz2.so.1.0",
 
         "libudev.so.0",
+
+        "libva.so.1",
+        "libva-x11.so.1",
 };
 
 /**
@@ -318,6 +321,9 @@ static const char *vendor_transmute_target[] = {
         "libbz2.so.1.0.6",
 
         "libudev.so.1",
+
+        "libva.so.2",
+        "libva-x11.so.2",
 };
 
 /**
