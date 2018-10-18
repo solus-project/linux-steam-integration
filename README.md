@@ -18,7 +18,7 @@ reasons:
 
 This project, and by extension Solus, is not officially endorsed by, or affiliated with, Steam, or its parent company, Valve*.
 
-Linux Steam Integration is a [Solus project](https://solus-project.com/)
+Linux Steam Integration is a [Solus project](https://getsol.us/)
 
 ![logo](https://build.solus-project.com/logo.png)
 
